@@ -6,6 +6,7 @@ import {
   notification,
 } from "antd";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   getAccounts
 } from "../../../../api/Admin/adminAccounts";
@@ -16,6 +17,7 @@ const AdminAccounts: React.FC = () => {
 
   const [accountData, setAccountData] = useState<Account[]>([]);
   const [filteredData, setFilteredData] = useState<Account[]>([]);
+  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState<string>("");
   const { token } = useContext(UserContext);
 
@@ -65,16 +67,6 @@ const AdminAccounts: React.FC = () => {
       width: "20%",
     },
     {
-        title: "Account Phone",
-        dataIndex: "phone",
-        width: "15%",
-    },
-    {
-        title: "Account Address",
-        dataIndex: "address",
-        width: "35%",
-    },
-    {
       title: "Status",
       dataIndex: "status",
       width: "5%",
@@ -87,6 +79,14 @@ const AdminAccounts: React.FC = () => {
           </Tag>
         );
       },
+    },
+    {
+      title: "",
+      dataIndex: "operation",
+      render: (_: any, record: Account) => (
+        <a onClick={() => navigate(`/admin/accounts/detail/${record.accountId}`)}>View details</a>
+      ),
+      width: "10%",
     },
   ];
 

@@ -6,6 +6,7 @@ import MemberLayout from "./Page/Member";
 import Home from "./Page/Home";
 import Dashboard from "./Page/Admin/Dashboard";
 import Accounts from "./Page/Admin/Accounts";
+import AccountDetail from "./Page/Admin/AccountDetail";
 import MemberShips from "./Page/Admin/MemberShips";
 import MemberShipDetail from "./Page/Admin/MemberShipDetail";
 import Hostels from "./Page/Admin/Hostels";
@@ -32,6 +33,7 @@ function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="accounts" element={<Accounts />} />
+              <Route path="accounts/detail/:accountId" element={<AccountDetail />} />
               <Route path="memberships" element={<MemberShips />} />
               <Route path="memberships/detail/:memberShipTransactionID" element={<MemberShipDetail />} />
               <Route path="hostels" element={<Hostels />} />

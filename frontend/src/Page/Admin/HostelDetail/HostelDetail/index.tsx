@@ -17,8 +17,6 @@ import {
   import { useContext } from "react";
   import { useNavigate, useParams } from "react-router-dom";
   import { UserContext } from "../../../../context/userContext";
-  import { NumberFormat } from "../../../../Utils/numberFormatVND";
-  import { DateFormat } from "../../../../Utils/dateFormat";
   
   const AdminHostelDetail: React.FC = () => {
   

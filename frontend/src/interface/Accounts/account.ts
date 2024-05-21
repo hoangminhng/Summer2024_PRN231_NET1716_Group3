@@ -3,6 +3,4 @@ interface Account {
     name: string;
     email: string;
     status: number;
-    phone: string;
-    address: string;
 }

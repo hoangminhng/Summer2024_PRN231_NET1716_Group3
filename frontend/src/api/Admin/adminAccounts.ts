@@ -19,6 +19,24 @@ export const getAccounts = async (token: string) => {
   }
 };
 
+export const getAccountDetail = async (id: number,token: string) => {
+  try {
+    const fetchData = await axios.get<AccountDetail>(
+      `${baseUrl}/api/admin/accounts/detail/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+}
+
 export const getMemberShips = async (token: string) => {
   try {
     const fetchData = await axios.get<MemberShip[]>(
