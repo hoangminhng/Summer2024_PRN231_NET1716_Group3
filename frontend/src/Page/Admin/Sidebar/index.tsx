@@ -7,7 +7,6 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   BookOutlined,
-  DollarOutlined,
   MailOutlined,
   LogoutOutlined
 } from "@ant-design/icons";
@@ -58,9 +57,7 @@ const Sidebar: React.FC = () => {
     getItem("Package", "sub4", <BookOutlined />, [
       getItem("Member Package", "6"),
     ]),
-
-    getItem("Transaction", "7", <DollarOutlined />),
-    getItem("Logout", "8", <LogoutOutlined />),
+    getItem("Logout", "7", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
 
   const handleMenuClick = (key: React.Key) => {
@@ -84,9 +81,6 @@ const Sidebar: React.FC = () => {
         navigate("/admin/packages");
         break;
       case "7":
-        navigate("/admin/transactions");
-        break;
-      case "8":
         logout();
         navigate("/");
         break;

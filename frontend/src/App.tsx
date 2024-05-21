@@ -8,6 +8,8 @@ import Dashboard from "./Page/Admin/Dashboard";
 import Accounts from "./Page/Admin/Accounts";
 import MemberShips from "./Page/Admin/MemberShips";
 import MemberShipDetail from "./Page/Admin/MemberShipDetail";
+import Hostels from "./Page/Admin/Hostels";
+import HostelDetail from "./Page/Admin/HostelDetail";
 
 
 
@@ -32,6 +34,8 @@ function App() {
               <Route path="accounts" element={<Accounts />} />
               <Route path="memberships" element={<MemberShips />} />
               <Route path="memberships/detail/:memberShipTransactionID" element={<MemberShipDetail />} />
+              <Route path="hostels" element={<Hostels />} />
+              <Route path="hostels/detail/:hostelID" element={<HostelDetail />} />
             </Route>
           </Route>
         </Routes>

@@ -107,6 +107,8 @@ const AdminMemberShips: React.FC = () => {
         <div>
           {/* Bảng danh sách */}
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <h3 title="MemberShips List"/>
+            <br />
             <div className="w-full md:w-72 flex flex-row justify-start">
             <Input
               label="Search by Email"

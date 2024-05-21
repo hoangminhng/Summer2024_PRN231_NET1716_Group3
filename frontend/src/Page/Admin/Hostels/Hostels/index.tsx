@@ -7,87 +7,98 @@ import {
 } from "antd";
 import { useState, useEffect } from "react";
 import {
-  getAccounts
-} from "../../../../api/Admin/adminAccounts";
+    getHostel
+} from "../../../../api/Admin/adminHostels";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../../context/userContext";
 
-const AdminAccounts: React.FC = () => {
+const AdminHostels: React.FC = () => {
 
-  const [accountData, setAccountData] = useState<Account[]>([]);
-  const [filteredData, setFilteredData] = useState<Account[]>([]);
+  const [hostelData, setHostelData] = useState<AdminHostel[]>([]);
+  const navigate = useNavigate();
+  const [filteredData, setFilteredData] = useState<AdminHostel[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const { token } = useContext(UserContext);
 
-  const fetchAccountList = async () => {
+  const fetchHostelList = async () => {
     try {
       if (token) {
-        let data: Account[] | undefined;
-          data = await getAccounts(token);
-          setAccountData(data || []);
+        let data: AdminHostel[] | undefined;
+          data = await getHostel(token);
+          setHostelData(data || []);
           setFilteredData(data || []);
         }
       } catch (error) {
-      console.error("Error fetching account list:", error);
+      console.error("Error fetching hostels list:", error);
     }
   };
 
   useEffect(() => {
-    fetchAccountList();
+    fetchHostelList();
   }, [token]);
 
   useEffect(() => {
-    if (accountData) {
-      const filtered = accountData.filter(
-        (account) =>
-          account.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-          account.email.toLowerCase().includes(searchInput.toLowerCase())
+    if (hostelData) {
+      const filtered = hostelData.filter(
+        (hostel) =>
+            hostel.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+            hostel.email.toLowerCase().includes(searchInput.toLowerCase()) ||
+            hostel.hostelName.toLowerCase().includes(searchInput.toLowerCase())
       );
       setFilteredData(filtered);
     }
-  }, [searchInput, accountData]);
+  }, [searchInput, hostelData]);
 
 
-  const columns: TableProps<Account>["columns"] = [
+  const columns: TableProps<AdminHostel>["columns"] = [
     {
       title: "No",
       width: "5%",
       render: (_text: any, _record: any, index: number) => index + 1,
     },
     {
-      title: "Account Name",
-      dataIndex: "name",
+      title: "Hostel Name",
+      dataIndex: "hostelName",
       width: "20%",
     },
     {
-      title: "Account Email",
-      dataIndex: "email",
-      width: "20%",
+      title: "Hostel Address",
+      dataIndex: "hostelAddress",
+      width: "30%",
     },
     {
-        title: "Account Phone",
-        dataIndex: "phone",
+        title: "Account Name",
+        dataIndex: "name",
         width: "15%",
     },
     {
-        title: "Account Address",
-        dataIndex: "address",
-        width: "35%",
+        title: "Account Email",
+        dataIndex: "email",
+        width: "15%",
     },
     {
       title: "Status",
       dataIndex: "status",
       width: "5%",
-      render: (account_Status: number) => {
-        let color = account_Status === 1 ? "volcano" : "green";
-        let status = account_Status === 1 ? "BLOCK" : "ACTIVE"
+      render: (hostel_Status: number) => {
+        let color = hostel_Status === 1 ? "volcano" : "green";
+        let status = hostel_Status === 1 ? "BLOCK" : "ACTIVE"
         return (
-          <Tag color={color} key={account_Status}>
+          <Tag color={color} key={hostel_Status}>
             {status.toUpperCase()}
           </Tag>
         );
       },
     },
+    {
+        title: "",
+        dataIndex: "operation",
+        render: (_: any, record: AdminHostel) => (
+          <a onClick={() => navigate(`/admin/hostels/detail/${record.hostelID}`)}>View details</a>
+        ),
+        width: "10%",
+      },
   ];
 
   
@@ -103,7 +114,7 @@ const AdminAccounts: React.FC = () => {
         <div>
           {/* Bảng danh sách */}
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <h3 title="Accounts List"/>
+          <h3 title="Hostels List"/>
             <br />
             <div className="w-full md:w-72 flex flex-row justify-start">
             <Input
@@ -120,4 +131,4 @@ const AdminAccounts: React.FC = () => {
   );
 };
 
-export default AdminAccounts;
+export default AdminHostels;
