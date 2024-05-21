@@ -3,61 +3,57 @@ import {
   Table,
   TableProps,
   Tag,
-  notification,
 } from "antd";
 import { useState, useEffect } from "react";
 import {
-  getAccounts
+  getMemberShips
 } from "../../../../api/Admin/adminAccounts";
 import { useContext } from "react";
 import { UserContext } from "../../../../context/userContext";
+import { useNavigate } from "react-router-dom";
+import { DateFormat } from "../../../../Utils/dateFormat";
 
-const AdminAccounts: React.FC = () => {
+const AdminMemberShips: React.FC = () => {
 
-  const [accountData, setAccountData] = useState<Account[]>([]);
-  const [filteredData, setFilteredData] = useState<Account[]>([]);
+  const [membershipData, setMembershipData] = useState<MemberShip[]>([]);
+  const navigate = useNavigate();
+  const [filteredData, setFilteredData] = useState<MemberShip[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const { token } = useContext(UserContext);
 
-  const fetchAccountList = async () => {
+  const fetchMemberList = async () => {
     try {
       if (token) {
-        let data: Account[] | undefined;
-          data = await getAccounts(token);
-          setAccountData(data || []);
+        let data: MemberShip[] | undefined;
+          data = await getMemberShips(token);
+          setMembershipData(data || []);
           setFilteredData(data || []);
         }
       } catch (error) {
-      console.error("Error fetching account list:", error);
+      console.error("Error fetching membership list:", error);
     }
   };
 
   useEffect(() => {
-    fetchAccountList();
+    fetchMemberList();
   }, [token]);
 
   useEffect(() => {
-    if (accountData) {
-      const filtered = accountData.filter(
-        (account) =>
-          account.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-          account.email.toLowerCase().includes(searchInput.toLowerCase())
+    if (membershipData) {
+      const filtered = membershipData.filter(
+        (membership) =>
+            membership.email.toLowerCase().includes(searchInput.toLowerCase())
       );
       setFilteredData(filtered);
     }
-  }, [searchInput, accountData]);
+  }, [searchInput, membershipData]);
 
 
-  const columns: TableProps<Account>["columns"] = [
+  const columns: TableProps<MemberShip>["columns"] = [
     {
       title: "No",
       width: "5%",
       render: (_text: any, _record: any, index: number) => index + 1,
-    },
-    {
-      title: "Account Name",
-      dataIndex: "name",
-      width: "20%",
     },
     {
       title: "Account Email",
@@ -65,14 +61,21 @@ const AdminAccounts: React.FC = () => {
       width: "20%",
     },
     {
-        title: "Account Phone",
-        dataIndex: "phone",
+        title: "MemberShip Package",
+        dataIndex: "membershipName",
+        width: "35%",
+    },
+    {
+        title: "Date Register",
+        dataIndex: "dateRegister",
+        render: (dateRegister: Date) => DateFormat(dateRegister),
         width: "15%",
     },
     {
-        title: "Account Address",
-        dataIndex: "address",
-        width: "35%",
+        title: "Date Expire",
+        dataIndex: "dateExpire",
+        render: (dateExpire: Date) => DateFormat(dateExpire),
+        width: "15%",
     },
     {
       title: "Status",
@@ -80,7 +83,7 @@ const AdminAccounts: React.FC = () => {
       width: "5%",
       render: (account_Status: number) => {
         let color = account_Status === 1 ? "volcano" : "green";
-        let status = account_Status === 1 ? "BLOCK" : "ACTIVE"
+        let status = account_Status === 1 ? "EXPIRE" : "ACTIVE"
         return (
           <Tag color={color} key={account_Status}>
             {status.toUpperCase()}
@@ -88,15 +91,16 @@ const AdminAccounts: React.FC = () => {
         );
       },
     },
+    {
+      title: "",
+      dataIndex: "operation",
+      render: (_: any, record: MemberShip) => (
+        <a onClick={() => navigate(`/admin/memberships/detail/${record.memberShipTransactionID}`)}>View details</a>
+      ),
+      width: "10%",
+    },
   ];
 
-  
-  const openNotificationWithIcon = (type: 'success' | 'error', description: string) => {
-    notification[type]({
-      message: "Notification Title",
-      description: description,
-    });
-  };
 
   return (
     <>
@@ -105,7 +109,7 @@ const AdminAccounts: React.FC = () => {
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="w-full md:w-72 flex flex-row justify-start">
             <Input
-              label="Search by Name or Email"
+              label="Search by Email"
               value={searchInput}
               crossOrigin={undefined}
               onChange={(e) => { setSearchInput(e.target.value); } } onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}           
@@ -118,4 +122,4 @@ const AdminAccounts: React.FC = () => {
   );
 };
 
-export default AdminAccounts;
+export default AdminMemberShips;
