@@ -48,14 +48,12 @@ const Sidebar: React.FC = () => {
       getItem("Accounts", "2"),
       getItem("MemberShips", "3"),
     ]),
-    getItem("Notice", "sub2", <MailOutlined />, [
-          getItem("Request MemberShip", "4", <FormOutlined/>),
-    ]),
     getItem("Hostel", "sub3", <HomeOutlined />, [
-      getItem("Hostels", "5"),
+      getItem("Hostels", "4"),
     ]),
     getItem("Package", "sub4", <BookOutlined />, [
-      getItem("Member Package", "6"),
+      getItem("Member Package", "5"),
+      getItem("Create Package", "6"),
     ]),
     getItem("Logout", "7", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
@@ -72,14 +70,14 @@ const Sidebar: React.FC = () => {
         navigate("/admin/memberships");
         break;
       case "4":
-        navigate("/admin/request");
-        break;
-      case "5":
         navigate("/admin/hostels");
         break;
-      case "6":
+      case "5":
         navigate("/admin/packages");
         break;
+      case "6":
+      navigate("/admin/packages/new");
+      break;
       case "7":
         logout();
         navigate("/");
