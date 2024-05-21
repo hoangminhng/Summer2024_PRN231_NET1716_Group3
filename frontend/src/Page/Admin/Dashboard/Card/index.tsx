@@ -32,15 +32,6 @@ useEffect(() => {
           <div className="flex justify-between">
             <span
               style={{
-                color: "burlywood",
-                fontSize: "30px",
-                fontWeight: "bold",
-              }}
-            >
-              Accounts : {<span className="text-black">{dashboardData?.totalAccount}</span>}
-            </span>
-            <span
-              style={{
                 color: "limegreen",
                 fontSize: "30px",
                 fontWeight: "bold",
@@ -59,7 +50,7 @@ useEffect(() => {
             </span>
             <span
               style={{
-                color: "#477ffb",
+                color: "burlywood",
                 fontSize: "30px",
                 fontWeight: "bold",
               }}

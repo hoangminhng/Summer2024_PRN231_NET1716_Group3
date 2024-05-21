@@ -18,3 +18,57 @@ export const getStatistic = async (token: string) => {
     console.log("Error: " + error);
   }
 };
+
+export const getStatisticSummary = async (token: string) => {
+  try {
+    const fetchData = await axios.get<Summary>(
+      `${baseUrl}/api/admin/dashboard/summary`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
+export const getStatisticPackage = async (token: string) => {
+  try {
+    const fetchData = await axios.get<TypePackage[]>(
+      `${baseUrl}/api/admin/dashboard/typepackage`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
+export const getStatisticProfit = async (token: string) => {
+  try {
+    const fetchData = await axios.get<TypeMonth[]>(
+      `${baseUrl}/api/admin/dashboard/typemonth`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
