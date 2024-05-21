@@ -2,7 +2,7 @@ interface Account {
     accountId: number;
     name: string;
     email: string;
-    status: string;
+    status: number;
     phone: string;
     address: string;
 }
