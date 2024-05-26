@@ -1,0 +1,179 @@
+import {
+    Button,
+    Input,
+    Descriptions,
+    notification
+  } from "antd";
+  import { useState, useEffect } from "react";
+  import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+  import {
+    getPackageDetail,
+    updatePackage
+  } from "../../../../api/Admin/adminPackages";
+  import { useContext } from "react";
+  import { useNavigate, useParams } from "react-router-dom";
+  import { UserContext } from "../../../../context/userContext";
+  
+  const AdminPackageDetail: React.FC = () => {
+  
+    const [packageDetailData, setPackageDetailData] = useState<Package>();
+    const { packageID } = useParams<{ packageID: string }>();
+    const [idnumber, setID] = useState<number>();
+    const navigate = useNavigate();
+    const { token } = useContext(UserContext);
+    const [packageData, setPackageData] = useState<Package>({
+        capacityHostel: 0,
+        memberShipFee: 0,
+        memberShipName: "",
+        month: 0,
+        status: 0,
+        memberShipID: 0,
+      });
+  
+    const fetchPackageDetail = async () => {
+      try {
+        if (token && packageID) {
+          let data: Package | undefined;
+          data = await getPackageDetail(parseInt(packageID), token);
+          setID(parseInt(packageID));
+          setPackageDetailData(data);
+        }
+      } catch (error) {
+        console.error("Error fetching package detail:", error);
+      }
+    };
+
+    const fetchUpdatePackage = async (Package: Package) => {
+        try {
+          if (token) {
+            let data: Message | undefined;
+            data = await updatePackage(Package, token);
+            return data;
+          }
+        } catch (error) {
+          console.error("Error fetching add staff:", error);
+        }
+      };
+    
+  
+    useEffect(() => {
+        fetchPackageDetail();
+    }, [idnumber, token]);
+  
+    const handleChange = (fieldName: keyof Package, value: string) => {
+        setPackageData((prevData) => ({
+          ...prevData,
+          [fieldName]: value,
+        }));
+      };
+
+      const openNotificationWithIcon = (type: 'success' | 'error', description: string) => {
+        notification[type]({
+          message: "Notification Title",
+          description: description,
+        });
+      };
+
+      const UpdatePackage = async () => {
+        packageData.memberShipID = packageDetailData?.memberShipID || 0;
+        packageData.status = packageDetailData?.status || 0;
+        const response = await fetchUpdatePackage(packageData);
+        if (response != undefined && response) {
+          if (response.statusCode == "MSG04") {
+            openNotificationWithIcon("success", response.message);
+          } else {
+            openNotificationWithIcon("error", "Something went wrong when executing operation. Please try again!");
+          }
+      }
+    };
+  
+    const items = [
+        {
+          key: "1",
+          label: "Package Name",
+          children: (
+            <Input
+              placeholder="Enter package"
+              required
+              value={packageDetailData?.memberShipName}
+              onChange={(e) => handleChange("memberShipName", e.target.value)}
+            />
+          ),
+          span: 3,
+        },
+        {
+          key: "2",
+          label: "Capacity Hostel",
+          children: (
+            <Input
+              type="number"
+              required
+              placeholder="Enter capacity hostel"
+              value={packageDetailData?.capacityHostel}
+              onChange={(e) => handleChange("capacityHostel", e.target.value)}
+            />
+          ),
+          span: 3,
+        },
+        {
+          key: "3",
+          label: "Package Fee",
+          children: (
+            <Input
+              type="number"
+              required
+              placeholder="Enter your fee"
+              value={packageDetailData?.memberShipFee}
+              onChange={(e) => handleChange("memberShipFee", e.target.value)}
+            />
+          ),
+          span: 3,
+        },
+        {
+          key: "4",
+          label: "Month",
+          children: (
+            <Input
+              type="number"
+              placeholder="Enter month"
+              required
+              value={packageDetailData?.month}
+              onChange={(e) => handleChange("month", e.target.value)}
+            />
+          ),
+          span: 3,
+        },
+      ];
+   
+    const handleBackToList = () => {
+      navigate("/admin/packages"); 
+    };
+   
+    return (
+      <>
+          <div>
+            <Button onClick={handleBackToList}>
+              <FontAwesomeIcon icon={faArrowLeft} style={{ color: "#74C0FC" }} />
+            </Button>
+            <br />
+            <br />
+
+            <Descriptions bordered title="Update Package" items={items}></Descriptions>
+            <br />
+            <div
+                style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                }}
+            >
+                <Button onClick={UpdatePackage}>Update</Button>
+            </div>
+          </div>
+      </>
+    );
+  };
+  
+  export default AdminPackageDetail;
+  

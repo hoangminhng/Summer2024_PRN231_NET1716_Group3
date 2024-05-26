@@ -1,0 +1,74 @@
+import axios from "axios";
+const baseUrl = process.env.REACT_APP_BACK_END_URL;
+
+export const getStatistic = async (token: string) => {
+  try {
+    const fetchData = await axios.get<Dashboard>(
+      `${baseUrl}/api/admin/dashboard`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
+export const getStatisticSummary = async (token: string) => {
+  try {
+    const fetchData = await axios.get<Summary>(
+      `${baseUrl}/api/admin/dashboard/summary`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
+export const getStatisticPackage = async (token: string) => {
+  try {
+    const fetchData = await axios.get<TypePackage[]>(
+      `${baseUrl}/api/admin/dashboard/typepackage`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
+export const getStatisticProfit = async (token: string) => {
+  try {
+    const fetchData = await axios.get<TypeMonth[]>(
+      `${baseUrl}/api/admin/dashboard/typemonth`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
