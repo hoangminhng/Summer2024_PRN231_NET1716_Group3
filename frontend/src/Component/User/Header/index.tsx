@@ -1,11 +1,24 @@
 import { LockOpenIcon, UserPlusIcon } from "@heroicons/react/20/solid";
 import React, { useState } from "react";
+import LoginModal from "../../LoginModal";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      // If the click occurs on the overlay (not on the modal content), close the modal
+      toggleModal();
+    }
   };
 
   return (
@@ -108,6 +121,7 @@ const Header: React.FC = () => {
         </div>
         <div className="hidden md:flex md:order-2 space-x-3 rtl:space-x-reverse">
           <button
+            onClick={toggleModal}
             type="button"
             className="flex items-center text-white bg-slate-950 hover:bg-slate-600 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-base px-5 py-3 text-center mb-2"
           >
@@ -115,6 +129,17 @@ const Header: React.FC = () => {
             Sign in
           </button>
         </div>
+        {isModalOpen && (
+          <div
+            tabIndex={-1}
+            aria-hidden="true"
+            onMouseDown={handleOverlayClick}
+            className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50  "
+            // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+          >
+            <LoginModal />
+          </div>
+        )}
       </div>
     </nav>
   );
