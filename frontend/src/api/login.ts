@@ -1,13 +1,12 @@
-import api from "./api";
+import baseUrl from "./api";
 
 export const loginByUsernamePassword = async (
   email: string,
   password: string
 ) => {
-  try {
-    const response = await api.post("/api/login", { email, password });
-    return response;
-  } catch (error) {
-    console.log(error);
+  const response = await baseUrl.post("/api/login", { email, password });
+  if (response.status !== 200) {
+    new Error(`Error: ${response.status}`);
   }
+  return response;
 };

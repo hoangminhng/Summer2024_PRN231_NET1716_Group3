@@ -1,17 +1,65 @@
+import { useContext, useState } from "react";
 import { loginByUsernamePassword } from "../../api/login";
+import { UserContext } from "../../Context/userContext";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const LoginModal: React.FC = () => {
+  const { login } = useContext(UserContext);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const handleSubmit = () => {
-    try {
-      const loginStaff = async () => {
-        const login = await loginByUsernamePassword("sharppena@pharmacon.com", "Pa$$w0rd");
-        console.log(login);
+    const loginStaff = async () => {
+      if (email === "" || password === "") {
+        toast.error("Please input all fields.", {
+          duration: 2000,
+        });
+      } else {
+        try {
+          const response = await loginByUsernamePassword(email, password);
+          // const responseData = response?.data;
+          // const user: LoginedUser = {
+          //   accountId: responseData?.accountId,
+          //   email: responseData?.email,
+          //   isLoginWithGmail: responseData?.isLoginWithGmail,
+          //   isNewAccount: responseData?.isNewAccount,
+          //   name: responseData?.name,
+          //   roleId: responseData?.roleId,
+          //   status: responseData?.status,
+          //   token: responseData?.token,
+          //   username: responseData?.username,
+          // };
+          // if (responseData?.token) {
+          //   login(user, responseData?.token);
+          // }
+          // if (user.roleId === 1) {
+          //   navigate("/admin");
+          // } else if (user.roleId === 2) {
+          //   navigate("/owner");
+          // } else if (user.roleId === 3) {
+          //   navigate("/member");
+          // }
+        } catch (error: any) {
+          if (error.message.includes("401")) {
+            toast.error("Invalid username or password", { duration: 2000 });
+          } else {
+            toast.error("An error occurred. Please try again.", {
+              duration: 2000,
+            });
+          }
+        }
       }
-      loginStaff();
-    } catch (error) {
-      console.log(error);
+    };
+    loginStaff();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent form submission
+      handleSubmit(); // Trigger login action
     }
-  }
+  };
   return (
     <>
       <div className="relative p-4 w-full max-w-md max-h-full">
@@ -22,7 +70,7 @@ const LoginModal: React.FC = () => {
             </h3>
           </div>
           <div className="p-4 md:p-5">
-            <form className="space-y-4" action="#">
+            <form className="space-y-4" onKeyDown={handleKeyDown}>
               <div>
                 <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-white text-start">
                   Your email
@@ -34,6 +82,9 @@ const LoginModal: React.FC = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                   placeholder="name@company.com"
                   required
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
                 />
               </div>
               <div>
@@ -47,6 +98,9 @@ const LoginModal: React.FC = () => {
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                   required
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
                 />
               </div>
               <div className="flex justify-between">
