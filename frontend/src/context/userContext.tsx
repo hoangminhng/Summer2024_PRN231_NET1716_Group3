@@ -9,7 +9,7 @@ interface UserContextType {
   userId: number | undefined;
   token: string | undefined;
   userAccountName: string | undefined;
-  login: (user: loginUser, token: string) => void;
+  login: (user: LoginedUser, token: string) => void;
   logout: () => void;
   isAuth: () => boolean;
 }
@@ -62,7 +62,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
   //   console.log("User ID: ", userId);
   // }, [userId]);
 
-  const login = (user: loginUser, token: string) => {
+  const login = (user: LoginedUser, token: string) => {
     const stringUser = JSON.stringify(user);
     let currentDate = new Date();
     localStorage.setItem("user", stringUser);
@@ -71,11 +71,10 @@ const UserProvider = ({ children }: UserProviderProps) => {
       "expiration",
       currentDate.setHours(currentDate.getHours() + 1).toString()
     );
-    localStorage.setItem("userId", user.id.toString());
+    localStorage.setItem("userId", user.accountId.toString());
     console.log(currentDate.setHours(currentDate.getHours() + 1).toString());
-    setUserAccountName(user?.accountName);
     setUserRole(user?.roleId);
-    setUserId(user?.id);
+    setUserId(user?.accountId);
     setToken(token);
   };
 
