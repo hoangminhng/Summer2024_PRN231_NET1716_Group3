@@ -7,15 +7,7 @@ const Home: React.FC = () => {
       <Banner />
       <div className="p-4">
         <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="flex items-center justify-center h-fit rounded mx-1 dark:bg-gray-800">
-            <HouseCard />
-          </div>
-          <div className="flex items-center justify-center h-fit rounded mx-1 dark:bg-gray-800">
-            <HouseCard />
-          </div>
-          <div className="flex items-center justify-center h-fit rounded mx-1 dark:bg-gray-800">
-            <HouseCard />
-          </div>
+          <HouseCard />
         </div>
         <div className="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800">
           <p className="text-2xl text-gray-400 dark:text-gray-500">
