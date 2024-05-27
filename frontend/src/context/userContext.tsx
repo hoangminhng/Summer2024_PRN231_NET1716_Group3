@@ -9,7 +9,7 @@ interface UserContextType {
   userId: number | undefined;
   token: string | undefined;
   userAccountName: string | undefined;
-  login: (user: loginUser, token: string) => void;
+  login: (user: LoginedUser, token: string) => void;
   logout: () => void;
   isAuth: () => boolean;
 }
@@ -24,7 +24,7 @@ export const UserContext = createContext<UserContextType>({
   isAuth: () => false,
 });
 
-const UserProvider = ({ children }: UserProviderProps) => {
+const UserContextProvider = ({ children }: UserProviderProps) => {
   const [userRole, setUserRole] = useState<number | undefined>();
   const [userAccountName, setUserAccountName] = useState<string | undefined>();
   const [userId, setUserId] = useState<number | undefined>();
@@ -62,7 +62,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
   //   console.log("User ID: ", userId);
   // }, [userId]);
 
-  const login = (user: loginUser, token: string) => {
+  const login = (user: LoginedUser, token: string) => {
     const stringUser = JSON.stringify(user);
     let currentDate = new Date();
     localStorage.setItem("user", stringUser);
@@ -71,11 +71,10 @@ const UserProvider = ({ children }: UserProviderProps) => {
       "expiration",
       currentDate.setHours(currentDate.getHours() + 1).toString()
     );
-    localStorage.setItem("userId", user.id.toString());
+    localStorage.setItem("userId", user.accountId.toString());
     console.log(currentDate.setHours(currentDate.getHours() + 1).toString());
-    setUserAccountName(user?.accountName);
     setUserRole(user?.roleId);
-    setUserId(user?.id);
+    setUserId(user?.accountId);
     setToken(token);
   };
 
@@ -100,10 +99,10 @@ const UserProvider = ({ children }: UserProviderProps) => {
   return (
     <UserContext.Provider
       value={{
-        userAccountName,
-        userId,
         userRole,
+        userId,
         token,
+        userAccountName,
         login,
         logout,
         isAuth,
@@ -114,4 +113,4 @@ const UserProvider = ({ children }: UserProviderProps) => {
   );
 };
 
-export default UserProvider;
+export default UserContextProvider;
