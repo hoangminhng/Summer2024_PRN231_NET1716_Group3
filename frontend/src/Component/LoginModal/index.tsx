@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { loginByUsernamePassword } from "../../api/login";
-import { UserContext } from "../../Context/userContext";
+import { UserContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -18,28 +18,28 @@ const LoginModal: React.FC = () => {
       } else {
         try {
           const response = await loginByUsernamePassword(email, password);
-          // const responseData = response?.data;
-          // const user: LoginedUser = {
-          //   accountId: responseData?.accountId,
-          //   email: responseData?.email,
-          //   isLoginWithGmail: responseData?.isLoginWithGmail,
-          //   isNewAccount: responseData?.isNewAccount,
-          //   name: responseData?.name,
-          //   roleId: responseData?.roleId,
-          //   status: responseData?.status,
-          //   token: responseData?.token,
-          //   username: responseData?.username,
-          // };
-          // if (responseData?.token) {
-          //   login(user, responseData?.token);
-          // }
-          // if (user.roleId === 1) {
-          //   navigate("/admin");
-          // } else if (user.roleId === 2) {
-          //   navigate("/owner");
-          // } else if (user.roleId === 3) {
-          //   navigate("/member");
-          // }
+          const responseData = response?.data;
+          const user: LoginedUser = {
+            accountId: responseData?.accountId,
+            email: responseData?.email,
+            isLoginWithGmail: responseData?.isLoginWithGmail,
+            isNewAccount: responseData?.isNewAccount,
+            name: responseData?.name,
+            roleId: responseData?.roleId,
+            status: responseData?.status,
+            token: responseData?.token,
+            username: responseData?.username,
+          };
+          if (responseData?.token) {
+            login(user, responseData?.token);
+          }
+          if (user.roleId === 1) {
+            navigate("/admin");
+          } else if (user.roleId === 2) {
+            navigate("/owner");
+          } else if (user.roleId === 3) {
+            navigate("/member");
+          }
         } catch (error: any) {
           if (error.message.includes("401")) {
             toast.error("Invalid username or password", { duration: 2000 });

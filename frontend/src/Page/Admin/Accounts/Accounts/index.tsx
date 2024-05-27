@@ -2,8 +2,7 @@ import { Input } from "@material-tailwind/react";
 import {
   Table,
   TableProps,
-  Tag,
-  notification,
+  Tag
 } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -82,21 +81,14 @@ const AdminAccounts: React.FC = () => {
     },
     {
       title: "",
-      dataIndex: "operation",
-      render: (_: any, record: Account) => (
-        <a onClick={() => navigate(`/admin/accounts/detail/${record.accountId}`)}>View details</a>
+      dataIndex: "accountID",
+      render: (accountID: number) => (
+        <a onClick={() => navigate(`/admin/accounts/detail/${accountID}`)}>View details</a>
       ),
       width: "10%",
     },
   ];
 
-  
-  const openNotificationWithIcon = (type: 'success' | 'error', description: string) => {
-    notification[type]({
-      message: "Notification Title",
-      description: description,
-    });
-  };
 
   return (
     <>
@@ -114,7 +106,7 @@ const AdminAccounts: React.FC = () => {
              />
             </div>
           </div>
-          <Table columns={columns} dataSource={filteredData} bordered />
+          <Table columns={columns} dataSource={filteredData} bordered pagination={{ pageSize: 8 }}/>
         </div>
     </>
   );

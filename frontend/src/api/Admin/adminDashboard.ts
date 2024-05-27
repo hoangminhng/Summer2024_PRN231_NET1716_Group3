@@ -19,23 +19,6 @@ export const getStatistic = async (token: string) => {
   }
 };
 
-export const getStatisticSummary = async (token: string) => {
-  try {
-    const fetchData = await axios.get<Summary>(
-      `${baseUrl}/api/admin/dashboard/summary`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const response = fetchData.data;
-    return response;
-  } catch (error) {
-    console.log("Error: " + error);
-  }
-};
 
 export const getStatisticPackage = async (token: string) => {
   try {
