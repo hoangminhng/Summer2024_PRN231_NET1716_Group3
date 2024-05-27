@@ -1,5 +1,5 @@
 interface Account {
-    accountID: number;
+    accountId: number;
     name: string;
     email: string;
     status: number;

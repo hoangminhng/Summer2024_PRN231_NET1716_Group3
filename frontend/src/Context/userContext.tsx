@@ -9,7 +9,7 @@ interface UserContextType {
   userId: number | undefined;
   token: string | undefined;
   userAccountName: string | undefined;
-  login: (user: LoginedUser, token: string) => void;
+  login: (user: loginUser, token: string) => void;
   logout: () => void;
   isAuth: () => boolean;
 }
@@ -24,7 +24,7 @@ export const UserContext = createContext<UserContextType>({
   isAuth: () => false,
 });
 
-const UserContextProvider = ({ children }: UserProviderProps) => {
+const UserProvider = ({ children }: UserProviderProps) => {
   const [userRole, setUserRole] = useState<number | undefined>();
   const [userAccountName, setUserAccountName] = useState<string | undefined>();
   const [userId, setUserId] = useState<number | undefined>();
@@ -62,7 +62,7 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
   //   console.log("User ID: ", userId);
   // }, [userId]);
 
-  const login = (user: LoginedUser, token: string) => {
+  const login = (user: loginUser, token: string) => {
     const stringUser = JSON.stringify(user);
     let currentDate = new Date();
     localStorage.setItem("user", stringUser);
@@ -71,10 +71,11 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
       "expiration",
       currentDate.setHours(currentDate.getHours() + 1).toString()
     );
-    localStorage.setItem("userId", user.accountId.toString());
+    localStorage.setItem("userId", user.id.toString());
     console.log(currentDate.setHours(currentDate.getHours() + 1).toString());
+    setUserAccountName(user?.accountName);
     setUserRole(user?.roleId);
-    setUserId(user?.accountId);
+    setUserId(user?.id);
     setToken(token);
   };
 
@@ -99,10 +100,10 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
   return (
     <UserContext.Provider
       value={{
-        userRole,
-        userId,
-        token,
         userAccountName,
+        userId,
+        userRole,
+        token,
         login,
         logout,
         isAuth,
@@ -113,4 +114,4 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
   );
 };
 
-export default UserContextProvider;
+export default UserProvider;

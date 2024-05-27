@@ -6,25 +6,25 @@ import {
 } from "@ant-design/icons";
 import { useState, useEffect , useContext} from "react";
 import {
-    getStatistic
+    getStatisticSummary
 } from "../../../../api/Admin/adminDashboard";
 import { UserContext } from "../../../../context/userContext";
 
 const gridStyle: React.CSSProperties = {
-  width: "50%",
+  width: "33.333%",
   textAlign: "center",
   //   borderStyle: "none",
 };
 
 const Summary: React.FC = () => {
   const { token } = useContext(UserContext);
-  const [totalData, settotalData] = useState<Dashboard>();
+  const [totalData, settotalData] = useState<Summary>();
   
   useEffect(() => {
     const fetchGetSummary = async () => {
       try {
         if (token) {
-          const data: Dashboard | undefined = await getStatistic(token);
+          const data: Summary | undefined = await getStatisticSummary(token);
           settotalData(data);
         }
       } catch (error) {
@@ -72,7 +72,7 @@ const Summary: React.FC = () => {
                   fontWeight: "bold",
                 }}
               >
-                ACCOUNTS
+                Staff
               </span>
             }
             value={totalData?.totalAccount}

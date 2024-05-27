@@ -14,7 +14,6 @@ import HostelDetail from "./Page/Admin/HostelDetail";
 import Packages from "./Page/Admin/Packages";
 import PackageDetail from "./Page/Admin/PackageDetail";
 import NewPackage from "./Page/Admin/NewPackage";
-import PermissionPage from "./Page/Permission";
 
 const roles = {
   Admin: 1,
@@ -27,8 +26,6 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/permission" element={<PermissionPage/>}/>
-
           <Route path="/" element={<MemberLayout />}>
             <Route index element={<Home />} />
           </Route>
