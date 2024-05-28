@@ -83,7 +83,7 @@ import {
             if (response?.status === 200) {
               openNotificationWithIcon("success", "Block status successfully!");
             } else {
-              openNotificationWithIcon("error", response?.statusText || "");
+              openNotificationWithIcon("error", response?.statusText || "Have some error");
             }
             await fetchAccountDetail();
         }else{
@@ -91,7 +91,7 @@ import {
           if (response?.status === 200) {
             openNotificationWithIcon("success", "Unblock status successfully!");
           } else {
-            openNotificationWithIcon("error", response?.statusText || "");
+            openNotificationWithIcon("error", response?.statusText || "Have some error");
           }
           await fetchAccountDetail();
         }
