@@ -47,7 +47,7 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
               const parseStorageUser = JSON.parse(storageUser as string);
               setUserAccountName(parseStorageUser.accountName);
               setUserRole(parseStorageUser.roleId);
-              setUserId(parseStorageUser.id);
+              setUserId(parseStorageUser.accountId);
               setToken(storageToken);
             }
           }
