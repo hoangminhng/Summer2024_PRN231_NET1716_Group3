@@ -125,7 +125,7 @@ const AdminHostels: React.FC = () => {
              />
             </div>
           </div>
-          <Table columns={columns} dataSource={filteredData} bordered />
+          <Table columns={columns} dataSource={filteredData} bordered pagination={{ pageSize: 8 }}/>
         </div>
     </>
   );

@@ -1,4 +1,4 @@
 interface Message{
-    statusCode: string,
+    statusCode: number,
     message: string,
 }

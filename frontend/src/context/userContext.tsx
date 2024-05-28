@@ -29,6 +29,7 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
   const [userAccountName, setUserAccountName] = useState<string | undefined>();
   const [userId, setUserId] = useState<number | undefined>();
   const [token, setToken] = useState<string | undefined>();
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     try {
@@ -51,16 +52,13 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
             }
           }
         }
+        setIsLoaded(true);
       };
       getLocalData();
     } catch (error) {
       console.log(error);
     }
   }, []);
-
-  // useEffect(() => {
-  //   console.log("User ID: ", userId);
-  // }, [userId]);
 
   const login = (user: LoginedUser, token: string) => {
     const stringUser = JSON.stringify(user);
@@ -72,7 +70,6 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
       currentDate.setHours(currentDate.getHours() + 1).toString()
     );
     localStorage.setItem("userId", user.accountId.toString());
-    console.log(currentDate.setHours(currentDate.getHours() + 1).toString());
     setUserRole(user?.roleId);
     setUserId(user?.accountId);
     setToken(token);
@@ -85,6 +82,8 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     setToken(undefined);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("expiration");
+    localStorage.removeItem("userId");
   };
 
   const isAuth = () => {
@@ -108,7 +107,7 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
         isAuth,
       }}
     >
-      {children}
+      {isLoaded ? children : null} {/* Only render children when loaded */}
     </UserContext.Provider>
   );
 };

@@ -14,31 +14,30 @@ import {
   const AdminNewPackage: React.FC = () => {
   
     const { token } = useContext(UserContext);
-    const [packageData, setPackageData] = useState<Package>({
-        capacityHostel: 0,
-        memberShipFee: 0,
-        memberShipName: "",
-        month: 0,
-        status: 0,
-        memberShipID: 0,
-      });
+    const initialPackageData = {
+      capacityHostel: 0,
+      memberShipFee: 0,
+      memberShipName: "",
+      month: 0
+  };
+  const [packageData, setPackageData] = useState<NewPackage>(initialPackageData);
+
   
 
-    const fetchCreatePackage = async (Package: Package) => {
+    const fetchCreatePackage = async (Package: NewPackage) => {
         try {
           if (token) {
-            let data: Message | undefined;
-            data = await createPackage(Package, token);
+            let data = await createPackage(Package, token);
             return data;
           }
         } catch (error) {
-          console.error("Error fetching add staff:", error);
+          console.error("Error fetching add package:", error);
         }
       };
     
   
   
-    const handleChange = (fieldName: keyof Package, value: string) => {
+    const handleChange = (fieldName: keyof NewPackage, value: string) => {
         setPackageData((prevData) => ({
           ...prevData,
           [fieldName]: value,
@@ -53,15 +52,13 @@ import {
       };
 
       const CreatePackage = async () => {
-        packageData.status = 0;
         const response = await fetchCreatePackage(packageData);
-        if (response != undefined && response) {
-          if (response.statusCode == "MSG04") {
-            openNotificationWithIcon("success", response.message);
+          if (response?.status === 200) {
+            openNotificationWithIcon("success", "Create new package successufully!");
+            setPackageData(initialPackageData);
           } else {
-            openNotificationWithIcon("error", "Something went wrong when executing operation. Please try again!");
+            openNotificationWithIcon("error", response?.statusText || "Have some error");
           }
-      }
     };
   
     const items = [
