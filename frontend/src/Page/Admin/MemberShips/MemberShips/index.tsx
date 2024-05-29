@@ -63,7 +63,7 @@ const AdminMemberShips: React.FC = () => {
     {
         title: "MemberShip Package",
         dataIndex: "membershipName",
-        width: "35%",
+        width: "25%",
     },
     {
         title: "Date Register",

@@ -7,7 +7,7 @@ interface MemberShipDetail{
     membershipName : string,
     capacityHostel: number,
     month: number,
-    memberShipFee: number,
+    packageFee: number,
     dateRegister : Date,
     dateExpire : Date,
     status : number

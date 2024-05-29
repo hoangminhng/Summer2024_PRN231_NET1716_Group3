@@ -1,11 +1,9 @@
 import { Line } from "@ant-design/plots";
-import { useState, useEffect , useContext} from "react";
-import {
-  getStatisticProfit
-} from "../../../../api/Admin/adminDashboard";
+import { useState, useEffect, useContext } from "react";
+import { getStatisticProfit } from "../../../../api/Admin/adminDashboard";
 import { UserContext } from "../../../../context/userContext";
 
-const DemoLine: React.FC = () => {
+const DemoLine: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const { token } = useContext(UserContext);
   const [monthData, setMonthData] = useState<TypeMonth[]>();
   
@@ -22,11 +20,12 @@ const DemoLine: React.FC = () => {
     };
 
     fetchGetMonthProfit();
-  }, [token]); 
+  }, [token]);
 
   if (!monthData) {
     return <div>Loading...</div>;
   }
+
   const config = {
     data: monthData, 
     xField: "month",
@@ -37,7 +36,12 @@ const DemoLine: React.FC = () => {
       shape: 'diamond',
     },
   };
-  return <Line {...config} />;
+
+  return (
+    <div style={{ height: '100%', ...style }}>
+      <Line {...config} />
+    </div>
+  );
 };
 
 export default DemoLine;
