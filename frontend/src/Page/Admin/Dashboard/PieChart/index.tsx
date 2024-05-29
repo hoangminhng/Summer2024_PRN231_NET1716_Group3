@@ -6,7 +6,7 @@ import {
 import { UserContext } from "../../../../context/userContext";
 
 
-const PropertiesPie: React.FC = () => {
+const PropertiesPie: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const { token } = useContext(UserContext);
   const [typeData, settypeData] = useState<TypePackage[]>();
   
@@ -45,7 +45,11 @@ const PropertiesPie: React.FC = () => {
     ],
   };
 
-  return <Pie {...config} />;
+  return(
+  <div style={{ height: '100%', ...style }}>
+      <Pie {...config} />;
+    </div>
+  )
 };
 
 export default PropertiesPie;

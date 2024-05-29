@@ -84,7 +84,7 @@ export const getAccountDetail = async (id: number,token: string) => {
 export const getMemberShips = async (token: string) => {
   try {
     const fetchData = await axios.get<MemberShip[]>(
-      `${baseUrl}/api/admin/memberships`,
+      `${baseUrl}/api/admin-get-all-membership`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

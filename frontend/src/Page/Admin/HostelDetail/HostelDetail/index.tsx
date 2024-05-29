@@ -97,7 +97,7 @@ import {
         {
             key: "7",
             label: "Number of Rooms",
-            children: hostelDetailData?.numberOfRoom || "",
+            children: hostelDetailData?.numberOfRoom || 0,
         },
         {
           key: "8",
