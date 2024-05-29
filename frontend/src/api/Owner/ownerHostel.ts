@@ -4,7 +4,7 @@ const baseUrl = process.env.REACT_APP_BACK_END_URL;
 export const getOwnerHostels = async (ownerId: number, token: string) => {
   try {
     const fetchData = await axios.get<OwnerHostel[]>(
-      `${baseUrl}/api/hostels/${ownerId}`,
+      `${baseUrl}/api/owner/${ownerId}/hostels`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -16,6 +16,47 @@ export const getOwnerHostels = async (ownerId: number, token: string) => {
     return response;
   } catch (error) {
     console.log("Error: " + error);
+  }
+};
+
+export const getOwnerHostelDetail = async (hostelId: number) => {
+  try {
+    const fetchData = await axios.get<OwnerHostel>(
+      `${baseUrl}/api/hostels/${hostelId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
+export const updateHostelStatus = async (
+  token: string | undefined,
+  hostelId: number | undefined,
+  status: number | undefined
+) => {
+  try {
+    const fetchData = await axios.put(
+      `${baseUrl}/api/hostels/${hostelId}/status/${status}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error:", error);
+    throw error;
   }
 };
 
