@@ -94,7 +94,7 @@ const AdminMemberShipDetail: React.FC = () => {
       {
         key: "4",
         label: "MemberShip Fee",
-        children: membershipDetailData?.memberShipFee ? NumberFormat(membershipDetailData?.memberShipFee) : "",
+        children: membershipDetailData?.packageFee ? NumberFormat(membershipDetailData?.packageFee) : "",
       },
       {
         key: "5",
@@ -109,20 +109,20 @@ const AdminMemberShipDetail: React.FC = () => {
       {
         key: "7",
         label: "Status",
-        children: membershipDetailData?.status || "",
-        render: (membership_Status: number) => {
-            let color = membership_Status === 1 ? "volcano" : "green";
-            let status = membership_Status === 1 ? "EXPIRE" : "ACTIVE"
-          return (
-            <Tag color={color} key={membership_Status}>
-              {status.toUpperCase()}
-            </Tag>
-          );
-        },
+        children: membershipDetailData ? (
+          <Tag
+            color={membershipDetailData.status === 1 ? "volcano" : "green"}
+            key={membershipDetailData.status}
+          >
+            {membershipDetailData.status === 1 ? "EXPIRE" : "ACTIVE"}
+          </Tag>
+        ) : (
+          ""
+        ),
       },
     ];
     return items.map((item) => (
-      <Descriptions.Item key={item.key} label={item.label}>
+      <Descriptions.Item key={item.key} label={item.label} span={item.span}>
         {item.children}
       </Descriptions.Item>
     ));

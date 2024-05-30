@@ -70,46 +70,52 @@ import {
         },
         {
           key: "2",
+          label: "Hostel Description",
+          children: hostelDetailData?.hostelDescription || "",
+          span: 3,
+        },
+        {
+          key: "3",
           label: "Hostel Address",
           children: hostelDetailData?.hostelAddress || "",
         },
         {
-          key: "3",
+          key: "4",
           label: "Name",
           children: hostelDetailData?.name || "",
         },
         {
-          key: "4",
+          key: "5",
           label: "Email",
           children: hostelDetailData?.email || "",
         },
         {
-            key: "5",
+            key: "6",
             label: "Phone",
             children: hostelDetailData?.phone || "",
         },
         {
-            key: "6",
+            key: "7",
             label: "Number of Rooms",
-            children: hostelDetailData?.numberOfRoom || "",
+            children: hostelDetailData?.numberOfRoom || 0,
         },
         {
-            key: "7",
-            label: "Hostel Status",
-            children: hostelDetailData?.status || "",
-            render: (hostel_Status: number) => {
-                let color = hostel_Status === 1 ? "volcano" : "green";
-                let status = hostel_Status === 1 ? "EXPIRE" : "ACTIVE"
-              return (
-                <Tag color={color} key={hostel_Status}>
-                  {status.toUpperCase()}
-                </Tag>
-              );
-            },
+          key: "8",
+          label: "Hostel Status",
+          children: hostelDetailData ? (
+            <Tag
+              color={hostelDetailData.status === 1 ? "volcano" : "green"}
+              key={hostelDetailData.status}
+            >
+              {hostelDetailData.status === 1 ? "BLOCK" : "ACTIVE"}
+            </Tag>
+          ) : (
+            ""
+          ),
           },
       ];
       return items.map((item) => (
-        <Descriptions.Item key={item.key} label={item.label}>
+        <Descriptions.Item key={item.key} label={item.label} span={item.span}>
           {item.children}
         </Descriptions.Item>
       ));
@@ -141,17 +147,17 @@ import {
           width: "20%",
         },
         {
-          title: "Hostel Capacity",
+          title: "Hostel Capacity (/people)",
           dataIndex: "capacity",
           width: "10%",
         },
         {
-            title: "Width",
+            title: "Width (m²)",
             dataIndex: "width",
             width: "10%",
         },
         {
-            title: "Lenght",
+            title: "Lenght (m²)",
             dataIndex: "lenght",
             width: "10%",
         },
@@ -185,13 +191,13 @@ import {
             </Button>
             <br />
             <br />
-            <Descriptions bordered title="Hostel Information">
+            <Descriptions bordered title={"Hostel Information code ID : " + idnumber}>
               {renderBorderedHostel()}
             </Descriptions>
             <br/>
             <h3 title="Room List"/>
             <br />
-            <Table columns={columns} dataSource={roomData} bordered />
+            <Table columns={columns} dataSource={roomData} bordered pagination={{ pageSize: 3 }}/>
           </div>
       </>
     );

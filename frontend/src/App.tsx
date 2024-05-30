@@ -11,14 +11,19 @@ import MemberShips from "./Page/Admin/MemberShips";
 import MemberShipDetail from "./Page/Admin/MemberShipDetail";
 import Hostels from "./Page/Admin/Hostels";
 import HostelDetail from "./Page/Admin/HostelDetail";
-// import Packages from "./Page/Admin/Packages";
+import Packages from "./Page/Admin/Packages";
 import PackageDetail from "./Page/Admin/PackageDetail";
 import NewPackage from "./Page/Admin/NewPackage";
+import PermissionPage from "./Page/Permission";
+import Package from "./Page/Package";
+import OwnerLayout from "./Page/Owner";
+import Hostel from "./Page/Owner/Hostel";
+import Room from "./Page/Owner/Room";
 
 const roles = {
   Admin: 1,
   Owner: 2,
-  Member: 3
+  Member: 3,
 };
 
 function App() {
@@ -26,22 +31,42 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
+          <Route path="/permission" element={<PermissionPage />} />
+
           <Route path="/" element={<MemberLayout />}>
             <Route index element={<Home />} />
+            <Route path="package" element={<Package />} />
           </Route>
 
           <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="accounts" element={<Accounts />} />
-              <Route path="accounts/detail/:accountId" element={<AccountDetail />} />
+              <Route
+                path="accounts/detail/:accountId"
+                element={<AccountDetail />}
+              />
               <Route path="memberships" element={<MemberShips />} />
-              <Route path="memberships/detail/:memberShipTransactionID" element={<MemberShipDetail />} />
+              <Route
+                path="memberships/detail/:memberShipTransactionID"
+                element={<MemberShipDetail />}
+              />
               <Route path="hostels" element={<Hostels />} />
+              
               <Route path="hostels/detail/:hostelID" element={<HostelDetail />} />
-              {/* <Route path="packages" element={<Packages />} /> */}
+              <Route path="packages" element={<Packages />} />
               <Route path="packages/new" element={<NewPackage />} />
-              <Route path="packages/detail/:packageID" element={<PackageDetail />} />
+              <Route
+                path="packages/detail/:packageID"
+                element={<PackageDetail />}
+              />
+            </Route>
+          </Route>
+
+          <Route element={<RequiredAuth allowedRoles={[roles.Owner]} />}>
+            <Route path="/owner" element={<OwnerLayout />}>
+              <Route path="hostel" element={<Hostel />} />
+              <Route path="hostel/:hostelId" element={<Room />} />
             </Route>
           </Route>
         </Routes>

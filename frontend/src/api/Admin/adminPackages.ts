@@ -53,7 +53,7 @@ export const updatePackage = async ({
           memberShipFee,
           status
         }
-      const fetchData = await axios.post<Message>(
+      const fetchData = await axios.post(
         `${baseUrl}/api/admin/packages/detail/update`,
         param,
         {
@@ -63,7 +63,7 @@ export const updatePackage = async ({
           },
         }
       );
-      const response = fetchData.data;
+      const response = fetchData;
       return response;
     } catch (error) {
       console.log("Error: " + error);
@@ -71,24 +71,20 @@ export const updatePackage = async ({
   };
 
   export const createPackage = async ({
-    memberShipID,
     memberShipName,
     capacityHostel,
     month,
     memberShipFee,
-    status
-}:Package, token: string) => {
+}:NewPackage, token: string) => {
     try {
         const param ={
-          memberShipID,
           memberShipName,
           capacityHostel,
           month,
           memberShipFee,
-          status
         }
-      const fetchData = await axios.post<Message>(
-        `${baseUrl}/api/admin/packages/new`,
+      const fetchData = await axios.post(
+        `${baseUrl}/api/admin-create-membership`,
         param,
         {
           headers: {
@@ -97,7 +93,51 @@ export const updatePackage = async ({
           },
         }
       );
-      const response = fetchData.data;
+      const response = fetchData;
+      return response;
+    } catch (error) {
+      console.log("Error: " + error);
+    }
+  };
+
+  export const changeStatusBlockPackage = async (token: string, memberShipID : number | undefined) => {
+    try {
+      const param = {
+        memberShipID
+      };
+      const fetchData = await axios.put(
+        `${baseUrl}/api/admin-deactivate-membership`,
+        param,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const response = fetchData;
+      return response;
+    } catch (error) {
+      console.log("Error: " + error);
+    }
+  };
+  
+  export const changeStatusActivePackage = async (token: string, memberShipID : number | undefined) => {
+    try {
+      const param = {
+        memberShipID
+      };
+      const fetchData = await axios.put(
+        `${baseUrl}/api/admin-activate-membership`,
+        param,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const response = fetchData;
       return response;
     } catch (error) {
       console.log("Error: " + error);

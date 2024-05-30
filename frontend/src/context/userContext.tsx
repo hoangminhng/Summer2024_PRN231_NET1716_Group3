@@ -24,11 +24,12 @@ export const UserContext = createContext<UserContextType>({
   isAuth: () => false,
 });
 
-const UserProvider = ({ children }: UserProviderProps) => {
+const UserContextProvider = ({ children }: UserProviderProps) => {
   const [userRole, setUserRole] = useState<number | undefined>();
   const [userAccountName, setUserAccountName] = useState<string | undefined>();
   const [userId, setUserId] = useState<number | undefined>();
   const [token, setToken] = useState<string | undefined>();
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     try {
@@ -46,21 +47,18 @@ const UserProvider = ({ children }: UserProviderProps) => {
               const parseStorageUser = JSON.parse(storageUser as string);
               setUserAccountName(parseStorageUser.accountName);
               setUserRole(parseStorageUser.roleId);
-              setUserId(parseStorageUser.id);
+              setUserId(parseStorageUser.accountId);
               setToken(storageToken);
             }
           }
         }
+        setIsLoaded(true);
       };
       getLocalData();
     } catch (error) {
       console.log(error);
     }
   }, []);
-
-  // useEffect(() => {
-  //   console.log("User ID: ", userId);
-  // }, [userId]);
 
   const login = (user: LoginedUser, token: string) => {
     const stringUser = JSON.stringify(user);
@@ -72,7 +70,6 @@ const UserProvider = ({ children }: UserProviderProps) => {
       currentDate.setHours(currentDate.getHours() + 1).toString()
     );
     localStorage.setItem("userId", user.accountId.toString());
-    console.log(currentDate.setHours(currentDate.getHours() + 1).toString());
     setUserRole(user?.roleId);
     setUserId(user?.accountId);
     setToken(token);
@@ -85,6 +82,8 @@ const UserProvider = ({ children }: UserProviderProps) => {
     setToken(undefined);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("expiration");
+    localStorage.removeItem("userId");
   };
 
   const isAuth = () => {
@@ -99,18 +98,18 @@ const UserProvider = ({ children }: UserProviderProps) => {
   return (
     <UserContext.Provider
       value={{
-        userAccountName,
-        userId,
         userRole,
+        userId,
         token,
+        userAccountName,
         login,
         logout,
         isAuth,
       }}
     >
-      {children}
+      {isLoaded ? children : null} {/* Only render children when loaded */}
     </UserContext.Provider>
   );
 };
 
-export default UserProvider;
+export default UserContextProvider;
