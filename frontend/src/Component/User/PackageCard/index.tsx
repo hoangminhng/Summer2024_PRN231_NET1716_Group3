@@ -42,10 +42,6 @@ const PackageCard: React.FC = () => {
     }
   }, []);
 
-  const closeModal = () => {
-    setIsModalVisible(false);
-  };
-
   return (
     <>
       {packageList.map((packageItem, index) => (
@@ -63,7 +59,7 @@ const PackageCard: React.FC = () => {
               padding: "10px",
               display: "flex",
               flexDirection: "column",
-              gap: "10px",
+              gap: "10px"
             }}
           >
             <p style={{ fontSize: "18px" }}>{packageItem.capacityHostel}<span style={{ fontWeight: "bold" }}> Hostels</span></p>
