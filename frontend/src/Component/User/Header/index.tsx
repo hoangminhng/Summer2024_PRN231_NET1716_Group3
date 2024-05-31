@@ -1,10 +1,16 @@
 import { LockOpenIcon, UserPlusIcon } from "@heroicons/react/20/solid";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import LoginModal from "../../LoginModal";
+import { UserContext } from "../../../context/userContext";
+import { AvatarDropdown } from "../AvatarDropDown";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { userRole, isAuth } = useContext(UserContext);
+  console.log(isAuth());
+  console.log(userRole);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -119,16 +125,25 @@ const Header: React.FC = () => {
             </li>
           </ul>
         </div>
-        <div className="hidden md:flex md:order-2 space-x-3 rtl:space-x-reverse">
-          <button
-            onClick={toggleModal}
-            type="button"
-            className="flex items-center text-white bg-slate-950 hover:bg-slate-600 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-base px-5 py-3 text-center mb-2"
-          >
-            <LockOpenIcon className="w-4 h-4 mr-1" />
-            Sign in
-          </button>
-        </div>
+        {isAuth() ? (
+          userRole == 3 ? (
+            <div className="hidden md:flex md:order-2">
+              <AvatarDropdown />
+            </div>
+          ) : null
+        ) : (
+          <div className="hidden md:flex md:order-2 space-x-3 rtl:space-x-reverse">
+            <button
+              onClick={toggleModal}
+              type="button"
+              className="flex items-center text-white bg-slate-950 hover:bg-slate-600 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-base px-5 py-3 text-center mb-2"
+            >
+              <LockOpenIcon className="w-4 h-4 mr-1" />
+              Sign in
+            </button>
+          </div>
+        )}
+
         {isModalOpen && (
           <div
             tabIndex={-1}
