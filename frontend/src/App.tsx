@@ -11,7 +11,7 @@ import MemberShips from "./Page/Admin/MemberShips";
 import MemberShipDetail from "./Page/Admin/MemberShipDetail";
 import Hostels from "./Page/Admin/Hostels";
 import HostelDetail from "./Page/Admin/HostelDetail";
-// import Packages from "./Page/Admin/Packages";
+import Packages from "./Page/Admin/PackagesAdmin";
 import PackageDetail from "./Page/Admin/PackageDetail";
 import NewPackage from "./Page/Admin/NewPackage";
 import PermissionPage from "./Page/Permission";
@@ -62,7 +62,7 @@ function App() {
               />
               <Route path="memberships" element={<MemberShips />} />
               <Route
-                path="memberships/detail/:memberShipTransactionID"
+                path="memberships/detail/:accountID"
                 element={<MemberShipDetail />}
               />
               <Route path="hostels" element={<Hostels />} />

@@ -5,6 +5,7 @@ interface AccountDetail{
     status: number;
     phone: string;
     address: string;
+    gender: number;
     citizenCard: string;
     createdDate: Date; 
 }
