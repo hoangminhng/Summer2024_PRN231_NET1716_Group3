@@ -19,6 +19,8 @@ import Package from "./Page/Package";
 import OwnerLayout from "./Page/Owner";
 import Hostel from "./Page/Owner/Hostel";
 import Room from "./Page/Owner/Room";
+import ProtectedRoute from "./Component/ProtectedRoute";
+import Register from "./Page/Register";
 
 const roles = {
   Admin: 1,
@@ -36,6 +38,18 @@ function App() {
           <Route path="/" element={<MemberLayout />}>
             <Route index element={<Home />} />
             <Route path="package" element={<Package />} />
+            <Route
+              path="/register"
+              element={
+                <ProtectedRoute>
+                  <Register />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+                path="hostel/detail/:hostelID"
+                element={<HostelDetail />}
+              />
           </Route>
 
           <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
@@ -52,9 +66,12 @@ function App() {
                 element={<MemberShipDetail />}
               />
               <Route path="hostels" element={<Hostels />} />
-              
-              <Route path="hostels/detail/:hostelID" element={<HostelDetail />} />
-              <Route path="packages" element={<Packages />} />
+
+              <Route
+                path="hostels/detail/:hostelID"
+                element={<HostelDetail />}
+              />
+              {/* <Route path="packages" element={<Packages />} /> */}
               <Route path="packages/new" element={<NewPackage />} />
               <Route
                 path="packages/detail/:packageID"

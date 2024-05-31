@@ -1,8 +1,12 @@
 interface Hostel {
-  id: number;
-  address: string;
-  price: number;
-  description: string;
-  imageUrl: string;
-  isForRent: boolean;
+  hostelID: number;
+  hostelName: string;
+  hostelAddress: string;
+  hostelDescription: string;
+  accountID: number;
+  ownerName: string;
+  status: number;
+  numOfAvailableRoom: number;
+  thumbnail: string;
+  numOfTotalRoom: 0;
 }
