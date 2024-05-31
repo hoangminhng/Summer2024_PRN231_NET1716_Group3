@@ -76,10 +76,10 @@ const AdminPackageDetail: React.FC = () => {
         packageData.memberShipID = packageDetailData?.memberShipID || 0;
         packageData.status = packageDetailData?.status || 0;
         const response = await fetchUpdatePackage(packageData);
-        if (response?.status == 200) {
+        if (response == undefined) {
             openNotificationWithIcon("success", "Update package information successfully!");
         } else {
-            openNotificationWithIcon("error", response?.data || "Have some error");
+            openNotificationWithIcon("error", response?.message || "Have some error");
         }
         await fetchPackageDetail();
     };

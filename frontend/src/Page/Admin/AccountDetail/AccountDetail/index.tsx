@@ -137,13 +137,18 @@ import {
         },
         {
           key: "6",
+          label: "Gender",
+          children: accountDetailData?.gender === 1 ? "Female" : "Male",
+      },
+        {
+          key: "7",
           label: "Date Create",
           children: accountDetailData
           ? formatDate(accountDetailData.createdDate)
           : "",
         },
         {
-          key: "7",
+          key: "8",
           label: "Status",
           children: accountDetailData ? (
             <Tag

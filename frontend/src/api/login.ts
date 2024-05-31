@@ -1,27 +1,26 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 const baseUrl = process.env.REACT_APP_BACK_END_URL;
 
 export const loginByUsernamePassword = async (
   username: string,
   password: string
 ) => {
-  const response = await axios.post(`${baseUrl}/api/login/username`, {
-    username,
-    password,
-  });
-  if (response.status !== 200) {
-    new Error(`Error: ${response.status}`);
+  try {
+    const param = { username, password };
+    const response = await axios.post(`${baseUrl}/api/login/username`, param);
+    return response;
+  } catch (error: any) {
+    toast.error(error.response.data.message, { duration: 2000 });
   }
-  return response;
 };
 
 export const loginByEmailPassword = async (email: string, password: string) => {
-  const response = await axios.post(`${baseUrl}/api/login`, {
-    email,
-    password,
-  });
-  if (response.status !== 200) {
-    new Error(`Error: ${response.status}`);
+  try {
+    const param = { email, password };
+    const response = await axios.post(`${baseUrl}/api/login`, param);
+    return response;
+  } catch (error: any) {
+    toast.error(error.response.data.message, { duration: 2000 });
   }
-  return response;
 };

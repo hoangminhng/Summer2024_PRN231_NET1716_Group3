@@ -65,8 +65,8 @@ export const updatePackage = async ({
       );
       const response = fetchData;
       return response;
-    } catch (error) {
-      console.log("Error: " + error);
+    } catch (error : any) {
+      return error.response.data;
     }
   };
 
@@ -95,8 +95,8 @@ export const updatePackage = async ({
       );
       const response = fetchData;
       return response;
-    } catch (error) {
-      console.log("Error: " + error);
+    } catch (error : any) {
+      return error.response.data;
     }
   };
 

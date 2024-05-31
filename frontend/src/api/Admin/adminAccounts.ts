@@ -24,8 +24,8 @@ export const changeStatusBlockAccounts = async (token: string, accountID : numbe
     const param = {
       accountID
     };
-    const fetchData = await axios.post(
-      `${baseUrl}/api/admin/account/block`,
+    const fetchData = await axios.put(
+      `${baseUrl}/api/admin/account/block/${accountID}`,
       param,
       {
         headers: {
@@ -46,8 +46,8 @@ export const changeStatusActiveAccounts = async (token: string, accountId : numb
     const param = {
       accountId
     };
-    const fetchData = await axios.post(
-      `${baseUrl}/api/admin/account/active`,
+    const fetchData = await axios.put(
+      `${baseUrl}/api/admin/account/active/${accountId}`,
       param,
       {
         headers: {
@@ -84,7 +84,7 @@ export const getAccountDetail = async (id: number,token: string) => {
 export const getMemberShips = async (token: string) => {
   try {
     const fetchData = await axios.get<MemberShip[]>(
-      `${baseUrl}/api/admin-get-all-membership`,
+      `${baseUrl}/api/admin/memberships`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -101,8 +101,26 @@ export const getMemberShips = async (token: string) => {
 
 export const getMemberShipDetail = async (id: number, token: string) => {
   try {
-    const fetchData = await axios.get<MemberShipDetail>(
+    const fetchData = await axios.get<MemberShipDetail[]>(
       `${baseUrl}/api/admin/memberships/detail/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
+export const getMemberShipInformationDetail = async (id: number, token: string) => {
+  try {
+    const fetchData = await axios.get<MemberShipInformation>(
+      `${baseUrl}/api/admin/memberships/detail/information/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

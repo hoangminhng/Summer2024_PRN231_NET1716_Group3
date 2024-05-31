@@ -11,7 +11,6 @@ import {
 import { useContext } from "react";
 import { UserContext } from "../../../../context/userContext";
 import { useNavigate } from "react-router-dom";
-import { DateFormat } from "../../../../Utils/dateFormat";
 
 const AdminMemberShips: React.FC = () => {
 
@@ -20,6 +19,20 @@ const AdminMemberShips: React.FC = () => {
   const [filteredData, setFilteredData] = useState<MemberShip[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const { token } = useContext(UserContext);
+
+
+  const statusStringMap: { [key: number]: string } = {
+    0 : "ACTIVE",
+    1 : "EXPIRE",
+    2 : "NOT ACTIVE",
+  };
+
+  const statusColorMap: { [key: number]: string } = {
+    0: "green",
+    1: "red",
+    2: "grey",
+  };
+
 
   const fetchMemberList = async () => {
     try {
@@ -61,31 +74,24 @@ const AdminMemberShips: React.FC = () => {
       width: "20%",
     },
     {
-        title: "MemberShip Package",
-        dataIndex: "membershipName",
+        title: "Name",
+        dataIndex: "name",
         width: "25%",
     },
     {
-        title: "Date Register",
-        dataIndex: "dateRegister",
-        render: (dateRegister: Date) => DateFormat(dateRegister),
-        width: "15%",
-    },
-    {
-        title: "Date Expire",
-        dataIndex: "dateExpire",
-        render: (dateExpire: Date) => DateFormat(dateExpire),
+        title: "Phone",
+        dataIndex: "phone",
         width: "15%",
     },
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: "isPackage",
       width: "5%",
-      render: (account_Status: number) => {
-        let color = account_Status === 1 ? "volcano" : "green";
-        let status = account_Status === 1 ? "EXPIRE" : "ACTIVE"
+      render: (isPackage: number) => {
+        let color = statusColorMap[isPackage];
+        let status = statusStringMap[isPackage]
         return (
-          <Tag color={color} key={account_Status}>
+          <Tag color={color} key={isPackage}>
             {status.toUpperCase()}
           </Tag>
         );
@@ -95,7 +101,7 @@ const AdminMemberShips: React.FC = () => {
       title: "",
       dataIndex: "operation",
       render: (_: any, record: MemberShip) => (
-        <a onClick={() => navigate(`/admin/memberships/detail/${record.memberShipTransactionID}`)}>View details</a>
+        <a onClick={() => navigate(`/admin/memberships/detail/${record.accountID}`)}>View details</a>
       ),
       width: "10%",
     },
