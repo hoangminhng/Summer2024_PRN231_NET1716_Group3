@@ -11,12 +11,12 @@ import {
   Typography,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import Title from "antd/es/typography/Title";
 import HostelForm from "../../../Component/Owner/HostelForm";
 import { getOwnerHostels } from "../../../api/Owner/ownerHostel";
 import { UserContext } from "../../../context/userContext";
 import { useNavigate } from "react-router-dom";
-const { Text } = Typography;
+import HostelDetail from "../../../Component/Owner/HostelDetail";
+const { Text, Title } = Typography;
 
 const getColorByStatus = (status: number) => {
   switch (status) {
@@ -48,6 +48,8 @@ const Hostel: React.FC = () => {
   const [hostelData, setHostelData] = useState<OwnerHostel[]>([]);
   const [current, setCurrent] = useState(1);
   const [modalFormOpen, setModalFormOpen] = useState(false);
+  const [modalHostelDetailOpen, setModalHostelDetailOpen] = useState(false);
+  const [selectedHostelId, setSelectedHostelId] = useState(0);
   const [loading, setLoading] = useState(false);
   const pageSize = 2;
   const { userId, token } = useContext(UserContext);
@@ -78,6 +80,15 @@ const Hostel: React.FC = () => {
 
   const handleDetailClick = (hostelId: number) => {
     navigate(`/owner/hostel/${hostelId}`);
+  };
+
+  const handleOpenHostelDetailModal = (hostelId: number) => {
+    setSelectedHostelId(hostelId);
+    setModalHostelDetailOpen(true);
+  };
+
+  const handleCloseHostelDetailModal = () => {
+    fetchOwnerHostels();
   };
 
   return (
@@ -116,7 +127,7 @@ const Hostel: React.FC = () => {
               <List.Item>
                 <Card>
                   <div style={{ display: "flex", position: "relative" }}>
-                    <div style={{ flex: "0 0 200px", overflow: "hidden" }}>
+                    <div style={{ flex: "0 0 250px", overflow: "hidden" }}>
                       <img
                         alt={item.hostelName}
                         style={{
@@ -154,13 +165,22 @@ const Hostel: React.FC = () => {
                         <Text strong>Total room: </Text>
                         {item.numOfTotalRoom}
                       </Text>
-                      <Button
-                        type="primary"
-                        style={{ left: "auto", marginLeft: "auto" }}
-                        onClick={() => handleDetailClick(item.hostelID)}
-                      >
-                        Detail
-                      </Button>
+                      <Flex justify="flex-end" gap={25}>
+                        <Button
+                          type="primary"
+                          onClick={() =>
+                            handleOpenHostelDetailModal(item.hostelID)
+                          }
+                        >
+                          Detail
+                        </Button>
+                        <Button
+                          type="primary"
+                          onClick={() => handleDetailClick(item.hostelID)}
+                        >
+                          Room List
+                        </Button>
+                      </Flex>
                     </div>
                   </div>
                 </Card>
@@ -173,6 +193,13 @@ const Hostel: React.FC = () => {
           setModalOpen={setModalFormOpen}
           modalOpen={modalFormOpen}
           fetchOwnerHostels={fetchOwnerHostels}
+        />
+
+        <HostelDetail
+          modalOpen={modalHostelDetailOpen}
+          setModalOpen={setModalHostelDetailOpen}
+          hostelId={selectedHostelId}
+          onClose={handleCloseHostelDetailModal}
         />
       </Space>
     </Layout>

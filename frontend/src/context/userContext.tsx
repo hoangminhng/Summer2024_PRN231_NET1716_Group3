@@ -12,7 +12,6 @@ interface UserContextType {
   login: (user: LoginedUser, token: string) => void;
   logout: () => void;
   isAuth: () => boolean;
-  isLoaded: boolean;
 }
 
 export const UserContext = createContext<UserContextType>({
@@ -23,7 +22,6 @@ export const UserContext = createContext<UserContextType>({
   login: () => {},
   logout: () => {},
   isAuth: () => false,
-  isLoaded: false,
 });
 
 const UserContextProvider = ({ children }: UserProviderProps) => {
@@ -57,22 +55,23 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
         setIsLoaded(true);
       };
       getLocalData();
-    } catch (error) { 
+    } catch (error) {
       console.log(error);
     }
   }, []);
 
   const login = (user: LoginedUser, token: string) => {
+    const stringUser = JSON.stringify(user);
     let currentDate = new Date();
+    localStorage.setItem("user", stringUser);
     localStorage.setItem("token", token);
     localStorage.setItem(
       "expiration",
       currentDate.setHours(currentDate.getHours() + 1).toString()
     );
     localStorage.setItem("userId", user.accountId.toString());
-    localStorage.setItem("user", JSON.stringify(user));
-    setUserRole(user.roleId);
-    setUserId(user.accountId);
+    setUserRole(user?.roleId);
+    setUserId(user?.accountId);
     setToken(token);
   };
 
@@ -81,6 +80,7 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     setUserRole(undefined);
     setUserId(undefined);
     setToken(undefined);
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("expiration");
     localStorage.removeItem("userId");
@@ -105,7 +105,6 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
         login,
         logout,
         isAuth,
-        isLoaded,
       }}
     >
       {isLoaded ? children : null} {/* Only render children when loaded */}
