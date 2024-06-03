@@ -10,7 +10,7 @@ const DemoLine: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   useEffect(() => {
     const fetchGetMonthProfit = async () => {
       try {
-        if (token) {
+        if (token != undefined) {
           const data: TypeMonth[] | undefined = await getStatisticProfit(token);
           setMonthData(data);
         }

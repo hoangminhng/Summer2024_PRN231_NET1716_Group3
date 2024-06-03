@@ -38,7 +38,7 @@ import {
 
     const fetchAccountDetail = async () => {
       try {
-        if (token && accountId) {
+        if (token != undefined && accountId != undefined) {
           let data: AccountDetail | undefined;
           data = await getAccountDetail(parseInt(accountId), token);
           setID(parseInt(accountId));
@@ -51,7 +51,7 @@ import {
     
     const fetchChangeStatusActive = async (accountId: number | undefined) => {
       try {
-        if (token) {
+        if (token != undefined) {
           let data = await changeStatusActiveAccounts(token, accountId);
           return data;
         }
@@ -62,7 +62,7 @@ import {
 
     const fetchChangeStatusBlock = async (accountId: number | undefined) => {
       try {
-        if (token) {
+        if (token != undefined) {
           let data = await changeStatusBlockAccounts(token, accountId);
           return data;
         }
