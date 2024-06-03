@@ -21,6 +21,7 @@ import Hostel from "./Page/Owner/Hostel";
 import Room from "./Page/Owner/Room";
 import ProtectedRoute from "./Component/ProtectedRoute";
 import Register from "./Page/Register";
+import MemberHostelDetail from "./Page/Member/HostelDetail";
 
 const roles = {
   Admin: 1,
@@ -47,9 +48,9 @@ function App() {
               }
             />
             <Route
-                path="hostel/detail/:hostelID"
-                element={<HostelDetail />}
-              />
+              path="hostel/detail/:hostelID"
+              element={<MemberHostelDetail />}
+            />
           </Route>
 
           <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
@@ -71,7 +72,7 @@ function App() {
                 path="hostels/detail/:hostelID"
                 element={<HostelDetail />}
               />
-              {/* <Route path="packages" element={<Packages />} /> */}
+              <Route path="packages" element={<Packages />} />
               <Route path="packages/new" element={<NewPackage />} />
               <Route
                 path="packages/detail/:packageID"

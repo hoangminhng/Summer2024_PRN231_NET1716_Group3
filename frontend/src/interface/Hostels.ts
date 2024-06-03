@@ -8,5 +8,5 @@ interface Hostel {
   status: number;
   numOfAvailableRoom: number;
   thumbnail: string;
-  numOfTotalRoom: 0;
+  numOfTotalRoom: number;
 }

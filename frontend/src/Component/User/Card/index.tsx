@@ -20,6 +20,10 @@ const HouseCard: React.FC = () => {
     }
   }, []);
 
+  const handleCardClick = (hostelID: string) => {
+    navigate(`/hostel/detail/${hostelID}`);
+  };
+
   return (
     <>
       <style>
@@ -39,6 +43,7 @@ const HouseCard: React.FC = () => {
         <div
           key={hostel.hostelID}
           className="flex items-center justify-center h-full rounded mx-1 dark:bg-gray-800"
+          onClick={() => handleCardClick(hostel.hostelID.toString())}
         >
           <div className="relative w-full bg-white border border-gray-200 rounded-3xl dark:bg-gray-800 dark:border-gray-700 hover:scale-up">
             <img
