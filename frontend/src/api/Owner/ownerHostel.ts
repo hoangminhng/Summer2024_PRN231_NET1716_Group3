@@ -87,13 +87,13 @@ export const uploadImage = async (
   token: string | undefined,
   hostelId: number,
   file: any
-) => {
+) : Promise<BaseApiResponse> => {
   const formData = new FormData();
   formData.append("formFile", file.originFileObj);
 
   try {
-    const fetchData = await axios.post(
-      `https://localhost:7050/api/hostels/${hostelId}/images`,
+    const fetchData = await axios.post<BaseApiResponse>(
+      `${baseUrl}/api/hostels/${hostelId}/images`,
       formData,
       {
         headers: {
@@ -107,5 +107,6 @@ export const uploadImage = async (
     return response;
   } catch (error) {
     console.error("Failed to upload image:", error);
+    throw error;
   }
 };

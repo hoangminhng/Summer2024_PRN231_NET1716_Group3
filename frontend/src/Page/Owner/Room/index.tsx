@@ -1,10 +1,21 @@
-import { Button, Card, Layout, List, Space, Spin, Tag, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Flex,
+  Layout,
+  List,
+  Space,
+  Spin,
+  Tag,
+  Typography,
+} from "antd";
 import Title from "antd/es/typography/Title";
 import { LoadingOutlined } from "@ant-design/icons";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
 import { getRoomListOfHostel } from "../../../api/Owner/ownerRoom";
+import RoomForm from "../../../Component/Owner/RoomForm/indext";
 const { Text } = Typography;
 
 const getColorByStatus = (status: number) => {
@@ -41,6 +52,7 @@ const Room: React.FC = () => {
   const [roomData, setRoomData] = useState<OwnerRoom[]>([]);
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState(1);
+  const [modalFormOpen, setModalFormOpen] = useState(false);
   const { hostelId } = useParams<{ hostelId: string }>();
   const { token } = useContext(UserContext);
   const navigate = useNavigate();
@@ -71,6 +83,10 @@ const Room: React.FC = () => {
     navigate("/owner/hostel");
   };
 
+  const handleOpenRoomForm = () => {
+    setModalFormOpen(true);
+  };
+
   return (
     <Layout>
       <Space
@@ -80,7 +96,10 @@ const Room: React.FC = () => {
           margin: "24px 16px 0",
         }}
       >
-        <Button onClick={handleBackClick}>Back</Button>
+        <Flex justify="space-between">
+          <Button onClick={handleBackClick}>Back</Button>
+          <Button onClick={() => handleOpenRoomForm()}>Add room</Button>
+        </Flex>
 
         {/* Rooms of hostel */}
         {loading ? (
@@ -153,6 +172,13 @@ const Room: React.FC = () => {
             )}
           />
         )}
+
+        <RoomForm
+          setModalOpen={setModalFormOpen}
+          modalOpen={modalFormOpen}
+          hostelId={hostelId}
+          fetchRooms={fetchRoomListOfHostel}
+        />
       </Space>
     </Layout>
   );
