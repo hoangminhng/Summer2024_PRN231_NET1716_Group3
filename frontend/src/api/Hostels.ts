@@ -9,3 +9,12 @@ export const GetHostelCard = async () => {
     console.log(error);
   }
 };
+
+export const GetHostelDetail = async (hostelID: string | undefined) => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/hostels/${hostelID}`);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
