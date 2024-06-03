@@ -1,11 +1,22 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Card, Flex, Layout, List, Space, Tag, Typography } from "antd";
-import Title from "antd/es/typography/Title";
+import {
+  Button,
+  Card,
+  Flex,
+  Layout,
+  List,
+  Space,
+  Spin,
+  Tag,
+  Typography,
+} from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import HostelForm from "../../../Component/Owner/HostelForm";
 import { getOwnerHostels } from "../../../api/Owner/ownerHostel";
 import { UserContext } from "../../../context/userContext";
 import { useNavigate } from "react-router-dom";
-const { Text } = Typography;
+import HostelDetail from "../../../Component/Owner/HostelDetail";
+const { Text, Title } = Typography;
 
 const getColorByStatus = (status: number) => {
   switch (status) {
@@ -37,18 +48,24 @@ const Hostel: React.FC = () => {
   const [hostelData, setHostelData] = useState<OwnerHostel[]>([]);
   const [current, setCurrent] = useState(1);
   const [modalFormOpen, setModalFormOpen] = useState(false);
+  const [modalHostelDetailOpen, setModalHostelDetailOpen] = useState(false);
+  const [selectedHostelId, setSelectedHostelId] = useState(0);
+  const [loading, setLoading] = useState(false);
   const pageSize = 2;
   const { userId, token } = useContext(UserContext);
   const navigate = useNavigate();
 
   const fetchOwnerHostels = async () => {
     if (userId !== undefined && token !== undefined) {
+      setLoading(true);
       try {
         const response = await getOwnerHostels(userId, token);
         setHostelData(response ?? []);
         //console.log(response);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -65,6 +82,15 @@ const Hostel: React.FC = () => {
     navigate(`/owner/hostel/${hostelId}`);
   };
 
+  const handleOpenHostelDetailModal = (hostelId: number) => {
+    setSelectedHostelId(hostelId);
+    setModalHostelDetailOpen(true);
+  };
+
+  const handleCloseHostelDetailModal = () => {
+    fetchOwnerHostels();
+  };
+
   return (
     <Layout>
       <Space
@@ -78,75 +104,103 @@ const Hostel: React.FC = () => {
           <Button onClick={() => handleOpenHostelForm()}>Create</Button>
         </Flex>
 
-        <List
-          grid={{
-            gutter: 60,
-            column: 1,
-          }}
-          pagination={{
-            current,
-            pageSize,
-            total: hostelData.length,
-            onChange: (page) => setCurrent(page),
-          }}
-          dataSource={hostelData}
-          renderItem={(item) => (
-            <List.Item>
-              <Card>
-                <div style={{ display: "flex", position: "relative" }}>
-                  <div style={{ flex: "0 0 200px", overflow: "hidden" }}>
-                    <img
-                      alt={item.hostelName}
-                      style={{ height: "100%", width: "100%", borderRadius: 0 }}
-                      src={item.thumbnail}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      padding: "0 30px",
-                      display: "flex",
-                      flexDirection: "column",
-                      flexGrow: 1,
-                    }}
-                  >
-                    <Title level={2}>{item.hostelName}</Title>
-                    <Text>
-                      <Text strong>Address: </Text>
-                      {item.hostelAddress}
-                    </Text>
-                    <Text>
-                      <Text strong>Description: </Text>
-                      {item.hostelDescription}
-                    </Text>
-                    <Text>
-                      <Text strong>Status: </Text>
-                      <Tag color={getColorByStatus(item.status ?? 0)}>
-                        {getStatusText(item.status ?? 0)}
-                      </Tag>
-                    </Text>
-                    <Text>
-                      <Text strong>Total room: </Text>
-                      {item.numOfTotalRoom}
-                    </Text>
-                    <Button
-                      type="primary"
-                      style={{ left: "auto", marginLeft: "auto" }}
-                      onClick={() => handleDetailClick(item.hostelID)}
+        {loading ? (
+          <Spin
+            fullscreen={true}
+            spinning={loading}
+            indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+          />
+        ) : (
+          <List
+            grid={{
+              gutter: 60,
+              column: 1,
+            }}
+            pagination={{
+              current,
+              pageSize,
+              total: hostelData.length,
+              onChange: (page) => setCurrent(page),
+            }}
+            dataSource={hostelData}
+            renderItem={(item) => (
+              <List.Item>
+                <Card>
+                  <div style={{ display: "flex", position: "relative" }}>
+                    <div style={{ flex: "0 0 250px", overflow: "hidden" }}>
+                      <img
+                        alt={item.hostelName}
+                        style={{
+                          height: "100%",
+                          width: "100%",
+                          borderRadius: 0,
+                        }}
+                        src={item.thumbnail}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        padding: "0 30px",
+                        display: "flex",
+                        flexDirection: "column",
+                        flexGrow: 1,
+                      }}
                     >
-                      Detail
-                    </Button>
+                      <Title level={2}>{item.hostelName}</Title>
+                      <Text>
+                        <Text strong>Address: </Text>
+                        {item.hostelAddress}
+                      </Text>
+                      <Text>
+                        <Text strong>Description: </Text>
+                        {item.hostelDescription}
+                      </Text>
+                      <Text>
+                        <Text strong>Status: </Text>
+                        <Tag color={getColorByStatus(item.status ?? 0)}>
+                          {getStatusText(item.status ?? 0)}
+                        </Tag>
+                      </Text>
+                      <Text>
+                        <Text strong>Total room: </Text>
+                        {item.numOfTotalRoom}
+                      </Text>
+                      <Flex justify="flex-end" gap={25}>
+                        <Button
+                          type="primary"
+                          onClick={() =>
+                            handleOpenHostelDetailModal(item.hostelID)
+                          }
+                        >
+                          Detail
+                        </Button>
+                        <Button
+                          type="primary"
+                          onClick={() => handleDetailClick(item.hostelID)}
+                        >
+                          Room List
+                        </Button>
+                      </Flex>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            </List.Item>
-          )}
-        />
+                </Card>
+              </List.Item>
+            )}
+          />
+        )}
 
         <HostelForm
           setModalOpen={setModalFormOpen}
           modalOpen={modalFormOpen}
           fetchOwnerHostels={fetchOwnerHostels}
-        ></HostelForm>
+        />
+
+        <HostelDetail
+          modalOpen={modalHostelDetailOpen}
+          setModalOpen={setModalHostelDetailOpen}
+          hostelId={selectedHostelId}
+          onClose={handleCloseHostelDetailModal}
+        />
       </Space>
     </Layout>
   );

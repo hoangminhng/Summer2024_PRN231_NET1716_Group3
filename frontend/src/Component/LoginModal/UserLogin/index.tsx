@@ -3,10 +3,11 @@ import toast from "react-hot-toast";
 import { UserContext } from "../../../context/userContext";
 // import { useNavigate } from "react-router-dom";
 import { loginByEmailPassword } from "../../../api/login";
+import { useNavigate } from "react-router-dom";
 
 const UserLogin: React.FC = () => {
   const { login } = useContext(UserContext);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const handleSubmit = () => {
@@ -33,9 +34,10 @@ const UserLogin: React.FC = () => {
           if (responseData?.token) {
             login(user, responseData?.token);
           }
-          // if (user.roleId === 2) {
-          //   navigate("/owner");
-          // } else if (user.roleId === 3) {
+          if (user.roleId === 2) {
+            navigate("/owner");
+          } 
+          // else if (user.roleId === 3) {
           //   navigate("/member");
           // }
         } catch (error: any) {
