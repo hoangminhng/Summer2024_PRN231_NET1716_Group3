@@ -6,7 +6,8 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   BookOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  MoneyCollectOutlined
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Button, Col, Layout, Menu, Row, theme } from "antd";
@@ -53,7 +54,8 @@ const Sidebar: React.FC = () => {
       getItem("Member Package", "5"),
       getItem("Create Package", "6"),
     ]),
-    getItem("Logout", "7", <LogoutOutlined />),
+    getItem("Transaction", "7", <MoneyCollectOutlined />),
+    getItem("Logout", "8", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
 
   const handleMenuClick = (key: React.Key) => {
@@ -77,6 +79,9 @@ const Sidebar: React.FC = () => {
       navigate("/admin/packages/new");
       break;
       case "7":
+      navigate("/admin/transactions");
+      break;
+      case "8":
         logout();
         navigate("/");
         break;

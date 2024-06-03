@@ -23,6 +23,7 @@ import ProtectedRoute from "./Component/ProtectedRoute";
 import Register from "./Page/Register";
 import MemberHostelDetail from "./Page/Member/HostelDetail";
 import OwnerContractCreate from "./Page/Owner/Contract";
+import AdminTransaction from "./Page/Admin/AdminTransaction";
 
 const roles = {
   Admin: 1,
@@ -76,6 +77,7 @@ function App() {
                 element={<HostelDetail />}
               />
               <Route path="packages" element={<Packages />} />
+              <Route path="transactions" element={<AdminTransaction />} />
               <Route path="packages/new" element={<NewPackage />} />
               <Route
                 path="packages/detail/:packageID"
