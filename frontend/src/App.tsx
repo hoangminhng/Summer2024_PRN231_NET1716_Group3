@@ -22,6 +22,8 @@ import Room from "./Page/Owner/Room";
 import ProtectedRoute from "./Component/ProtectedRoute";
 import Register from "./Page/Register";
 import MemberHostelDetail from "./Page/Member/HostelDetail";
+import OwnerContractCreate from "./Page/Owner/Contract";
+import AdminTransaction from "./Page/Admin/AdminTransaction";
 
 const roles = {
   Admin: 1,
@@ -53,6 +55,8 @@ function App() {
             />
           </Route>
 
+          <Route path="contract/create" element={<OwnerContractCreate />} />
+
           <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
@@ -73,6 +77,7 @@ function App() {
                 element={<HostelDetail />}
               />
               <Route path="packages" element={<Packages />} />
+              <Route path="transactions" element={<AdminTransaction />} />
               <Route path="packages/new" element={<NewPackage />} />
               <Route
                 path="packages/detail/:packageID"

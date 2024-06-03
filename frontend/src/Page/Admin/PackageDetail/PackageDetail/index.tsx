@@ -24,7 +24,7 @@ const AdminPackageDetail: React.FC = () => {
 
     const fetchPackageDetail = async () => {
         try {
-            if (token && packageID) {
+            if (token != undefined && packageID != undefined) {
                 let data: Package | undefined;
                 data = await getPackageDetail(parseInt(packageID), token);
                 setID(parseInt(packageID));
@@ -45,7 +45,7 @@ const AdminPackageDetail: React.FC = () => {
 
     const fetchUpdatePackage = async (Package: Package) => {
         try {
-            if (token) {
+            if (token != undefined) {
                 let data = await updatePackage(Package, token);
                 return data;
             }
@@ -73,6 +73,7 @@ const AdminPackageDetail: React.FC = () => {
     };
 
     const UpdatePackage = async () => {
+        if(token != undefined){
         packageData.memberShipID = packageDetailData?.memberShipID || 0;
         packageData.status = packageDetailData?.status || 0;
         const response = await fetchUpdatePackage(packageData);
@@ -82,6 +83,7 @@ const AdminPackageDetail: React.FC = () => {
             openNotificationWithIcon("error", response?.message || "Have some error");
         }
         await fetchPackageDetail();
+        }
     };
 
     const items = [

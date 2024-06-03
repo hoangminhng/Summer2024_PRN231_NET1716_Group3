@@ -10,7 +10,7 @@ const Total: React.FC = () => {
   
   const fetchStatistic = async () => {
     try {
-      if (token) {
+      if (token != undefined) {
         let data: Dashboard | undefined;
         data = await getStatistic(token);
         setDashboardData(data);

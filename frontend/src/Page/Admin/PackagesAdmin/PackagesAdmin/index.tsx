@@ -14,7 +14,7 @@ const AdminPackage: React.FC = () => {
 
   const fetchPackageList = async () => {
     try {
-      if (token) {
+      if (token != undefined) {
         const data = await getPackages(token);
         setPackageData(data || []);
       }
@@ -25,7 +25,7 @@ const AdminPackage: React.FC = () => {
 
   const fetchChangeStatusActive = async (packageID: number | undefined) => {
     try {
-      if (token) {
+      if (token != undefined) {
         let data = await changeStatusActivePackage(token, packageID);
         return data;
       }
@@ -36,7 +36,7 @@ const AdminPackage: React.FC = () => {
 
   const fetchChangeStatusBlock = async (packageID: number | undefined) => {
     try {
-      if (token) {
+      if (token != undefined) {
         let data = await changeStatusBlockPackage(token, packageID);
         return data;
       }

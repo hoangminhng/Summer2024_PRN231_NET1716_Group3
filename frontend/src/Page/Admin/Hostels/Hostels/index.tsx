@@ -3,7 +3,6 @@ import {
   Table,
   TableProps,
   Tag,
-  notification,
 } from "antd";
 import { useState, useEffect } from "react";
 import {
@@ -23,7 +22,7 @@ const AdminHostels: React.FC = () => {
 
   const fetchHostelList = async () => {
     try {
-      if (token) {
+      if (token != undefined) {
         let data: AdminHostel[] | undefined;
           data = await getHostel(token);
           setHostelData(data || []);
@@ -102,12 +101,6 @@ const AdminHostels: React.FC = () => {
   ];
 
   
-  const openNotificationWithIcon = (type: 'success' | 'error', description: string) => {
-    notification[type]({
-      message: "Notification Title",
-      description: description,
-    });
-  };
 
   return (
     <>

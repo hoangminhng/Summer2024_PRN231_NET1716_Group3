@@ -23,7 +23,7 @@ const Summary: React.FC = () => {
   useEffect(() => {
     const fetchGetSummary = async () => {
       try {
-        if (token) {
+        if (token != undefined) {
           const data: Dashboard | undefined = await getStatistic(token);
           settotalData(data);
         }

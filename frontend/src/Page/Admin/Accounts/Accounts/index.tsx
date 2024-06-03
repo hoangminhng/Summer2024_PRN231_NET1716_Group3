@@ -22,7 +22,7 @@ const AdminAccounts: React.FC = () => {
 
   const fetchAccountList = async () => {
     try {
-      if (token) {
+      if (token != undefined) {
         let data: Account[] | undefined;
           data = await getAccounts(token);
           setAccountData(data || []);
