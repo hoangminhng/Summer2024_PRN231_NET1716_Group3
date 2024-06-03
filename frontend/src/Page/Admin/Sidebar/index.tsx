@@ -1,13 +1,11 @@
 import React, { useState, useContext } from "react";
 import {
-  FormOutlined,
   PieChartOutlined,
   HomeOutlined,
   UserOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   BookOutlined,
-  MailOutlined,
   LogoutOutlined
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
