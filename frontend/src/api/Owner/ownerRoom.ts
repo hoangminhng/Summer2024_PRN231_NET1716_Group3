@@ -19,6 +19,23 @@ export const getRoomListOfHostel = async (hostelId: number, token: string) => {
   }
 };
 
+export const getOwnerRoomDetail = async (roomId: number) => {
+  try {
+    const fetchData = await axios.get<OwnerRoomDetail>(
+      `${baseUrl}/api/rooms/${roomId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
 export const createRoom = async (
   token: string | undefined,
   hostelPayload: CreateRoomRequest

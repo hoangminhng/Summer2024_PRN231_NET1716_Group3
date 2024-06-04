@@ -24,6 +24,7 @@ import Register from "./Page/Register";
 import MemberHostelDetail from "./Page/Member/HostelDetail";
 import OwnerContractCreate from "./Page/Owner/Contract";
 import AdminTransaction from "./Page/Admin/AdminTransaction";
+import RoomDetail from "./Page/Owner/RoomDetail";
 
 const roles = {
   Admin: 1,
@@ -88,8 +89,9 @@ function App() {
 
           <Route element={<RequiredAuth allowedRoles={[roles.Owner]} />}>
             <Route path="/owner" element={<OwnerLayout />}>
-              <Route path="hostel" element={<Hostel />} />
-              <Route path="hostel/:hostelId" element={<Room />} />
+              <Route path="hostels" element={<Hostel />} />
+              <Route path="hostels/:hostelId" element={<Room />} />
+              <Route path="hostels/:hostelId/rooms/:roomId" element={<RoomDetail />} />
             </Route>
           </Route>
         </Routes>

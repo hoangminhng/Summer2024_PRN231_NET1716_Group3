@@ -44,7 +44,7 @@ const OwnerLayout: React.FC = () => {
   const handleMenuClick = (key: React.Key) => {
     switch (key) {
       case "1":
-        navigate("/owner/hostel");
+        navigate("/owner/hostels");
         break;
       case "2":
         logout();

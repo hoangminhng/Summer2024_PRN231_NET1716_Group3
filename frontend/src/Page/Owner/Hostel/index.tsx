@@ -16,33 +16,11 @@ import { getOwnerHostels } from "../../../api/Owner/ownerHostel";
 import { UserContext } from "../../../context/userContext";
 import { useNavigate } from "react-router-dom";
 import HostelDetail from "../../../Component/Owner/HostelDetail";
+import {
+  getColorByStatus,
+  getStatusText,
+} from "../../../Utils/hostelStatusColor";
 const { Text, Title } = Typography;
-
-const getColorByStatus = (status: number) => {
-  switch (status) {
-    case 0:
-      return "default";
-    case 1:
-      return "green";
-    case 2:
-      return "red";
-    default:
-      return "default";
-  }
-};
-
-const getStatusText = (status: number) => {
-  switch (status) {
-    case 0:
-      return "Prepare";
-    case 1:
-      return "Available";
-    case 2:
-      return "Block";
-    default:
-      return "Unknown";
-  }
-};
 
 const Hostel: React.FC = () => {
   const [hostelData, setHostelData] = useState<OwnerHostel[]>([]);
@@ -79,7 +57,7 @@ const Hostel: React.FC = () => {
   };
 
   const handleDetailClick = (hostelId: number) => {
-    navigate(`/owner/hostel/${hostelId}`);
+    navigate(`/owner/hostels/${hostelId}`);
   };
 
   const handleOpenHostelDetailModal = (hostelId: number) => {
