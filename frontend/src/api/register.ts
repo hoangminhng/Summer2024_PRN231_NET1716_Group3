@@ -13,6 +13,26 @@ export const registerByEmailPassword = async (
     const response = await axios.post(`${baseUrl}/api/register/email`, param);
     return response;
   } catch (error: any) {
+    console.log(error);
+    toast.error(error.response.data.message, { duration: 2000 });
+  }
+};
+
+export const confirmRegisterOtp = async (email: string, otpToken: string) => {
+  try {
+    const param = { email, otpToken };
+    const response = await axios.post(`${baseUrl}/api/otp/confirm`, param);
+    return response;
+  } catch (error: any) {
+    toast.error(error.response.data.message, { duration: 2000 });
+  }
+};
+
+export const resendRegisterOtp = async (email: string) => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/otp/resend/${email}`);
+    return response;
+  } catch (error: any) {
     toast.error(error.response.data.message, { duration: 2000 });
   }
 };

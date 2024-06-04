@@ -1,8 +1,9 @@
 import { GetProp, Input } from "antd";
 import { OTPProps } from "antd/es/input/OTP";
-import { useState } from "react";
-
-import React from "react";
+import { resendRegisterOtp, confirmRegisterOtp } from "../../api/register";
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 
 interface ConfirmOtpModalProps {
@@ -10,10 +11,30 @@ interface ConfirmOtpModalProps {
 }
 
 const ConfirmOtpModal: React.FC<ConfirmOtpModalProps> = ({ email }) => {
-    const onChange: GetProp<typeof Input.OTP, 'onChange'> = (text) => {
-        console.log('onChange:', text);
+    const navigate = useNavigate();
+    const [otpToken, setOtp] = useState<string>("");
+    const onChange: GetProp<typeof Input.OTP, 'onChange'> = (otp) => {
+        console.log('onChange:', otp);
         console.log('email pass to modal:', email);
+        setOtp(otp);
+    };
+    const handleSubmit = () => {
+        if (otpToken.length !== 6) return;
 
+        const confirmOtp = async () => {
+            const response = await confirmRegisterOtp(email, otpToken);
+            toast.success("Account create successfully", { duration: 2000 });
+            navigate("/");
+        };
+        confirmOtp();
+    }
+
+    const onResend = () => {
+        const resendOtp = async () => {
+            const response = await resendRegisterOtp(email);
+            toast.success(response?.data.message, { duration: 2000 });
+        }
+        resendOtp();
     };
 
     const sharedProps: OTPProps = {
@@ -38,6 +59,7 @@ const ConfirmOtpModal: React.FC<ConfirmOtpModalProps> = ({ email }) => {
                     <button
                         type="button"
                         className="w-fit text-white bg-slate-950 hover:bg-slate-600 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={handleSubmit}
                     >
                         Confirm
                     </button>
@@ -46,6 +68,7 @@ const ConfirmOtpModal: React.FC<ConfirmOtpModalProps> = ({ email }) => {
                         <a
                             href="register"
                             className="text-blue-700 hover:underline dark:text-blue-500"
+                            onClick={onResend}
                         >
                             Resend
                         </a>
@@ -57,3 +80,4 @@ const ConfirmOtpModal: React.FC<ConfirmOtpModalProps> = ({ email }) => {
 };
 
 export default ConfirmOtpModal;
+

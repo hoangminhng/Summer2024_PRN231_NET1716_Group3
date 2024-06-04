@@ -18,21 +18,20 @@ const Register: React.FC = () => {
     let roleId: number = 1; //default is user
 
     const register = async () => {
-      // if (email === "" || password === "" || name === "") {
-      //   toast.error("Please input all fields.", {
-      //     duration: 2000,
-      //   });
-      // } else {
-      //   if (isOwner) {
-      //     roleId = 2;
-      //   }
-      //   const response = await registerByEmailPassword(email, roleId, name, password);
-      //   if (response != null) {
-      //     navigate("/confirm-otp");
-      //   }
-      // }
+      if (email === "" || password === "" || name === "") {
+        toast.error("Please input all fields.", {
+          duration: 2000,
+        });
+      } else {
+        if (isOwner) {
+          roleId = 2;
+        }
+        const response = await registerByEmailPassword(email, roleId, name, password);
+        if (response != null) {
+          toggleModal();
+        }
+      }
 
-      toggleModal();
 
     };
     register();
