@@ -1,13 +1,7 @@
 import { useParams } from "react-router-dom";
-import {
-  useEffect,
-  useRef,
-  useState,
-  Suspense,
-  lazy,
-  useCallback,
-} from "react";
+import { useEffect, useRef, useState, Suspense, lazy } from "react";
 import { GetHostelDetail } from "../../../api/Hostels";
+import HostelFacilites from "./HostelFacilites";
 
 const HostelOverview = lazy(() => import("./HostelOverview"));
 const RoomAndPrice = lazy(() => import("./RoomAndPrice"));
@@ -53,10 +47,6 @@ const MemberHostelDetail: React.FC = () => {
     tabRefs.current[tabId]?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleTabLoaded = useCallback(() => {
-    setActiveTabIndex((prevIndex) => Math.min(prevIndex + 1, tabs.length - 1));
-  }, []);
-
   const tabs: TabProps[] = [
     {
       id: "overview",
@@ -67,35 +57,34 @@ const MemberHostelDetail: React.FC = () => {
           hostelName={hostel?.hostelName ?? ""}
           hostelAddress={hostel?.hostelAddress ?? ""}
           hostelDescription={hostel?.hostelDescription ?? ""}
-          onTabLoaded={handleTabLoaded}
         />
       ),
     },
     {
       id: "infomation",
       label: "Apartment info & price",
-      content: (
-        <RoomAndPrice
-          hostelId={parseInt(hostelID ?? "", 10)}
-          onTabLoaded={handleTabLoaded}
-        />
-      ),
+      content: <RoomAndPrice hostelId={parseInt(hostelID ?? "", 10)} />,
     },
     {
       id: "facilities",
       label: "Facilities & Policies",
-      content: <p>This is the Settings tab's associated content.</p>,
+      content: (
+        <HostelFacilites
+          hostelId={parseInt(hostelID ?? "", 10)}
+          hostelName={hostel?.hostelName ?? ""}
+        />
+      ),
     },
-    {
-      id: "rules",
-      label: "House rules",
-      content: <p>This is the Contacts tab's associated content.</p>,
-    },
-    {
-      id: "notes",
-      label: "The fine print",
-      content: <p>This is the Contacts tab's associated content.</p>,
-    },
+    // {
+    //   id: "rules",
+    //   label: "House rules",
+    //   content: <p>This is the Contacts tab's associated content.</p>,
+    // },
+    // {
+    //   id: "notes",
+    //   label: "The fine print",
+    //   content: <p>This is the Contacts tab's associated content.</p>,
+    // },
   ];
 
   return (

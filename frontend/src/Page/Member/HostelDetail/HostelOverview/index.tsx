@@ -9,14 +9,12 @@ interface HostelOverviewProps {
   hostelId: number;
   hostelAddress: string;
   hostelDescription: string;
-  onTabLoaded: () => void;
 }
 const HostelOverview: React.FC<HostelOverviewProps> = ({
   hostelName,
   hostelId,
   hostelAddress,
   hostelDescription,
-  onTabLoaded,
 }) => {
   const [imageList, setImageList] = useState<string[]>([]);
 
@@ -35,7 +33,7 @@ const HostelOverview: React.FC<HostelOverviewProps> = ({
     };
 
     fetchHostels();
-  }, [hostelId, onTabLoaded]); // Include hostelId in dependency array
+  }, [hostelId]); // Include hostelId in dependency array
 
   const images = imageList.map((url) => ({
     original: url,
@@ -61,7 +59,7 @@ const HostelOverview: React.FC<HostelOverviewProps> = ({
             items={images}
             showFullscreenButton={false}
             showPlayButton={false}
-            thumbnailPosition="right"
+            thumbnailPosition="bottom"
             infinite={true}
           />
         </div>
