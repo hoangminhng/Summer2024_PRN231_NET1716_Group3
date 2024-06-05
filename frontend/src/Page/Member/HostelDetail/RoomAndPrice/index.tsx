@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
 import { GetRoomListByHostelId } from "../../../../api/Room";
+import { NumberFormat } from "../../../../Utils/numberFormat";
 
 interface RoomAndPriceProps {
   hostelId: number;
-  onTabLoaded: () => void;
 }
 
-const RoomAndPrice: React.FC<RoomAndPriceProps> = ({
-  hostelId,
-  onTabLoaded,
-}) => {
+const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
   const [roomList, setRoomList] = useState<ListRooms[] | undefined>([]);
 
   useEffect(() => {
@@ -22,7 +19,7 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({
       }
     };
     fetchRooms();
-  }, [hostelId, onTabLoaded]);
+  }, [hostelId]);
   return (
     <>
       <div className="flex flex-col items-start">
@@ -45,6 +42,7 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({
               <th scope="col" className="px-6 py-3">
                 Room Fee
               </th>
+              <th scope="col" className="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody>
@@ -56,9 +54,16 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({
                 <td className="px-6 py-4 w-1/4">
                   <img src={room.roomThumbnail} />
                 </td>
-                <td className="px-6 py-4 w-1/4">{room.roomName}</td>
-                <td className="px-6 py-4 w-1/4">{room.capacity}</td>
-                <td className="px-6 py-4 w-1/4">{room.roomFee}</td>
+                <td className="px-6 py-4 w-1/5">{room.roomName}</td>
+                <td className="px-6 py-4 w-1/5">{room.capacity}</td>
+                <td className="px-6 py-4 w-1/5">
+                  {NumberFormat(room.roomFee)} /month
+                </td>
+                <td className="px-6 py-4 w-1/5">
+                  <button className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                    View detail
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
