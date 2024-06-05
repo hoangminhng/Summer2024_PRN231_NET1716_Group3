@@ -20,7 +20,7 @@ const AdminNewPackage: React.FC = () => {
 
   const fetchCreatePackage = async (Package: NewPackage) => {
     try {
-      if (token) {
+      if (token != undefined) {
         let data = await createPackage(Package, token);
         return data;
       }

@@ -36,7 +36,7 @@ const AdminMemberShips: React.FC = () => {
 
   const fetchMemberList = async () => {
     try {
-      if (token) {
+      if (token != undefined) {
         let data: MemberShip[] | undefined;
           data = await getMemberShips(token);
           setMembershipData(data || []);

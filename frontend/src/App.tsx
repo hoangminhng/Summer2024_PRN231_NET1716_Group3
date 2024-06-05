@@ -22,6 +22,9 @@ import Room from "./Page/Owner/Room";
 import ProtectedRoute from "./Component/ProtectedRoute";
 import Register from "./Page/Register";
 import MemberHostelDetail from "./Page/Member/HostelDetail";
+import OwnerContractCreate from "./Page/Owner/Contract";
+import AdminTransaction from "./Page/Admin/AdminTransaction";
+import RoomDetail from "./Page/Owner/RoomDetail";
 
 const roles = {
   Admin: 1,
@@ -53,6 +56,8 @@ function App() {
             />
           </Route>
 
+          <Route path="contract/create" element={<OwnerContractCreate />} />
+
           <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
@@ -73,6 +78,7 @@ function App() {
                 element={<HostelDetail />}
               />
               <Route path="packages" element={<Packages />} />
+              <Route path="transactions" element={<AdminTransaction />} />
               <Route path="packages/new" element={<NewPackage />} />
               <Route
                 path="packages/detail/:packageID"
@@ -83,8 +89,9 @@ function App() {
 
           <Route element={<RequiredAuth allowedRoles={[roles.Owner]} />}>
             <Route path="/owner" element={<OwnerLayout />}>
-              <Route path="hostel" element={<Hostel />} />
-              <Route path="hostel/:hostelId" element={<Room />} />
+              <Route path="hostels" element={<Hostel />} />
+              <Route path="hostels/:hostelId" element={<Room />} />
+              <Route path="hostels/:hostelId/rooms/:roomId" element={<RoomDetail />} />
             </Route>
           </Route>
         </Routes>

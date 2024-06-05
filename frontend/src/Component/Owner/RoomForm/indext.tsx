@@ -1,9 +1,18 @@
-import { Button, Form, Input, Modal, Spin, Upload, notification } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Spin,
+  Upload,
+  notification,
+} from "antd";
 import { useContext, useState } from "react";
 import { LoadingOutlined, UploadOutlined } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import { UserContext } from "../../../context/userContext";
-import { createHostel, uploadImage } from "../../../api/Owner/ownerHostel";
+import { createRoom, uploadImage } from "../../../api/Owner/ownerRoom";
 
 const formItemLayout = {
   labelCol: {
@@ -24,16 +33,18 @@ const formItemLayout = {
   },
 };
 
-interface HostelFormProps {
+interface RoomFormProps {
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  fetchOwnerHostels: () => void;
+  hostelId: string | undefined;
+  fetchRooms: () => void;
 }
 
-const HostelForm: React.FC<HostelFormProps> = ({
+const RoomForm: React.FC<RoomFormProps> = ({
   modalOpen,
   setModalOpen,
-  fetchOwnerHostels,
+  hostelId,
+  fetchRooms,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -61,49 +72,46 @@ const HostelForm: React.FC<HostelFormProps> = ({
       setLoading(false);
       return;
     }
-
     setLoading(true);
-    console.log("Loading: ", loading);
     console.log("Received values:", values);
-    const { hostelName, hostelAddress, hostelDescription } = values;
+    const { roomName, capacity, length, width, description, roomFee } = values;
 
-    if (userId !== undefined) {
-      const hostelPayload: CreateHostelRequest = {
-        hostelName: hostelName,
-        hostelAddress: hostelAddress,
-        hostelDescription: hostelDescription,
-        accountID: userId,
+    if (userId !== undefined && hostelId !== undefined) {
+      const roomPayload: CreateRoomRequest = {
+        roomName,
+        capacity,
+        length,
+        width,
+        description,
+        roomFee,
+        hostelID: parseInt(hostelId),
       };
 
       try {
-        const response = await createHostel(token, hostelPayload);
-        console.log("Hostel created successfully:", response);
-
+        const response = await createRoom(token, roomPayload);
+        console.log("Rooom created successfully:", response);
         if (response) {
-          const newHostelId = response.hostelID;
+          const newRoomId = response.roomID;
           if (fileList.length > 0) {
             const uploadResponse = await uploadImage(
               token,
-              newHostelId,
-              fileList[0]
+              newRoomId,
+              fileList
             );
 
             console.log("Upload response: ", uploadResponse);
             if (uploadResponse.statusCode == 200) {
               handleCancel();
-              openNotificationWithIcon(
-                "success",
-                "Create new hostel successfully"
-              );
-              fetchOwnerHostels();
+              openNotificationWithIcon("success", "Create room successfully");
+              fetchRooms();
             }
           }
         } else {
-          openNotificationWithIcon("error", "Create new hostel failed");
+          openNotificationWithIcon("error", "Create room failed");
         }
       } catch (error) {
         console.error("Failed to create hostel:", error);
-        openNotificationWithIcon("error", "Create new hostel failed");
+        openNotificationWithIcon("error", "Create room failed");
       } finally {
         setLoading(false);
       }
@@ -115,7 +123,7 @@ const HostelForm: React.FC<HostelFormProps> = ({
       width={1000}
       title={
         <Title level={2} style={{ textAlign: "center", marginBottom: 40 }}>
-          Hostel Information
+          Room Information | Hostel {hostelId}
         </Title>
       }
       centered
@@ -149,34 +157,58 @@ const HostelForm: React.FC<HostelFormProps> = ({
       <Form
         form={form}
         {...formItemLayout}
-        name="hostelForm"
+        name="roomForm"
         initialValues={{ remember: true }}
         onFinish={onFinish}
       >
         <Form.Item
-          name="hostelName"
-          label="Hostel Name"
-          rules={[{ required: true, message: "Please input hostel name!" }]}
+          name="roomName"
+          label="Room Name"
+          rules={[{ required: true, message: "Please input room name!" }]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          name="hostelAddress"
-          label="Hostel Address"
-          rules={[{ required: true, message: "Please input hostel address!" }]}
+          name="capacity"
+          label="Capacity"
+          rules={[{ required: true, message: "Please input capacity!" }]}
         >
-          <Input />
+          <InputNumber min={1} max={5} />
         </Form.Item>
 
         <Form.Item
-          name="hostelDescription"
-          label="Hostel Description"
+          name="length"
+          label="Length (in meters)"
+          rules={[{ required: true, message: "Please input length!" }]}
+        >
+          <InputNumber min={1} />
+        </Form.Item>
+
+        <Form.Item
+          name="width"
+          label="Width (in meters)"
+          rules={[{ required: true, message: "Please input width!" }]}
+        >
+          <InputNumber min={1} />
+        </Form.Item>
+
+        <Form.Item
+          name="description"
+          label="Room Description"
           rules={[
-            { required: true, message: "Please input hostel description!" },
+            { required: true, message: "Please input room description!" },
           ]}
         >
           <Input.TextArea showCount maxLength={100} />
+        </Form.Item>
+
+        <Form.Item
+          name="roomFee"
+          label="Room Fee"
+          rules={[{ required: true, message: "Please input room fee!" }]}
+        >
+          <InputNumber min={0} />
         </Form.Item>
 
         <Form.Item
@@ -186,7 +218,8 @@ const HostelForm: React.FC<HostelFormProps> = ({
           getValueFromEvent={normFile}
         >
           <Upload
-            maxCount={1}
+            maxCount={3}
+            multiple
             beforeUpload={() => false}
             fileList={fileList}
             onChange={({ fileList }) => setFileList(fileList)}
@@ -218,4 +251,4 @@ const normFile = (e: { fileList: any }) => {
   return [];
 };
 
-export default HostelForm;
+export default RoomForm;

@@ -13,7 +13,7 @@ const PropertiesPie: React.FC<{ style?: React.CSSProperties }> = ({ style }) => 
   useEffect(() => {
     const fetchGetTypePackage = async () => {
       try {
-        if (token) {
+        if (token != undefined) {
           const data: TypePackage[] | undefined = await getStatisticPackage(token);
           settypeData(data);
         }

@@ -40,7 +40,7 @@ const AdminMemberShipDetail: React.FC = () => {
 
   const fetchMemberShipDetail = async () => {
     try {
-      if (token && accountID) {
+      if (token != undefined && accountID != undefined) {
         let data: MemberShipDetail[] | undefined;
         data = await getMemberShipDetail(parseInt(accountID), token);
         setID(parseInt(accountID));
@@ -53,7 +53,7 @@ const AdminMemberShipDetail: React.FC = () => {
   
   const fetchMemberShipInformationDetail = async () => {
     try {
-      if (token && accountID) {
+      if (token != undefined && accountID != undefined) {
         let data: MemberShipInformation | undefined;
         data = await getMemberShipInformationDetail(parseInt(accountID), token);
         setID(parseInt(accountID));

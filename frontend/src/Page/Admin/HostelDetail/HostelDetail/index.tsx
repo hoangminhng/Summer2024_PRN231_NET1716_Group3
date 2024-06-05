@@ -29,7 +29,7 @@ import {
   
     const fetchHostelDetail = async () => {
       try {
-        if (token && hostelID) {
+        if (token != undefined && hostelID != undefined) {
           let data: AdminHostelDetail | undefined;
           data = await getHostelDetail(parseInt(hostelID), token);
           setID(parseInt(hostelID));
@@ -42,7 +42,7 @@ import {
 
     const fetchRoomList = async () => {
         try {
-          if (token && hostelID) {
+          if (token != undefined && hostelID != undefined) {
             let data: AdminRoom[] | undefined;
             data = await getRooms(parseInt(hostelID), token);
             setID(parseInt(hostelID));
