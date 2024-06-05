@@ -30,7 +30,9 @@ export const confirmRegisterOtp = async (email: string, otpToken: string) => {
 
 export const resendRegisterOtp = async (email: string) => {
   try {
-    const response = await axios.get(`${baseUrl}/api/otp/resend/${email}`);
+    const response = await axios.get(
+      `${baseUrl}/api/otp/resend?email=${email}`
+    );
     return response;
   } catch (error: any) {
     toast.error(error.response.data.message, { duration: 2000 });
