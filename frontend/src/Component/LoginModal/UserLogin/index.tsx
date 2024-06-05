@@ -36,7 +36,7 @@ const UserLogin: React.FC = () => {
           }
           if (user.roleId === 2) {
             navigate("/owner");
-          } 
+          }
           // else if (user.roleId === 3) {
           //   navigate("/member");
           // }
@@ -111,7 +111,7 @@ const UserLogin: React.FC = () => {
             </label>
           </div>
           <a
-            href="#"
+            href="forget-password"
             className="text-sm text-gray-900 hover:underline dark:text-blue-500"
           >
             Lost Password?

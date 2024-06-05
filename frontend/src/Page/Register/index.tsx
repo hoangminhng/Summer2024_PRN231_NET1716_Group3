@@ -3,10 +3,10 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { registerByEmailPassword } from "../../api/register";
 import ConfirmOtpModal from "../../Component/OtpModal";
+import { trackPromise } from 'react-promise-tracker';
 
 const Register: React.FC = () => {
   // const { login } = useContext(UserContext);
-  const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [isOwner, setIsOwner] = useState<boolean>(false);
@@ -26,11 +26,13 @@ const Register: React.FC = () => {
         if (isOwner) {
           roleId = 2;
         }
+        // trackPromise(registerByEmailPassword(email, roleId, name, password)).then(toggleModal);
         const response = await registerByEmailPassword(email, roleId, name, password);
         if (response != null) {
           toggleModal();
         }
       }
+
 
 
     };
