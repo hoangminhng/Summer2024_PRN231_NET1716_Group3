@@ -25,6 +25,7 @@ import MemberHostelDetail from "./Page/Member/HostelDetail";
 import OwnerContractCreate from "./Page/Owner/Contract";
 import AdminTransaction from "./Page/Admin/AdminTransaction";
 import RoomDetail from "./Page/Owner/RoomDetail";
+import MemberRoomDetails from "./Page/Member/RoomDetail";
 
 const roles = {
   Admin: 1,
@@ -54,6 +55,7 @@ function App() {
               path="hostel/detail/:hostelID"
               element={<MemberHostelDetail />}
             />
+            <Route path="room/detail/:roomID" element={<MemberRoomDetails />} />
           </Route>
 
           <Route path="contract/create" element={<OwnerContractCreate />} />
@@ -91,7 +93,10 @@ function App() {
             <Route path="/owner" element={<OwnerLayout />}>
               <Route path="hostels" element={<Hostel />} />
               <Route path="hostels/:hostelId" element={<Room />} />
-              <Route path="hostels/:hostelId/rooms/:roomId" element={<RoomDetail />} />
+              <Route
+                path="hostels/:hostelId/rooms/:roomId"
+                element={<RoomDetail />}
+              />
             </Route>
           </Route>
         </Routes>

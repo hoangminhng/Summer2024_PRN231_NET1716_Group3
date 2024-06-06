@@ -22,3 +22,12 @@ export const GetRoomListByHostelId = async (hostelId: string | undefined) => {
     console.log(error);
   }
 };
+
+export const GetRoomDetailById = async (roomId: string | undefined) => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/rooms/${roomId}`);
+    return response;
+  } catch (error: any) {
+    console.log(error);
+  }
+};
