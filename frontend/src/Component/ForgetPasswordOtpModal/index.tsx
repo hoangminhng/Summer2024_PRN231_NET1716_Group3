@@ -4,35 +4,39 @@ import { resendRegisterOtp, confirmRegisterOtp } from "../../api/register";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { confirmPassword, sendOtpForgetPassword } from "../../api/forgetPassword";
 
 
-interface ConfirmOtpModalProps {
+interface ForgetPasswordOtpModalProps {
     email: string; // Prop to receive the email address
+    password: string;
 }
 
-const ConfirmOtpModal: React.FC<ConfirmOtpModalProps> = ({ email }) => {
+const ForgetPasswordOtpModal: React.FC<ForgetPasswordOtpModalProps> = ({ email, password }) => {
     const navigate = useNavigate();
     const [otpToken, setOtp] = useState<string>("");
     const onChange: GetProp<typeof Input.OTP, 'onChange'> = (otp) => {
         console.log('onChange:', otp);
         console.log('email pass to modal:', email);
+        console.log('password pass to modal:', password);
+
         setOtp(otp);
     };
     const handleSubmit = () => {
         if (otpToken.length !== 6) return;
 
-        const confirmOtp = async () => {
-            const response = await confirmRegisterOtp(email, otpToken);
-            toast.success("Account create successfully", { duration: 2000 });
+        const confirmPasswordOtp = async () => {
+            const response = await confirmPassword(email, password, otpToken);
+            toast.success("Set new password successfully", { duration: 2000 });
             navigate("/");
         };
-        confirmOtp();
+        confirmPasswordOtp();
     }
 
-    const onResend = (event) => {
-        event.preventDefault();
+    const onResend = () => {
         const resendOtp = async () => {
-            await resendRegisterOtp(email);
+            const response = await sendOtpForgetPassword(email);
+            toast.success(response?.data.message, { duration: 2000 });
         }
         resendOtp();
     };
@@ -79,5 +83,5 @@ const ConfirmOtpModal: React.FC<ConfirmOtpModalProps> = ({ email }) => {
     );
 };
 
-export default ConfirmOtpModal;
+export default ForgetPasswordOtpModal;
 

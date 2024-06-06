@@ -26,6 +26,8 @@ import OwnerContractCreate from "./Page/Owner/Contract";
 import AdminTransaction from "./Page/Admin/AdminTransaction";
 import RoomDetail from "./Page/Owner/RoomDetail";
 import MemberRoomDetails from "./Page/Member/RoomDetail";
+import ForgetPassword from "./Page/ForgetPassword";
+import React from "react";
 
 const roles = {
   Admin: 1,
@@ -48,6 +50,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Register />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/forget-password"
+              element={
+                <ProtectedRoute>
+                  <ForgetPassword />
                 </ProtectedRoute>
               }
             />
