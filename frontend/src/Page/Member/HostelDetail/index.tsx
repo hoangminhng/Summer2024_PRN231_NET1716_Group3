@@ -12,12 +12,6 @@ interface TabProps {
   content: React.ReactNode;
 }
 
-interface Hostel {
-  hostelName: string;
-  hostelAddress: string;
-  hostelDescription: string;
-}
-
 const MemberHostelDetail: React.FC = () => {
   const { hostelID } = useParams<{ hostelID: string }>();
   const [hostel, setHostel] = useState<Hostel | undefined>();
@@ -52,26 +46,32 @@ const MemberHostelDetail: React.FC = () => {
       id: "overview",
       label: "Overview",
       content: (
-        <HostelOverview
-          hostelId={parseInt(hostelID ?? "", 10)}
-          hostelName={hostel?.hostelName ?? ""}
-          hostelAddress={hostel?.hostelAddress ?? ""}
-          hostelDescription={hostel?.hostelDescription ?? ""}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <HostelOverview
+            hostelId={parseInt(hostelID ?? "", 10)}
+            hostelName={hostel?.hostelName ?? ""}
+            hostelAddress={hostel?.hostelAddress ?? ""}
+            hostelDescription={hostel?.hostelDescription ?? ""}
+          />
+        </Suspense>
       ),
     },
     {
       id: "infomation",
       label: "Apartment info & price",
-      content: <RoomAndPrice hostelId={parseInt(hostelID ?? "", 10)} />,
+      content: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <RoomAndPrice hostelId={parseInt(hostelID ?? "", 10)} />
+        </Suspense>
+      ),
     },
     {
       id: "facilities",
       label: "Facilities & Policies",
       content: (
         <HostelFacilites
-          hostelId={parseInt(hostelID ?? "", 10)}
           hostelName={hostel?.hostelName ?? ""}
+          hostelSerivces={hostel?.hostelServices ?? []}
         />
       ),
     },
@@ -121,17 +121,17 @@ const MemberHostelDetail: React.FC = () => {
               key={tab.id}
               ref={(el) => (tabRefs.current[tab.id] = el)}
               className={`dark:bg-gray-800 ${
-                activeTabIndex === index ? "block" : "hidden"
+                activeTabIndex === index ? "block" : ""
               }`}
               id={tab.id}
               role="tabpanel"
               aria-labelledby={`${tab.id}-tab`}
             >
-              {index <= activeTabIndex && (
-                <Suspense fallback={<div>Loading...</div>}>
-                  {tab.content}
-                </Suspense>
-              )}
+              {/* {index <= activeTabIndex && (
+                <Suspense fallback={<div>Loading...</div>}></Suspense>
+              )} */}
+
+              {tab.content}
             </div>
           ))}
         </div>

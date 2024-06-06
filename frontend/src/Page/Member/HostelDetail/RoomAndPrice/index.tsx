@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { GetRoomListByHostelId } from "../../../../api/Room";
 import { NumberFormat } from "../../../../Utils/numberFormat";
+import { useNavigate } from "react-router-dom";
 
 interface RoomAndPriceProps {
   hostelId: number;
@@ -20,6 +21,11 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
     };
     fetchRooms();
   }, [hostelId]);
+
+  const navigate = useNavigate();
+  const handleButtonClick = (roomID: string) => {
+    navigate(`/room/detail/${roomID}`);
+  };
   return (
     <>
       <div className="flex flex-col items-start">
@@ -60,8 +66,18 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
                   {NumberFormat(room.roomFee)} /month
                 </td>
                 <td className="px-6 py-4 w-1/5">
-                  <button className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                  <button
+                    type="button"
+                    className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                    onClick={() => handleButtonClick(room.roomID.toString())}
+                  >
                     View detail
+                  </button>
+                  <button
+                    type="button"
+                    className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  >
+                    Visit house
                   </button>
                 </td>
               </tr>
