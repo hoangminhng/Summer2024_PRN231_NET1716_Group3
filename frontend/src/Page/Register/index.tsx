@@ -4,9 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { registerByEmailPassword } from "../../api/register";
 import ConfirmOtpModal from "../../Component/OtpModal";
 import { trackPromise } from 'react-promise-tracker';
+import { isValidEmail } from "../../Utils/emailFormat";
+import { LoadingSpinnerComponent } from "../../Component/LoadingSpinner";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
+
 
 const Register: React.FC = () => {
   // const { login } = useContext(UserContext);
+  const [isloading, setIsLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [isOwner, setIsOwner] = useState<boolean>(false);
@@ -15,27 +21,49 @@ const Register: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = () => {
-    let roleId: number = 1; //default is user
+    let roleId: number = 3; //default is user
+    if (email === "" || password === "" || name === "") {
+      toast.error("Please input all fields.", {
+        duration: 2000,
+      });
+      return;
+    }
+    if (!isValidEmail(email)) {
+      console.log("this email is invalid " + email);
+      toast.error("Invalid email format.", {
+        duration: 2000,
+      });
+      return;
+    }
+    if (password.length < 6 || password.length > 20) {
+      toast.error("Password length must be between 6 and 20 character.", {
+        duration: 2000,
+      });
+      return;
+    }
+
 
     const register = async () => {
-      if (email === "" || password === "" || name === "") {
-        toast.error("Please input all fields.", {
-          duration: 2000,
-        });
-      } else {
-        if (isOwner) {
-          roleId = 2;
-        }
-        // trackPromise(registerByEmailPassword(email, roleId, name, password)).then(toggleModal);
+
+      if (isOwner) {
+        roleId = 2;
+      }
+      // trackPromise(registerByEmailPassword(email, roleId, name, password)).then(toggleModal);
+      try {
+        setIsLoading(true);
         const response = await registerByEmailPassword(email, roleId, name, password);
         if (response != null) {
           toggleModal();
         }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
       }
 
 
+    }
 
-    };
     register();
   };
 
@@ -58,8 +86,12 @@ const Register: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="justify-center">
+    <div className="relative">
+      {isloading &&
+        <div className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50 ">
+          <Spin indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />} />
+        </div>}
+      <>  <div className="justify-center">
         <div className="w-3/5 mx-auto">
           <div
             className="w-full bg-[#f6f5ec] gap-4 mb-4 rounded-[12px] overflow-hidden"
@@ -163,18 +195,19 @@ const Register: React.FC = () => {
           </form>
         </div>
       </div >
-      {isModalOpen && (
-        <div
-          tabIndex={-1}
-          aria-hidden="true"
-          onMouseDown={handleOverlayClick}
-          className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50  "
-        // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
-        >
-          <ConfirmOtpModal email={email} />
-        </div>
-      )}
-    </>
+        {isModalOpen && (
+          <div
+            tabIndex={-1}
+            aria-hidden="true"
+            onMouseDown={handleOverlayClick}
+            className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50  "
+          // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+          >
+            <ConfirmOtpModal email={email} />
+          </div>
+        )}</>
+
+    </div>
   );
 };
 
