@@ -7,6 +7,7 @@ interface OwnerHostel {
   ownerName?: string;
   status?: number;
   numOfAvailableRoom?: number;
-  thumbnail?: string;
+  images: string[];
   numOfTotalRoom?: number;
+  hostelType: string,
 }

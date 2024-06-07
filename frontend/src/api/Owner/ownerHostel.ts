@@ -86,10 +86,12 @@ export const createHostel = async (
 export const uploadImage = async (
   token: string | undefined,
   hostelId: number,
-  file: any
-) : Promise<BaseApiResponse> => {
+  files: any
+): Promise<BaseApiResponse> => {
   const formData = new FormData();
-  formData.append("formFile", file.originFileObj);
+  files.forEach((file: { originFileObj: string | Blob }) => {
+    formData.append("imageFiles", file.originFileObj);
+  });
 
   try {
     const fetchData = await axios.post<BaseApiResponse>(
@@ -108,5 +110,22 @@ export const uploadImage = async (
   } catch (error) {
     console.error("Failed to upload image:", error);
     throw error;
+  }
+};
+
+export const getHostelType = async () => {
+  try {
+    const fetchData = await axios.get<HostelType[]>(
+      `${baseUrl}/api/hostels/types`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
   }
 };

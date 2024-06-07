@@ -3,6 +3,7 @@ interface CreateHostelRequest {
   hostelAddress: string;
   hostelDescription: string;
   accountID: number;
+  hostelType: string,
 }
 
 interface CreateHostelResponse {

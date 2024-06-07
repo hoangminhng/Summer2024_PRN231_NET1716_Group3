@@ -91,9 +91,15 @@ const RoomDetail: React.FC = () => {
           <Row gutter={16} justify={"space-around"}>
             <Col className="gutter-row" span={10}>
               <Flex vertical gap="large">
-                <Carousel autoplay>
+                <Carousel autoplay arrows effect="fade">
                   {roomDetailData?.roomImageUrls.map((imageUrl) => (
-                    <Image key={imageUrl} src={imageUrl} alt="Room Image" />
+                    <Image
+                      width={"100%"}
+                      height={350}
+                      key={imageUrl}
+                      src={imageUrl}
+                      alt="Room Image"
+                    />
                   ))}
                 </Carousel>
 

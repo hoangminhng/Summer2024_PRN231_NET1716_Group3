@@ -1,5 +1,6 @@
 import {
   Button,
+  Carousel,
   Descriptions,
   Flex,
   Image,
@@ -30,7 +31,8 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
   hostelId,
   onClose,
 }) => {
-  const [hostelDetailData, setHostelDetailData] = useState<OwnerHostel>();
+  const [hostelDetailData, setHostelDetailData] =
+    useState<OwnerHostel | null>();
   const [loading, setLoading] = useState(false);
   const [currentStatus, setCurrentStatus] = useState<number | undefined>(
     undefined
@@ -46,7 +48,7 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
         const response = await getOwnerHostelDetail(hostelId);
         setHostelDetailData(response);
         setCurrentStatus(response?.status);
-        // console.log(response);
+        console.log(response);
       } catch (error) {
         console.log(error);
       } finally {
@@ -56,8 +58,10 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
   };
 
   useEffect(() => {
-    fetchHostelDetail();
-  }, [hostelId]);
+    if (modalOpen) {
+      fetchHostelDetail();
+    }
+  }, [modalOpen, hostelId]);
 
   const handleStatusChange = (value: number) => {
     setStatusToChange(value);
@@ -91,8 +95,9 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
 
   return (
     <Modal
+      centered
       style={{ maxWidth: "90%" }}
-      width={800}
+      width={1000}
       title={
         <Title level={2} style={{ textAlign: "center", width: "100%" }}>
           Hostel Information
@@ -112,12 +117,29 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
         </div>
       ) : (
         <Flex vertical align="center">
-          <Image width={300} src={hostelDetailData?.thumbnail} />
-          <Descriptions bordered style={{ marginTop: 30 }}>
-            <Descriptions.Item label="Hostel Name" span={1}>
+          <Carousel
+            autoplay
+            effect="fade"
+            style={{ width: 300, marginBottom: 20 }}
+          >
+            {hostelDetailData?.images.map((imageUrl) => (
+              <Image
+                width={"100%"}
+                height={200}
+                key={imageUrl}
+                src={imageUrl}
+                alt="Hostel Image"
+              />
+            ))}
+          </Carousel>
+          <Descriptions bordered style={{ marginTop: 20 }}>
+            <Descriptions.Item label="Name" span={2}>
               {hostelDetailData?.hostelName}
             </Descriptions.Item>
-            <Descriptions.Item label="Hostel Address" span={2}>
+            <Descriptions.Item label="Type" span={1}>
+              {hostelDetailData?.hostelType}
+            </Descriptions.Item>
+            <Descriptions.Item label="Address" span={2}>
               {hostelDetailData?.hostelAddress}
             </Descriptions.Item>
             <Descriptions.Item label="Description" span={3}>
@@ -125,7 +147,8 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
             </Descriptions.Item>
             <Descriptions.Item label="Status" span={3}>
               <Select
-                value={statusToChange !== null ? statusToChange : currentStatus}
+                //value={statusToChange !== null ? statusToChange : currentStatus}
+                value={statusToChange ? statusToChange : currentStatus}
                 onChange={handleStatusChange}
                 style={{ width: 120 }}
                 options={[
@@ -155,10 +178,10 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
                 </Popconfirm>
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="Available Rooms" span={1}>
+            <Descriptions.Item label="Available Rooms" span={2}>
               {hostelDetailData?.numOfAvailableRoom}
             </Descriptions.Item>
-            <Descriptions.Item label="Total Rooms" span={1}>
+            <Descriptions.Item label="Total Rooms" span={2}>
               {hostelDetailData?.numOfTotalRoom}
             </Descriptions.Item>
           </Descriptions>
