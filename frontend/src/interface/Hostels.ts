@@ -9,4 +9,5 @@ interface Hostel {
   numOfAvailableRoom: number;
   thumbnail: string;
   numOfTotalRoom: number;
+  hostelServices: HostelService[];
 }

@@ -14,7 +14,7 @@ export const GetHostelDetail = async (hostelID: string | undefined) => {
   try {
     const response = await axios.get(`${baseUrl}/api/hostels/${hostelID}`);
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
   }
 };

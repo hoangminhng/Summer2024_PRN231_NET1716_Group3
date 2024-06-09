@@ -1,13 +1,7 @@
 import { useParams } from "react-router-dom";
-import {
-  useEffect,
-  useRef,
-  useState,
-  Suspense,
-  lazy,
-  useCallback,
-} from "react";
+import { useEffect, useRef, useState, Suspense, lazy } from "react";
 import { GetHostelDetail } from "../../../api/Hostels";
+import HostelFacilites from "./HostelFacilites";
 
 const HostelOverview = lazy(() => import("./HostelOverview"));
 const RoomAndPrice = lazy(() => import("./RoomAndPrice"));
@@ -16,12 +10,6 @@ interface TabProps {
   id: string;
   label: string;
   content: React.ReactNode;
-}
-
-interface Hostel {
-  hostelName: string;
-  hostelAddress: string;
-  hostelDescription: string;
 }
 
 const MemberHostelDetail: React.FC = () => {
@@ -53,49 +41,50 @@ const MemberHostelDetail: React.FC = () => {
     tabRefs.current[tabId]?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleTabLoaded = useCallback(() => {
-    setActiveTabIndex((prevIndex) => Math.min(prevIndex + 1, tabs.length - 1));
-  }, []);
-
   const tabs: TabProps[] = [
     {
       id: "overview",
       label: "Overview",
       content: (
-        <HostelOverview
-          hostelId={parseInt(hostelID ?? "", 10)}
-          hostelName={hostel?.hostelName ?? ""}
-          hostelAddress={hostel?.hostelAddress ?? ""}
-          hostelDescription={hostel?.hostelDescription ?? ""}
-          onTabLoaded={handleTabLoaded}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <HostelOverview
+            hostelId={parseInt(hostelID ?? "", 10)}
+            hostelName={hostel?.hostelName ?? ""}
+            hostelAddress={hostel?.hostelAddress ?? ""}
+            hostelDescription={hostel?.hostelDescription ?? ""}
+          />
+        </Suspense>
       ),
     },
     {
       id: "infomation",
       label: "Apartment info & price",
       content: (
-        <RoomAndPrice
-          hostelId={parseInt(hostelID ?? "", 10)}
-          onTabLoaded={handleTabLoaded}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <RoomAndPrice hostelId={parseInt(hostelID ?? "", 10)} />
+        </Suspense>
       ),
     },
     {
       id: "facilities",
       label: "Facilities & Policies",
-      content: <p>This is the Settings tab's associated content.</p>,
+      content: (
+        <HostelFacilites
+          hostelName={hostel?.hostelName ?? ""}
+          hostelSerivces={hostel?.hostelServices ?? []}
+        />
+      ),
     },
-    {
-      id: "rules",
-      label: "House rules",
-      content: <p>This is the Contacts tab's associated content.</p>,
-    },
-    {
-      id: "notes",
-      label: "The fine print",
-      content: <p>This is the Contacts tab's associated content.</p>,
-    },
+    // {
+    //   id: "rules",
+    //   label: "House rules",
+    //   content: <p>This is the Contacts tab's associated content.</p>,
+    // },
+    // {
+    //   id: "notes",
+    //   label: "The fine print",
+    //   content: <p>This is the Contacts tab's associated content.</p>,
+    // },
   ];
 
   return (
@@ -132,17 +121,17 @@ const MemberHostelDetail: React.FC = () => {
               key={tab.id}
               ref={(el) => (tabRefs.current[tab.id] = el)}
               className={`dark:bg-gray-800 ${
-                activeTabIndex === index ? "block" : "hidden"
+                activeTabIndex === index ? "block" : ""
               }`}
               id={tab.id}
               role="tabpanel"
               aria-labelledby={`${tab.id}-tab`}
             >
-              {index <= activeTabIndex && (
-                <Suspense fallback={<div>Loading...</div>}>
-                  {tab.content}
-                </Suspense>
-              )}
+              {/* {index <= activeTabIndex && (
+                <Suspense fallback={<div>Loading...</div>}></Suspense>
+              )} */}
+
+              {tab.content}
             </div>
           ))}
         </div>
