@@ -28,7 +28,7 @@ import {
 const { Text } = Typography;
 
 const getStatusTag = (status: number) => {
-  return status === 1 ? (
+  return status === 0 ? (
     <Tag color="green">Active</Tag>
   ) : (
     <Tag color="grey">Inactive</Tag>
