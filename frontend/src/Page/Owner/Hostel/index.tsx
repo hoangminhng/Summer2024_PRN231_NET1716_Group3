@@ -105,7 +105,7 @@ const Hostel: React.FC = () => {
               <List.Item>
                 <Card>
                   <div style={{ display: "flex", position: "relative" }}>
-                    <div style={{ flex: "0 0 250px", overflow: "hidden" }}>
+                    <div style={{ flex: "0 0 200px", overflow: "hidden" }}>
                       <img
                         alt={item.hostelName}
                         style={{
@@ -113,7 +113,7 @@ const Hostel: React.FC = () => {
                           width: "100%",
                           borderRadius: 0,
                         }}
-                        src={item.thumbnail}
+                        src={item.images[0]}
                       />
                     </div>
                     <div
@@ -130,8 +130,8 @@ const Hostel: React.FC = () => {
                         {item.hostelAddress}
                       </Text>
                       <Text>
-                        <Text strong>Description: </Text>
-                        {item.hostelDescription}
+                        <Text strong>Type: </Text>
+                        {item.hostelType}
                       </Text>
                       <Text>
                         <Text strong>Status: </Text>
