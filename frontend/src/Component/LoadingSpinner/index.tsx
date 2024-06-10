@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-import { usePromiseTracker } from "react-promise-tracker";
 import { ThreeDots } from 'react-loader-spinner';
 
 export const LoadingSpinnerComponent: React.FunctionComponent = () => {
-    const { promiseInProgress } = usePromiseTracker();
 
     return (
-        promiseInProgress && (
-            <div className="spinner">
+        (
+            <div className="spinner w-full h-[100vh] flex justify-center items-center bg-opacity-0">
                 <ThreeDots
-                    visible={true}
+                    visible={false}
                     height="80"
                     width="80"
                     color="#4fa94d"
@@ -18,6 +16,8 @@ export const LoadingSpinnerComponent: React.FunctionComponent = () => {
                     wrapperStyle={{}}
                     wrapperClass="" />
             </div>
+
+
         )
     );
 };

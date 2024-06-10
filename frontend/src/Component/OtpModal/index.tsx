@@ -14,8 +14,6 @@ const ConfirmOtpModal: React.FC<ConfirmOtpModalProps> = ({ email }) => {
     const navigate = useNavigate();
     const [otpToken, setOtp] = useState<string>("");
     const onChange: GetProp<typeof Input.OTP, 'onChange'> = (otp) => {
-        console.log('onChange:', otp);
-        console.log('email pass to modal:', email);
         setOtp(otp);
     };
     const handleSubmit = () => {

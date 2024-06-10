@@ -24,6 +24,7 @@ export const sendOtpForgetPassword = async (email: string) => {
     );
     return response;
   } catch (error: any) {
+    console.log(error);
     toast.error(error.response.data.message, { duration: 2000 });
   }
 };

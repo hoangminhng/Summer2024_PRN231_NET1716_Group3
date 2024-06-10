@@ -13,5 +13,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       containerStyle={{ marginTop: "80px" }}
     />
     <App />
+    {/* <LoadingSpinnerComponent /> */}
   </UserContextProvider>
 );
