@@ -111,7 +111,15 @@ const Room: React.FC = () => {
                       </div>
                     }
                   >
-                    <Title level={2}>{item.roomName}</Title>
+                    <div
+                      style={{
+                        height: 80,
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Title level={2}>{item.roomName}</Title>
+                    </div>
                     <div
                       style={{
                         display: "flex",
