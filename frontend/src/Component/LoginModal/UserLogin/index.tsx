@@ -37,6 +37,9 @@ const UserLogin: React.FC = () => {
           if (user.roleId === 2) {
             navigate("/owner");
           }
+          if(user.roleId === 1){
+            navigate("/admin");
+          }
           // else if (user.roleId === 3) {
           //   navigate("/member");
           // }
