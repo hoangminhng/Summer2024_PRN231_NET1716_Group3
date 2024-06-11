@@ -1,44 +1,20 @@
 import {
-  Typography,
   Button,
   Menu,
   MenuHandler,
   MenuList,
-  MenuItem,
   Avatar,
 } from "@material-tailwind/react";
 import React, { useContext, useState } from "react";
 import { UserContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
 
-import {
-  UserCircleIcon,
-  ChevronDownIcon,
-  Cog6ToothIcon,
-  InboxArrowDownIcon,
-  LifebuoyIcon,
-  PowerIcon,
-} from "@heroicons/react/24/solid";
+import { ChevronDownIcon, PowerIcon } from "@heroicons/react/24/solid";
 
 const profileMenuItems = [
   {
-    label: "My Profile",
-    icon: UserCircleIcon,
-  },
-  {
-    label: "Edit Profile",
-    icon: Cog6ToothIcon,
-  },
-  {
-    label: "Inbox",
-    icon: InboxArrowDownIcon,
-  },
-  {
-    label: "Help",
-    icon: LifebuoyIcon,
-  },
-  {
     label: "Sign Out",
+    path: "signout",
     icon: PowerIcon,
   },
 ];
@@ -55,21 +31,6 @@ export function AvatarDropdown() {
     if (path === "signout") {
       logout();
       navigate("/");
-    } else {
-      switch (path) {
-        case "history":
-          navigate("/history");
-          break;
-        case "profile":
-          navigate("/profile");
-          break;
-        case "realEstate":
-          navigate("/memberReas");
-          break;
-        case "transaction":
-          navigate("/transaction");
-          break;
-      }
     }
     closeMenu();
   };
@@ -108,37 +69,26 @@ export function AvatarDropdown() {
         onPointerEnterCapture={() => {}}
         onPointerLeaveCapture={() => {}}
       >
-        {profileMenuItems.map(({ label, icon }, key) => {
+        {profileMenuItems.map(({ label, icon, path }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
           return (
-            <MenuItem
+            <div
               key={label}
-              onClick={closeMenu}
-              className={`flex items-center gap-2 rounded ${
+              onClick={() => handleClick(path)}
+              className={`flex items-center gap-2 rounded p-3 text-sm text-gray-700 dark:text-gray-400${
                 isLastItem
                   ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
                   : ""
               }`}
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
             >
               {React.createElement(icon, {
                 className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
                 strokeWidth: 2,
               })}
-              <Typography
-                as="span"
-                variant="small"
-                className="font-normal"
-                color={isLastItem ? "red" : "inherit"}
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
-              >
+              <p className="font-normal" color={isLastItem ? "red" : "inherit"}>
                 {label}
-              </Typography>
-            </MenuItem>
+              </p>
+            </div>
           );
         })}
       </MenuList>
