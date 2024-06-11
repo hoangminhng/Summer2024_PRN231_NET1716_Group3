@@ -14,7 +14,7 @@ import {
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../../../context/userContext";
-import { NumberFormat } from "../../../../Utils/numberFormatVND";
+import { NumberFormat } from "../../../../Utils/numberFormat";
 import { DateFormat } from "../../../../Utils/dateFormat";
 
 const AdminMemberShipDetail: React.FC = () => {

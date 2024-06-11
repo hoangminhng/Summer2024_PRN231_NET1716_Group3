@@ -38,10 +38,28 @@ export const getStatisticPackage = async (token: string) => {
   }
 };
 
-export const getStatisticProfit = async (token: string) => {
+export const getStatisticProfit = async (token: string, year: number) => {
   try {
     const fetchData = await axios.get<TypeMonth[]>(
-      `${baseUrl}/api/admin/dashboard/typemonth`,
+      `${baseUrl}/api/admin/dashboard/typemonth?year=${year}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
+export const getStatisticAccount = async (token: string, year: number) => {
+  try {
+    const fetchData = await axios.get<AccountMonth[]>(
+      `${baseUrl}/api/admin/dashboard/accountmonth?year=${year}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -27,7 +27,7 @@ import AdminTransaction from "./Page/Admin/AdminTransaction";
 import RoomDetail from "./Page/Owner/RoomDetail";
 import MemberRoomDetails from "./Page/Member/RoomDetail";
 import ForgetPassword from "./Page/ForgetPassword";
-import React from "react";
+import OwnerViewContract from "./Page/Owner/ViewContract";
 
 const roles = {
   Admin: 1,
@@ -69,6 +69,7 @@ function App() {
           </Route>
 
           <Route path="contract/create" element={<OwnerContractCreate />} />
+          <Route path="/contracts" element={<OwnerViewContract />} />
 
           <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
             <Route path="/admin" element={<AdminLayout />}>

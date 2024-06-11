@@ -3,6 +3,7 @@ import { NumberFormat } from "../../../../Utils/numberFormat";
 import {
   DollarOutlined,
   UserOutlined,
+  HomeOutlined
 } from "@ant-design/icons";
 import { useState, useEffect , useContext} from "react";
 import {
@@ -11,9 +12,10 @@ import {
 import { UserContext } from "../../../../context/userContext";
 
 const gridStyle: React.CSSProperties = {
-  width: "50%",
+  width: "30%",
   textAlign: "center",
-  //   borderStyle: "none",
+  margin: "20px",
+  borderRadius: "20px"
 };
 
 const Summary: React.FC = () => {
@@ -86,6 +88,30 @@ const Summary: React.FC = () => {
                 }}
               >
                 <UserOutlined />
+              </span>
+            }
+          />
+        </Card.Grid>
+        <Card.Grid style={gridStyle} hoverable={false}>
+          <Statistic
+            title={
+              <span
+                style={{
+                  color: "#bdc3c9",
+                  fontSize: "30px",
+                  fontWeight: "bold",
+                }}
+              >
+                HOSTELS
+              </span>
+            }
+            value={totalData?.totalHostel || 0}
+            valueStyle={{ color: "#001529", fontWeight: "bold" }}
+            prefix={
+              <span
+                style={{ color: "blueviolet", fontSize: "30px", fontWeight: "bold" }}
+              >
+                <HomeOutlined />
               </span>
             }
           />

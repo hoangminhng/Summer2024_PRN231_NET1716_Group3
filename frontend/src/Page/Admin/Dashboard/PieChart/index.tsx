@@ -47,6 +47,16 @@ const PropertiesPie: React.FC<{ style?: React.CSSProperties }> = ({ style }) => 
 
   return(
   <div style={{ height: '100%', ...style }}>
+    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", margin: "30px" }}>
+        <div>
+          <h2 style={{ fontSize: "20px", fontWeight: "bold", textTransform: "uppercase" }}>
+          Package statistics chart
+          </h2>
+          <p style={{ fontFamily: "cursive" }}>
+          Statistical chart of number of members for each package.
+          </p>
+        </div> 
+      </div>
       <Pie {...config} />;
     </div>
   )

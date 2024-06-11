@@ -1,19 +1,19 @@
 import { Line } from "@ant-design/plots";
 import { Select } from "antd";
 import { useState, useEffect, useContext } from "react";
-import { getStatisticProfit } from "../../../../api/Admin/adminDashboard";
+import { getStatisticAccount } from "../../../../api/Admin/adminDashboard";
 import { UserContext } from "../../../../context/userContext";
 
-const DemoLine: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
+const AccountLine: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const { token } = useContext(UserContext);
-  const [monthData, setMonthData] = useState<TypeMonth[]>([]);
+  const [monthData, setMonthData] = useState<AccountMonth[]>([]);
   const [yearValue, setYear] = useState<number>();
 
   const handleChange = async (value: number) => {
     setYear(value);
     try {
       if (token) {
-        const data: TypeMonth[] | undefined = await getStatisticProfit(token, value);
+        const data: AccountMonth[] | undefined = await getStatisticAccount(token, value);
         setMonthData(data || []);
       }
     } catch (error) {
@@ -27,7 +27,7 @@ const DemoLine: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         if (token) {
           const initialYear = 2024;
           setYear(initialYear);
-          const data: TypeMonth[] | undefined = await getStatisticProfit(token, initialYear);
+          const data: AccountMonth[] | undefined = await getStatisticAccount(token, initialYear);
           setMonthData(data || []);
         }
       } catch (error) {
@@ -41,7 +41,7 @@ const DemoLine: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const config = {
     data: monthData,
     xField: "month",
-    yField: "formattedNumberOfProfit",
+    yField: "numberOfAccount",
     label: {},
     point: {
       size: 5,
@@ -54,10 +54,10 @@ const DemoLine: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", margin: "30px" }}>
         <div>
           <h2 style={{ fontSize: "20px", fontWeight: "bold", textTransform: "uppercase" }}>
-            Statistics table of the number of membership
+            Statistics table of the number of account
           </h2>
           <p style={{ fontFamily: "cursive" }}>
-            Statistics table of the number of membership packages sold each year.
+            Statistics table of the number of accounts in flatform each year.
           </p>
         </div>
         <div>
@@ -81,4 +81,4 @@ const DemoLine: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   );
 };
 
-export default DemoLine;
+export default AccountLine;

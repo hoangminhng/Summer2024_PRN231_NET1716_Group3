@@ -81,9 +81,9 @@ const AdminAccounts: React.FC = () => {
     },
     {
       title: "",
-      dataIndex: "accountID",
-      render: (accountID: number) => (
-        <a onClick={() => navigate(`/admin/accounts/detail/${accountID}`)}>View details</a>
+      dataIndex: "operation",
+      render: (_: any, record: Account) => (
+        <a onClick={() => navigate(`/admin/accounts/detail/${record.accountId}`)}>View details</a>
       ),
       width: "10%",
     },

@@ -129,3 +129,21 @@ export const getHostelType = async () => {
     console.log("Error: " + error);
   }
 };
+
+export const getHostelOwnerContract = async (ownerId: number, token: string) => {
+  try {
+    const fetchData = await axios.get<HostelOwnerContract[]>(
+      `${baseUrl}/api/owner/${ownerId}/contract/hostels`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
