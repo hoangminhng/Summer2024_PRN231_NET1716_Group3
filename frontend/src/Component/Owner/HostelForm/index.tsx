@@ -1,9 +1,23 @@
-import { Button, Form, Input, Modal, Spin, Upload, notification } from "antd";
-import { useContext, useState } from "react";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Spin,
+  Upload,
+  notification,
+} from "antd";
+import { useContext, useEffect, useState } from "react";
 import { LoadingOutlined, UploadOutlined } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import { UserContext } from "../../../context/userContext";
-import { createHostel, uploadImage } from "../../../api/Owner/ownerHostel";
+import {
+  createHostel,
+  getHostelType,
+  uploadImage,
+} from "../../../api/Owner/ownerHostel";
+import { Option } from "antd/es/mentions";
 
 const formItemLayout = {
   labelCol: {
@@ -38,7 +52,22 @@ const HostelForm: React.FC<HostelFormProps> = ({
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [fileList, setFileList] = useState<any[]>([]);
+  const [hostelTypes, setHostelTypes] = useState<HostelType[]>([]);
   const { userId, token } = useContext(UserContext);
+
+  useEffect(() => {
+    const fetchHostelTypes = async () => {
+      try {
+        const response = await getHostelType();
+        if (response) {
+          setHostelTypes(response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch hostel types:", error);
+      }
+    };
+    fetchHostelTypes();
+  }, []);
 
   type NotificationType = "success" | "info" | "warning" | "error";
   const [api, contextHolder] = notification.useNotification();
@@ -65,7 +94,7 @@ const HostelForm: React.FC<HostelFormProps> = ({
     setLoading(true);
     console.log("Loading: ", loading);
     console.log("Received values:", values);
-    const { hostelName, hostelAddress, hostelDescription } = values;
+    const { hostelName, hostelAddress, hostelDescription, hostelType } = values;
 
     if (userId !== undefined) {
       const hostelPayload: CreateHostelRequest = {
@@ -73,7 +102,10 @@ const HostelForm: React.FC<HostelFormProps> = ({
         hostelAddress: hostelAddress,
         hostelDescription: hostelDescription,
         accountID: userId,
+        hostelType: hostelType,
       };
+
+      console.log("Payload", hostelPayload);
 
       try {
         const response = await createHostel(token, hostelPayload);
@@ -85,7 +117,7 @@ const HostelForm: React.FC<HostelFormProps> = ({
             const uploadResponse = await uploadImage(
               token,
               newHostelId,
-              fileList[0]
+              fileList
             );
 
             console.log("Upload response: ", uploadResponse);
@@ -180,13 +212,29 @@ const HostelForm: React.FC<HostelFormProps> = ({
         </Form.Item>
 
         <Form.Item
+          name="hostelType"
+          label="Hostel Type"
+          rules={[{ required: true, message: "Please select hostel type!" }]}
+        >
+          <Select placeholder="Select hostel type">
+            {hostelTypes.map((type) => (
+              <Option key={type.key} value={type.key}>
+                {type.value}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        <Form.Item
           name="image"
           label="Upload"
           valuePropName="fileList"
           getValueFromEvent={normFile}
+          required
         >
           <Upload
-            maxCount={1}
+            maxCount={3}
+            multiple
             beforeUpload={() => false}
             fileList={fileList}
             onChange={({ fileList }) => setFileList(fileList)}

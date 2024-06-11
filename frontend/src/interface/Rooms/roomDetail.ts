@@ -4,7 +4,7 @@ interface RoomDetail {
   description: number;
   roomImageUrls: string[];
   renterName: string;
-  roomServices: roomServices[];
+  roomServices: RoomService[];
   roomID: number;
   roomName: string;
   capacity: number;
