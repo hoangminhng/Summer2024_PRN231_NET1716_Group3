@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { GetRoomListByHostelId } from "../../../../api/Room";
 import { NumberFormat } from "../../../../Utils/numberFormat";
 import { useNavigate } from "react-router-dom";
+import VisitHouseModal from "./VisitHouseModal";
+import LoginModal from "../../../../Component/LoginModal";
 
 interface RoomAndPriceProps {
   hostelId: number;
@@ -9,6 +11,42 @@ interface RoomAndPriceProps {
 
 const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
   const [roomList, setRoomList] = useState<ListRooms[] | undefined>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoginModal, setIsLoginModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<ListRooms | null>(null);
+
+  const storageUserId = localStorage.getItem("userId");
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const toggleLoginModal = () => {
+    setIsLoginModal(!isLoginModal);
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      // If the click occurs on the overlay (not on the modal content), close the modal
+      toggleModal();
+    }
+  };
+
+  const handleLoginModalOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      // If the click occurs on the overlay (not on the modal content), close the modal
+      toggleLoginModal();
+    }
+  };
+
+  const handleVisitHouseClick = (room: ListRooms) => {
+    if (storageUserId) {
+      setSelectedRoom(room);
+      toggleModal();
+    } else {
+      toggleLoginModal();
+    }
+  };
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -74,6 +112,7 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
                     View detail
                   </button>
                   <button
+                    onClick={() => handleVisitHouseClick(room)}
                     type="button"
                     className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                   >
@@ -84,6 +123,27 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
             ))}
           </tbody>
         </table>
+
+        {isModalOpen && (
+          <div
+            tabIndex={-1}
+            aria-hidden="true"
+            onMouseDown={handleOverlayClick}
+            className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50"
+          >
+            <VisitHouseModal room={selectedRoom} closeModal={toggleModal} />
+          </div>
+        )}
+        {isLoginModal && (
+          <div
+            tabIndex={-1}
+            aria-hidden="true"
+            onMouseDown={handleLoginModalOverlayClick}
+            className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50"
+          >
+            <LoginModal closeModal={toggleLoginModal} />
+          </div>
+        )}
       </div>
     </>
   );
