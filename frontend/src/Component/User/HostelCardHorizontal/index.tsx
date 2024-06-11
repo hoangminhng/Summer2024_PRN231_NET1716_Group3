@@ -4,7 +4,9 @@ import { GetHostelCard } from "../../../api/Hostels";
 import dayjs from "dayjs";
 
 const CardHorizontal: React.FC = () => {
-  const [hostelList, setHostelList] = useState<Hostel[] | undefined>([]);
+  const [hostelList, setHostelList] = useState<Hostel[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const hostelsPerPage = 10;
   const navigate = useNavigate();
 
   const fetchHostels = async () => {
@@ -20,12 +22,25 @@ const CardHorizontal: React.FC = () => {
     }
   }, []);
 
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const indexOfLastHostel = currentPage * hostelsPerPage;
+  const indexOfFirstHostel = indexOfLastHostel - hostelsPerPage;
+  const currentHostels = hostelList?.slice(
+    indexOfFirstHostel,
+    indexOfLastHostel
+  );
+  const totalPages = Math.ceil(hostelList.length / hostelsPerPage);
+
   const handleCardClick = (hostelID: string) => {
     navigate(`/hostel/detail/${hostelID}`);
   };
   return (
     <>
-      {hostelList?.map((hostel) => (
+      {currentHostels?.map((hostel) => (
         <div
           className="flex flex-col items-start bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 mb-4"
           onClick={() => handleCardClick(hostel.hostelID.toString())}
@@ -93,6 +108,36 @@ const CardHorizontal: React.FC = () => {
           </div>
         </div>
       ))}
+
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => handlePageChange(index + 1)}
+            className={`px-4 py-2 mx-1 text-sm rounded-md ${
+              currentPage === index + 1
+                ? "bg-slate-950 text-white"
+                : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+        >
+          Next
+        </button>
+      </div>
     </>
   );
 };

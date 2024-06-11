@@ -1,5 +1,4 @@
 import { useState } from "react";
-import AdminLogin from "./AdminLogin";
 import UserLogin from "./UserLogin";
 
 interface TabProps {
@@ -10,11 +9,6 @@ interface TabProps {
 
 const tabs: TabProps[] = [
   {
-    id: "profile",
-    label: "Admin Login",
-    content: <AdminLogin />,
-  },
-  {
     id: "dashboard",
     label: "User Login",
     content: <UserLogin />,
@@ -22,7 +16,7 @@ const tabs: TabProps[] = [
 ];
 
 const LoginModal: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>(tabs[0].id);
+  const [activeTab] = useState<string>(tabs[0].id);
 
   return (
     <>
@@ -34,7 +28,7 @@ const LoginModal: React.FC = () => {
             </h3>
           </div>
           <div className="p-4 md:p-5">
-            <ul
+            {/* <ul
               className="flex flex-wrap items-center justify-center -mb-px text-sm font-medium text-center bg-white px-4 w-full"
               role="tablist"
             >
@@ -58,7 +52,7 @@ const LoginModal: React.FC = () => {
                   </button>
                 </li>
               ))}
-            </ul>
+            </ul> */}
             <div id="default-tab-content" className="p-4 md:p-5">
               {tabs.map((tab) => (
                 <div
