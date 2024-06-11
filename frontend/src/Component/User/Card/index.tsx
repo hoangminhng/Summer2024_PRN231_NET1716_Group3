@@ -48,7 +48,7 @@ const HouseCard: React.FC = () => {
           <div className="relative w-full bg-white border border-gray-200 rounded-3xl dark:bg-gray-800 dark:border-gray-700 hover:scale-up">
             <img
               className="w-full h-64 object-cover object-center p-2 rounded-[36px]"
-              src={hostel.thumbnail}
+              src={hostel.images[0]}
             />
             <div className="p-4">
               <div className="flex items-center">

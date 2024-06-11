@@ -5,14 +5,24 @@ import {
   InputNumber,
   Modal,
   Spin,
+  Steps,
   Upload,
   notification,
+  Flex,
+  Select,
+  Space,
 } from "antd";
-import { useContext, useState } from "react";
-import { LoadingOutlined, UploadOutlined } from "@ant-design/icons";
+import { useContext, useEffect, useState } from "react";
+import {
+  LoadingOutlined,
+  UploadOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import { UserContext } from "../../../context/userContext";
 import { createRoom, uploadImage } from "../../../api/Owner/ownerRoom";
+import { getTypeServices } from "../../../api/typeService";
 
 const formItemLayout = {
   labelCol: {
@@ -40,6 +50,17 @@ interface RoomFormProps {
   fetchRooms: () => void;
 }
 
+const steps = [
+  {
+    title: "Room info",
+    content: "First-content",
+  },
+  {
+    title: "Room service",
+    content: "Second-content",
+  },
+];
+
 const RoomForm: React.FC<RoomFormProps> = ({
   modalOpen,
   setModalOpen,
@@ -50,6 +71,48 @@ const RoomForm: React.FC<RoomFormProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [fileList, setFileList] = useState<any[]>([]);
   const { userId, token } = useContext(UserContext);
+  const [typeServices, setTypeServices] = useState<TypeService[]>([]);
+  const [current, setCurrent] = useState(0);
+  const [formData, setFormData] = useState<any>({});
+  const [selectedServices, setSelectedServices] = useState<number[]>([]);
+  const [isCreateButtonEnabled, setIsCreateButtonEnabled] = useState(false);
+
+  useEffect(() => {
+    setIsCreateButtonEnabled(selectedServices.length > 0);
+  }, [selectedServices]);
+
+  useEffect(() => {
+    if (current === 1) {
+      const fetchData = async () => {
+        try {
+          const response = await getTypeServices();
+          if (response) {
+            setTypeServices(response);
+          }
+        } catch (error) {
+          console.error("Failed to fetch type services:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [current]);
+
+  const next = async () => {
+    try {
+      const values = await form.validateFields();
+      setFormData((prev: any) => ({ ...prev, ...values }));
+      setCurrent(current + 1);
+    } catch (error) {
+      console.log("Validation failed:", error);
+    }
+  };
+
+  const prev = () => {
+    setCurrent(current - 1);
+  };
+
+  const items = steps.map((item) => ({ key: item.title, title: item.title }));
 
   type NotificationType = "success" | "info" | "warning" | "error";
   const [api, contextHolder] = notification.useNotification();
@@ -62,7 +125,18 @@ const RoomForm: React.FC<RoomFormProps> = ({
 
   const handleCancel = () => {
     setModalOpen(false);
+    setCurrent(0);
     form.resetFields();
+  };
+
+  const handleSelectService = (value: number, selected: boolean) => {
+    if (selected) {
+      setSelectedServices((prev) => [...prev, value]);
+    } else {
+      setSelectedServices((prev) => prev.filter((id) => id !== value));
+    }
+
+    console.log(selectedServices);
   };
 
   const onFinish = async (values: any) => {
@@ -74,7 +148,17 @@ const RoomForm: React.FC<RoomFormProps> = ({
     }
     setLoading(true);
     console.log("Received values:", values);
-    const { roomName, capacity, length, width, description, roomFee } = values;
+
+    const mergedValues = { ...formData, ...values };
+    const {
+      roomName,
+      capacity,
+      length,
+      width,
+      description,
+      roomFee,
+      services,
+    } = mergedValues;
 
     if (userId !== undefined && hostelId !== undefined) {
       const roomPayload: CreateRoomRequest = {
@@ -85,7 +169,13 @@ const RoomForm: React.FC<RoomFormProps> = ({
         description,
         roomFee,
         hostelID: parseInt(hostelId),
+        roomServices: services.map((service: any) => ({
+          typeServiceID: service.typeService,
+          price: service.price,
+        })),
       };
+
+      console.log("Room payload: ", roomPayload);
 
       try {
         const response = await createRoom(token, roomPayload);
@@ -118,42 +208,31 @@ const RoomForm: React.FC<RoomFormProps> = ({
     }
   };
 
+  const handleClearServices = () => {
+    setSelectedServices([]);
+    setIsCreateButtonEnabled(false);
+    form.setFieldsValue({ services: [] });
+  };
+
   return (
     <Modal
       width={1000}
       title={
         <Title level={2} style={{ textAlign: "center", marginBottom: 40 }}>
-          Room Information | Hostel {hostelId}
+          Room Information
         </Title>
       }
       centered
       open={modalOpen}
       onCancel={handleCancel}
-      footer={[
-        <Button key="back" onClick={handleCancel} size="large">
-          Cancel
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          size="large"
-          onClick={() => {
-            setLoading(true);
-            form
-              .validateFields()
-              .then((values) => {
-                onFinish(values);
-              })
-              .catch((info) => {
-                console.log("Validate Failed:", info);
-                setLoading(false);
-              });
-          }}
-        >
-          Create
-        </Button>,
-      ]}
+      footer={[]}
     >
+      <Steps
+        current={current}
+        items={items}
+        style={{ paddingLeft: 50, paddingRight: 50 }}
+      />
+
       <Form
         form={form}
         {...formItemLayout}
@@ -161,73 +240,220 @@ const RoomForm: React.FC<RoomFormProps> = ({
         initialValues={{ remember: true }}
         onFinish={onFinish}
       >
-        <Form.Item
-          name="roomName"
-          label="Room Name"
-          rules={[{ required: true, message: "Please input room name!" }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          name="capacity"
-          label="Capacity"
-          rules={[{ required: true, message: "Please input capacity!" }]}
-        >
-          <InputNumber min={1} max={5} />
-        </Form.Item>
-
-        <Form.Item
-          name="length"
-          label="Length (in meters)"
-          rules={[{ required: true, message: "Please input length!" }]}
-        >
-          <InputNumber min={1} />
-        </Form.Item>
-
-        <Form.Item
-          name="width"
-          label="Width (in meters)"
-          rules={[{ required: true, message: "Please input width!" }]}
-        >
-          <InputNumber min={1} />
-        </Form.Item>
-
-        <Form.Item
-          name="description"
-          label="Room Description"
-          rules={[
-            { required: true, message: "Please input room description!" },
-          ]}
-        >
-          <Input.TextArea showCount maxLength={100} />
-        </Form.Item>
-
-        <Form.Item
-          name="roomFee"
-          label="Room Fee"
-          rules={[{ required: true, message: "Please input room fee!" }]}
-        >
-          <InputNumber min={0} />
-        </Form.Item>
-
-        <Form.Item
-          name="image"
-          label="Upload"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-        >
-          <Upload
-            maxCount={3}
-            multiple
-            beforeUpload={() => false}
-            fileList={fileList}
-            onChange={({ fileList }) => setFileList(fileList)}
+        {current === 0 && (
+          <div
+            style={{
+              marginTop: 50,
+            }}
           >
-            <Button icon={<UploadOutlined />}>Click to Upload</Button>
-          </Upload>
-        </Form.Item>
+            <Form.Item
+              name="roomName"
+              label="Room Name"
+              rules={[{ required: true, message: "Please input room name!" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="capacity"
+              label="Capacity"
+              rules={[{ required: true, message: "Please input capacity!" }]}
+            >
+              <InputNumber min={1} max={5} />
+            </Form.Item>
+
+            <Form.Item
+              name="length"
+              label="Length (in meters)"
+              rules={[{ required: true, message: "Please input length!" }]}
+            >
+              <InputNumber min={1} />
+            </Form.Item>
+
+            <Form.Item
+              name="width"
+              label="Width (in meters)"
+              rules={[{ required: true, message: "Please input width!" }]}
+            >
+              <InputNumber min={1} />
+            </Form.Item>
+
+            <Form.Item
+              name="description"
+              label="Room Description"
+              rules={[
+                { required: true, message: "Please input room description!" },
+              ]}
+            >
+              <Input.TextArea showCount maxLength={100} />
+            </Form.Item>
+
+            <Form.Item
+              name="roomFee"
+              label="Room Fee"
+              rules={[{ required: true, message: "Please input room fee!" }]}
+            >
+              <InputNumber min={0} />
+            </Form.Item>
+
+            <Form.Item
+              name="image"
+              label="Upload"
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
+              required
+            >
+              <Upload
+                maxCount={3}
+                multiple
+                beforeUpload={() => false}
+                fileList={fileList}
+                onChange={({ fileList }) => setFileList(fileList)}
+              >
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
+            </Form.Item>
+          </div>
+        )}
+
+        {current === 1 && (
+          <div
+            style={{
+              marginTop: 50,
+            }}
+          >
+            <Title level={3} style={{ marginBottom: 10 }}>
+              Room Services
+            </Title>
+            <Form.List name="services">
+              {(fields, { add }) => (
+                <>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <Space
+                      key={key}
+                      style={{
+                        display: "flex",
+                        marginBottom: 8,
+                      }}
+                      align="baseline"
+                    >
+                      <Form.Item
+                        {...restField}
+                        name={[name, "typeService"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select a service!",
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Select service"
+                          style={{ width: 200 }}
+                          onSelect={(value) => handleSelectService(value, true)}
+                          onDeselect={(value) =>
+                            handleSelectService(value, false)
+                          }
+                        >
+                          {typeServices.map((service) => (
+                            <Select.Option
+                              key={service.typeServiceID}
+                              value={service.typeServiceID}
+                              disabled={selectedServices.includes(
+                                service.typeServiceID
+                              )}
+                            >
+                              {service.typeName}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "price"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input the price!",
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          placeholder="Price"
+                          min={0}
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Space>
+                  ))}
+                  <Form.Item>
+                    <Button
+                      style={{ width: "auto", marginRight: 20 }}
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Add
+                    </Button>
+                    <Button
+                      style={{ width: "auto" }}
+                      type="dashed"
+                      onClick={handleClearServices}
+                      block
+                      icon={<MinusCircleOutlined />}
+                    >
+                      Clear
+                    </Button>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+          </div>
+        )}
       </Form>
+
+      <div
+        style={{
+          marginTop: 24,
+        }}
+      >
+        <Flex justify="center">
+          <>
+            {current > 0 && (
+              <Button style={{ margin: "0 8px" }} onClick={() => prev()}>
+                Previous
+              </Button>
+            )}
+            {current === 0 && (
+              <Button type="primary" onClick={() => next()}>
+                Next
+              </Button>
+            )}
+            {current === 1 && (
+              <Button
+                key="submit"
+                type="primary"
+                disabled={!isCreateButtonEnabled}
+                onClick={() => {
+                  setLoading(true);
+                  form
+                    .validateFields()
+                    .then((values) => {
+                      onFinish(values);
+                    })
+                    .catch((info) => {
+                      console.log("Validate Failed:", info);
+                      setLoading(false);
+                    });
+                }}
+              >
+                Create
+              </Button>
+            )}
+          </>
+        </Flex>
+      </div>
 
       <Spin
         fullscreen={true}

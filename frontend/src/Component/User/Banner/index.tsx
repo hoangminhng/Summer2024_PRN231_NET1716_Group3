@@ -8,7 +8,7 @@ const Banner = () => {
         <p className="text-6xl text-gray-900 font-medium dark:text-white text-left font-sans">
           Find Your Dream Home Today
         </p>
-        <div className="w-2/3 mt-5 flex items-center relative">
+        {/* <div className="w-2/3 mt-5 flex items-center relative">
           <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
             <svg
               className="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -39,7 +39,7 @@ const Banner = () => {
           >
             Search
           </button>
-        </div>
+        </div> */}
       </div>
       <img
         src="src/assets/Housebanner.png"

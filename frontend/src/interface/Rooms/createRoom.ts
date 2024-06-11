@@ -6,6 +6,7 @@ interface CreateRoomRequest {
   description: string;
   roomFee: number;
   hostelID: number;
+  roomServices: ServiceDetails[];
 }
 
 interface CreateRoomResponse {
