@@ -7,7 +7,9 @@ interface Hostel {
   ownerName: string;
   status: number;
   numOfAvailableRoom: number;
-  thumbnail: string;
+  images: string[];
   numOfTotalRoom: number;
   hostelServices: HostelService[];
+  createDate: Date;
+  phone: string;
 }
