@@ -46,13 +46,13 @@ const OwnerViewContract : React.FC = () =>{
     }, []);
 
     const statusStringMap: { [key: number]: string } = {
-        0 : "SIGNED",
-        1 : "NOT SIGN",
+        1 : "SIGNED",
+        0 : "NOT SIGN",
       };
     
     const statusColorMap: { [key: number]: string } = {
-        0: "green",
-        1: "red",
+        1: "green",
+        0: "red",
     };
 
     const paginatedData = contractData.slice(

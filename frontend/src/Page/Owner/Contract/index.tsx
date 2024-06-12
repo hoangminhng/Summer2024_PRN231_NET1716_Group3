@@ -3,9 +3,8 @@
         PlusCircleFilled,
         UserOutlined
     } from "@ant-design/icons";
+    const { TextArea } = Input;
     const { RangePicker } = DatePicker;
-    import { CKEditor } from "@ckeditor/ckeditor5-react";
-    import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
     import { useContext } from "react";
     import { UserContext } from "../../../context/userContext";
     import { useState, useEffect } from "react";
@@ -20,8 +19,8 @@
         const [errorContent, setErrorContent] = useState<any>("");
         const [roomDeposit, setRoomDeposit] = useState<number>(0);
         const [hostelData, setHostelData] = useState<HostelOwnerContract[]>([]);
-        const [newMember, setNewMember] = useState({name:'', phone: '', citizen_card: ''} as MemberContract);
-        const [formErrors, setFormErrors] = useState({ name: '', phone: '', citizen_card: '' });
+        const [newMember, setNewMember] = useState({name:'', phone: '', citizenCard: ''} as MemberContract);
+        const [formErrors, setFormErrors] = useState({ name: '', phone: '', citizenCard: '' });
         const [selectedServices, setSelectedServices] = useState<number[]>([]);
         const [memberData, setMemberData] = useState<MemberContract[]>([]);
         const [roomData, setRoomData] = useState<RoomOwnerContract[]>([]);
@@ -189,12 +188,12 @@
         };
 
         const showModal = () => {
-            setFormErrors({ name: '', phone: '', citizen_card: '' });
+            setFormErrors({ name: '', phone: '', citizenCard: '' });
             setIsModalOpen(true);
         };
         
         const handleOk = () => {
-            const errors = { name: '', phone: '', citizen_card: '' };
+            const errors = { name: '', phone: '', citizenCard: '' };
         
             if (!newMember.name) {
             errors.name = 'Name is required';
@@ -202,27 +201,27 @@
             if (!newMember.phone) {
             errors.phone = 'Phone is required';
             }
-            if (!newMember.citizen_card) {
-            errors.citizen_card = 'Citizen card is required';
+            if (!newMember.citizenCard) {
+            errors.citizenCard = 'Citizen card is required';
             }
         
             setFormErrors(errors);
         
-            if (!errors.name && !errors.phone && !errors.citizen_card) {
+            if (!errors.name && !errors.phone && !errors.citizenCard) {
             setMemberData([...memberData, newMember]);
-            setNewMember({ name: '', phone: '', citizen_card: '' });
+            setNewMember({ name: '', phone: '', citizenCard: '' });
             setIsModalOpen(false);
             }
         };
         
         const handleCancel = () => {
-            setNewMember({ name: '', phone: '', citizen_card: '' });
-            setFormErrors({ name: '', phone: '', citizen_card: '' });
+            setNewMember({ name: '', phone: '', citizenCard: '' });
+            setFormErrors({ name: '', phone: '', citizenCard: '' });
             setIsModalOpen(false);
         };
         
         const handleInputChange = (name: string, value: string | number) => {
-            setNewMember({ ...newMember, [name]: value });
+            setNewMember({ ...newMember, [name]: value.toString() });
         
             setFormErrors({
             ...formErrors,
@@ -241,7 +240,7 @@
             }
         };
 
-        const handleCreateContract = () => {
+        const handleCreateContract = async () => {
             if(startDate && endDate && userId && userContract?.viewerId && roomIDData && roomDeposit && updatedContent){
                 let data: CreateContract = {
                     ownerAccountID: userId, 
@@ -255,10 +254,18 @@
                     contractMember: memberData || null,
                     roomService: selectedServices
                 };
-        
-                fetchCreateContract(data);
-                openNotificationWithIcon("success", "Create successfully");
+                const response = await fetchCreateContract(data);
+                if (response != undefined && !errorContent) {      
+                    openNotificationWithIcon("success", "Create successfully");
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                setErrorContent("");
+                openNotificationWithIcon("error", errorContent || "Appointment not found!");
+                }
             } else {
+                setErrorContent("");
                 openNotificationWithIcon("error", "You must fill all fields");
             }
         };
@@ -276,6 +283,17 @@
                 label: room.roomName,
             }))
         ];
+
+        const generateHTML = (inputText : string) => {
+            const paragraphs = inputText.split('\n').map((line: string) => `<p>${line}</p>`).join('');
+            return paragraphs;
+        }
+    
+        const handleInputAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+            const inputValue = event.target.value;
+            const htmlContent = generateHTML(inputValue);
+            setUpdatedContent(htmlContent);
+        }
 
     return (
         <>
@@ -295,6 +313,12 @@
                     <Form.Item
                     label="Date Start --> Date End :"
                     name="Date"
+                    rules={[
+                        {
+                        required: true,
+                        message: 'Please input!',
+                        },
+                    ]}
                     >
                             <RangePicker style={{width: "600px"}} onChange = {onChangeDate} required/>
                     </Form.Item>
@@ -416,30 +440,6 @@
                     <Input placeholder={userContract?.viewerEmail} style={{width: "200px", borderRadius:"10px"}} disabled value={userContract?.viewerEmail} required/>
                     </Form.Item>
                 </div>
-                <div style={{display:"flex", justifyContent: "left", marginBottom: "20px"}}>
-                <Form.Item
-                label="Contract Term : "
-                name="ContractTerm"
-                rules={[
-                    {
-                    required: true,
-                    message: 'Please input!',
-                    },
-                ]}
-                labelCol={{
-                    span: 24,
-                  }}
-                  wrapperCol={{
-                    span: 24,
-                  }}
-                >
-                <CKEditor
-                        editor={ClassicEditor}
-                        
-                        onChange={(_e, editor) => setUpdatedContent(editor.getData())}
-                    />
-                </Form.Item>
-                </div>
                 <div style={{display: "flex", justifyContent:"start", marginBottom: "20px", width: "100%", textAlign: "left"}}>
                     <Collapse items={items} style={{width:"100%"}}/>
                 </div>
@@ -463,7 +463,7 @@
                         <div style={{ textAlign: 'center' }}>
                             <p>{member.name}</p>
                             <p>{member.phone}</p>
-                            <p>{member.citizen_card}</p>
+                            <p>{member.citizenCard}</p>
                         </div>
                         </Card>
                     ))}
@@ -485,7 +485,7 @@
                     <div>
                     <h2 style={{ marginBottom: '30px', marginTop: '40px' }}>Student Name: <span>{selectedMember.name}</span></h2>
                     <h2 style={{ marginBottom: '30px' }}>Student Phone: <span>{selectedMember.phone}</span></h2>
-                    <h2 style={{ marginBottom: '30px' }}>Student Citizen Card: <span>{selectedMember.citizen_card}</span></h2>
+                    <h2 style={{ marginBottom: '30px' }}>Student Citizen Card: <span>{selectedMember.citizenCard}</span></h2>
                     </div>
                 )}
                 </Modal>
@@ -505,7 +505,7 @@
                 ]}
                 >
                 <div>
-                    <h2 style={{ marginBottom: '30px', marginTop: '40px'}}>Student Name: 
+                    <h2 style={{ marginBottom: '30px', marginTop: '40px'}}><span style={{color:"red"}}>*</span>Student Name: 
                     <Input
                         name="name"
                         placeholder=""
@@ -516,30 +516,50 @@
                     />
                     {formErrors.name && <p style={{ color: 'red' }}>{formErrors.name}</p>}
                     </h2>
-                    <h2 style={{ marginBottom: '30px' }}>Student Phone: 
+                    <h2 style={{ marginBottom: '30px' }}><span style={{color:"red"}}>*</span>Student Phone: 
                     <InputNumber
                         name="phone"
                         placeholder=""
                         style={{ width: '300px', borderRadius: '10px', height: '30px', marginLeft:'20px'}}
                         value={newMember.phone}
-                        onChange={(value) => handleInputChange('phone', value || "")}
+                        onChange={(value) => handleInputChange('phone', value ? value.toString() : "")}
                         required
                     />
                     {formErrors.phone && <p style={{ color: 'red' }}>{formErrors.phone}</p>}
                     </h2>
-                    <h2 style={{ marginBottom: '30px' }}>Citizen Card: 
+                    <h2 style={{ marginBottom: '30px' }}><span style={{color:"red"}}>*</span>Citizen Card: 
                     <InputNumber
-                        name="citizen_card"
+                        name="citizenCard"
                         placeholder=""
                         style={{ width: '300px', borderRadius: '10px', height: '30px', marginLeft:'35px' }}
-                        value={newMember.citizen_card}
-                        onChange={(value) => handleInputChange('citizen_card', value || "")}
+                        value={newMember.citizenCard}
+                        onChange={(value) => handleInputChange('citizenCard', value ? value.toString() : "")}
                         required
                     />
-                    {formErrors.citizen_card && <p style={{ color: 'red' }}>{formErrors.citizen_card}</p>}
+                    {formErrors.citizenCard && <p style={{ color: 'red' }}>{formErrors.citizenCard}</p>}
                     </h2>
                 </div>
                 </Modal>
+                <div style={{display:"flex", justifyContent: "left", marginBottom: "20px"}}>
+                <Form.Item
+                label="Contract Term : "
+                name="ContractTerm"
+                rules={[
+                    {
+                    required: true,
+                    message: 'Please input!',
+                    },
+                ]}
+                labelCol={{
+                    span: 24,
+                  }}
+                  wrapperCol={{
+                    span: 24,
+                  }}
+                >
+                <TextArea rows={20} style={{width:"1280px"}} onChange={handleInputAreaChange} />
+                </Form.Item>
+                </div>
                     <Form.Item
                     >
                         <div style={{display:"flex", justifyContent: "center", marginBottom: "20px", marginTop: "50px"}}>
