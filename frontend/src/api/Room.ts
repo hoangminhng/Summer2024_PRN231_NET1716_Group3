@@ -31,3 +31,14 @@ export const GetRoomDetailById = async (roomId: string | undefined) => {
     console.log(error);
   }
 };
+
+export const MakeRoomAppointment = async (
+  data: CreateRoomAppointmentDto
+) => {
+  try {
+    const response = await axios.post(`${baseUrl}/api/rooms/appointment`, data);
+    return response;
+  } catch (error: any) {
+    console.log(error);
+  }
+};

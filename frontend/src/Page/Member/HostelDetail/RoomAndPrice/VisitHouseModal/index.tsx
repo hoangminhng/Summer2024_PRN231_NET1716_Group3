@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { MakeRoomAppointment } from "../../../../../api/Room";
+import toast from "react-hot-toast";
 
 interface VisitHouseModalProps {
   room: ListRooms | null;
@@ -11,12 +13,24 @@ const VisitHouseModal: React.FC<VisitHouseModalProps> = ({
 }) => {
   const [meetingDate, setMeetingDate] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const storageUserId = localStorage.getItem("userId");
-    // Handle form submission logic here
-    console.log("User Id:", storageUserId);
-    console.log("Meeting Date:", meetingDate);
+
+    if (room && storageUserId) {
+      let data: CreateRoomAppointmentDto = {
+        RoomId: room?.roomID.toString(),
+        ViewerId: storageUserId,
+        AppointmentTime: meetingDate,
+      };
+      const response = await MakeRoomAppointment(data);
+      const responseData = response?.data;
+      if (responseData.statusCode == 200) {
+        toast.success(responseData.message, {
+          duration: 2000,
+        });
+      }
+    }
     closeModal();
   };
   return (

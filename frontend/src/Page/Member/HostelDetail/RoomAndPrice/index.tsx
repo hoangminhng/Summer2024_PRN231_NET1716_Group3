@@ -32,7 +32,9 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
     }
   };
 
-  const handleLoginModalOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleLoginModalOverlayClick = (
+    e: React.MouseEvent<HTMLDivElement>
+  ) => {
     if (e.target === e.currentTarget) {
       // If the click occurs on the overlay (not on the modal content), close the modal
       toggleLoginModal();
@@ -84,6 +86,9 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
                 Capacity
               </th>
               <th scope="col" className="px-6 py-3">
+                Status
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Room Fee
               </th>
               <th scope="col" className="px-6 py-3"></th>
@@ -95,15 +100,26 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 key={room.roomID}
               >
-                <td className="px-6 py-4 w-1/4">
+                <td className="px-6 py-4 w-1/5">
                   <img src={room.roomThumbnail} />
                 </td>
-                <td className="px-6 py-4 w-1/5">{room.roomName}</td>
-                <td className="px-6 py-4 w-1/5">{room.capacity}</td>
-                <td className="px-6 py-4 w-1/5">
+                <td className="px-6 py-4 w-1/6">{room.roomName}</td>
+                <td className="px-6 py-4 w-1/6">{room.capacity}</td>
+                <td className="px-6 py-4 w-1/6">
+                  {room.status == 0 ? (
+                    <span className="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                      Availble
+                    </span>
+                  ) : room.status == 1 ? (
+                    <span className="bg-yellow-100 text-yellow-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                      Viewing 
+                    </span>
+                  ) : room.status}
+                </td>
+                <td className="px-6 py-4 w-1/6">
                   {NumberFormat(room.roomFee)} /month
                 </td>
-                <td className="px-6 py-4 w-1/5">
+                <td className="px-6 py-4 w-1/6">
                   <button
                     type="button"
                     className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
