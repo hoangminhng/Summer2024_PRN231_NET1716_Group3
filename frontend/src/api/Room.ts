@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 const baseUrl = process.env.REACT_APP_BACK_END_URL;
 
 export const GetAllRoomImageByHostelId = async (
@@ -16,7 +17,7 @@ export const GetAllRoomImageByHostelId = async (
 
 export const GetRoomListByHostelId = async (hostelId: string | undefined) => {
   try {
-    const response = await axios.get(`${baseUrl}/api/rooms/${hostelId}/list`);
+    const response = await axios.get(`${baseUrl}/api/rooms/member/${hostelId}/list`);
     return response;
   } catch (error: any) {
     console.log(error);
@@ -39,6 +40,6 @@ export const MakeRoomAppointment = async (
     const response = await axios.post(`${baseUrl}/api/rooms/appointment`, data);
     return response;
   } catch (error: any) {
-    console.log(error);
+    toast.error(error.response.data.message, { duration: 2000 });
   }
 };

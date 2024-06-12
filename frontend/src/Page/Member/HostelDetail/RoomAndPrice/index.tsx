@@ -50,15 +50,16 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
     }
   };
 
+  const fetchRooms = async () => {
+    try {
+      const response = await GetRoomListByHostelId(hostelId.toString());
+      setRoomList(response?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const response = await GetRoomListByHostelId(hostelId.toString());
-        setRoomList(response?.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     fetchRooms();
   }, [hostelId]);
 
@@ -112,9 +113,11 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
                     </span>
                   ) : room.status == 1 ? (
                     <span className="bg-yellow-100 text-yellow-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
-                      Viewing 
+                      Viewing
                     </span>
-                  ) : room.status}
+                  ) : (
+                    room.status
+                  )}
                 </td>
                 <td className="px-6 py-4 w-1/6">
                   {NumberFormat(room.roomFee)} /month
@@ -127,13 +130,15 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
                   >
                     View detail
                   </button>
-                  <button
-                    onClick={() => handleVisitHouseClick(room)}
-                    type="button"
-                    className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                  >
-                    Visit house
-                  </button>
+                  {room.status == 0 ? (
+                    <button
+                      onClick={() => handleVisitHouseClick(room)}
+                      type="button"
+                      className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                    >
+                      Visit house
+                    </button>
+                  ) : null}
                 </td>
               </tr>
             ))}
@@ -147,7 +152,11 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
             onMouseDown={handleOverlayClick}
             className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50"
           >
-            <VisitHouseModal room={selectedRoom} closeModal={toggleModal} />
+            <VisitHouseModal
+              room={selectedRoom}
+              closeModal={toggleModal}
+              reloadRoomList={fetchRooms}
+            />
           </div>
         )}
         {isLoginModal && (
