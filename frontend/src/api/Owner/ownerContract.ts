@@ -19,6 +19,24 @@ export const getOwnerContract = async (ownerId: number, token: string) => {
   }
 };
 
+export const getContractDetail = async (contractID: number, token: string) => {
+  try {
+    const fetchData = await axios.get<ContractDetail>(
+      `${baseUrl}/api/contracts/getDetails/${contractID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
+
 export const getUserAppointmentOwnerContract = async (roomID: number, token: string) => {
   try {
     const fetchData = await axios.get<UserAppointmentContract>(

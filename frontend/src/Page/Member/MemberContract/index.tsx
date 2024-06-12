@@ -3,16 +3,16 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
 import { DateFormat } from "../../../Utils/dateFormat";
-import { getOwnerContract , getContractDetail} from "../../../api/Owner/ownerContract";
 import { Document, Packer, Paragraph, TextRun} from "docx";
 import { saveAs } from "file-saver";
 import { NumberFormat } from "../../../Utils/numberFormat";
+import { getContractDetail, getMemberContract } from "../../../api/Member/memberContract";
 
-const OwnerViewContract : React.FC = () =>{
+const MemberViewContract : React.FC = () =>{
 
     const navigate = useNavigate();
     const { token , userId } = useContext(UserContext);
-    const [contractData, setContractData] = useState<ViewContract[]>([]);
+    const [contractData, setContractData] = useState<MemberViewContract[]>([]);
     const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3;
@@ -47,8 +47,8 @@ const OwnerViewContract : React.FC = () =>{
     const fetchContractList = async () => {
         try {
             if(token != undefined && userId != undefined){
-                let data : ViewContract[] | undefined
-                data = await getOwnerContract(userId, token);
+                let data : MemberViewContract[] | undefined
+                data = await getMemberContract(userId, token);
                 setContractData(data || []);
             }
         } catch (error) {
@@ -308,7 +308,7 @@ const OwnerViewContract : React.FC = () =>{
                     <Col span={23} key={index}>
                         <Card
                             extra={<div>
-                                <Button type="primary" onClick={() => handleDownload(contractItem.contractID)}>Print contract</Button> <Button type="primary" onClick={() => navigate(`/owner/contracts/detail/${contractItem.contractID}`)}>View detail</Button>
+                                <Button type="primary" onClick={() => handleDownload(contractItem.contractID)}>Print contract</Button> <Button type="primary" onClick={() => navigate(`/member/contracts/detail/${contractItem.contractID}`)}>View detail</Button>
                                 </div>}
                             style={{
                             width: "100%",
@@ -322,12 +322,13 @@ const OwnerViewContract : React.FC = () =>{
                                     <p>Room : <span>{contractItem.roomName}</span></p>
                                 </Col>
                                 <Col span={6}>
-                                    <p>Date Create : <span>{DateFormat(contractItem.createdDate)}</span></p> <br />
+                                    <p>Date Create : <span>{DateFormat(contractItem.dateStart)}</span></p> 
+                                    <p>Date End : <span>{DateFormat(contractItem.dateEnd)}</span></p> 
                                     <p>Date Sign : <span>{contractItem.dateSign ? DateFormat(contractItem.dateSign) : " "}</span></p>
                                 </Col>
                                 <Col span={6}>
                                     <div style={{paddingTop: "20px"}}>
-                                        <p>Student Sign : <span>{contractItem.studentLeadAccountName}</span></p>
+                                        <p>Student Sign : <span>{contractItem.ownerAccountName}</span></p>
                                     </div>
                                 </Col>
                                 <Col span={4}>
@@ -352,4 +353,4 @@ const OwnerViewContract : React.FC = () =>{
         </div>
     );
 }
-export default OwnerViewContract;
+export default MemberViewContract;

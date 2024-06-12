@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import LoginModal from "../../LoginModal";
 import { UserContext } from "../../../context/userContext";
 import { AvatarDropdown } from "../AvatarDropDown";
-import Logo from "../../../assets/Logo.png";
+// import Logo from "../../../assets/logo.png";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,7 +32,7 @@ const Header: React.FC = () => {
     <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src={Logo} className="h-10" alt="Flowbite Logo" />
+          {/* <img src={Logo} className="h-10" alt="Flowbite Logo" /> */}
         </a>
         <button
           onClick={toggleMenu}
