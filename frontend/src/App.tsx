@@ -29,6 +29,8 @@ import MemberRoomDetails from "./Page/Member/RoomDetail";
 import ForgetPassword from "./Page/ForgetPassword";
 import OwnerViewContract from "./Page/Owner/ViewContract";
 import OwnerContractDetail from "./Page/Owner/ContractDetail";
+import MemberViewContract from "./Page/Member/MemberContract";
+import MemberContractDetail from "./Page/Member/MemberContractDetail";
 
 const roles = {
   Admin: 1,
@@ -112,6 +114,16 @@ function App() {
               <Route
                 path="contracts/detail/:contractID"
                 element={<OwnerContractDetail />}
+              />
+            </Route>
+          </Route>
+
+          <Route element={<RequiredAuth allowedRoles={[roles.Member]} />}>
+            <Route path="/member" element={<OwnerLayout />}>
+              <Route path="contracts" element={<MemberViewContract />} />
+              <Route
+                path="contracts/detail/:contractID"
+                element={<MemberContractDetail />}
               />
             </Route>
           </Route>

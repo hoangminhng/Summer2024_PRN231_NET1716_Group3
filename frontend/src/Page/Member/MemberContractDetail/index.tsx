@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
-import { getContractDetail } from "../../../api/Owner/ownerContract";
+import { getContractDetail } from "../../../api/Member/memberContract";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { Document, Packer, Paragraph, TextRun} from "docx";
 import { saveAs } from "file-saver";
 
-const OwnerContractDetail = () => {
+const MemberContractDetail = () => {
     const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const { contractID } = useParams<{ contractID: string }>();
     const [idnumber, setID] = useState<number>();
@@ -471,4 +471,4 @@ const OwnerContractDetail = () => {
     );
 };
 
-export default OwnerContractDetail;
+export default MemberContractDetail;
