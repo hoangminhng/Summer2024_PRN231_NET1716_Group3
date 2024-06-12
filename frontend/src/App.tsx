@@ -68,8 +68,6 @@ function App() {
             <Route path="room/detail/:roomID" element={<MemberRoomDetails />} />
           </Route>
 
-          <Route path="contract/create" element={<OwnerContractCreate />} />
-          <Route path="/contracts" element={<OwnerViewContract />} />
 
           <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
             <Route path="/admin" element={<AdminLayout />}>
@@ -108,6 +106,8 @@ function App() {
                 path="hostels/:hostelId/rooms/:roomId"
                 element={<RoomDetail />}
               />
+              <Route path="contract/create" element={<OwnerContractCreate />} />
+              <Route path="contracts" element={<OwnerViewContract />} />
             </Route>
           </Route>
         </Routes>

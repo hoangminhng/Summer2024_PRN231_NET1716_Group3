@@ -10,6 +10,7 @@ import { UserContext } from "../../../../context/userContext";
 
 const AdminNewPackage: React.FC = () => {
   const { token } = useContext(UserContext);
+  const [errorContent, setErrorContent] = useState<string>("");
   const initialPackageData = {
     capacityHostel: 0,
     memberShipFee: 0,
@@ -25,7 +26,7 @@ const AdminNewPackage: React.FC = () => {
         return data;
       }
     } catch (error: any) {
-      return { status: 400, message: error.response.data.message };
+      setErrorContent(error.message);
     }
   };
 
@@ -65,11 +66,12 @@ const AdminNewPackage: React.FC = () => {
       packageData.capacityHostel = 0;
     }
     const response = await fetchCreatePackage(packageData);
-    if (response == undefined) {
+    if (response != undefined && !errorContent) {
       openNotificationWithIcon("success", "Create new package successfully!");
       setPackageData(initialPackageData);
     } else {
-      openNotificationWithIcon("error", response?.message || "Have some error");
+      setErrorContent("");
+      openNotificationWithIcon("error", errorContent || "Have some error");
     }
   };
 
@@ -93,7 +95,7 @@ const AdminNewPackage: React.FC = () => {
                 required
                 placeholder="Enter capacity hostel"
                 onChange={(e) => handleChange("capacityHostel", e.target.value)}
-                value={packageData.capacityHostel.toString()} 
+                value={packageData.capacityHostel.toString() == "0" ? "": packageData.capacityHostel.toString()} 
               />
             </Descriptions.Item>
             <Descriptions.Item label="Package Fee" span={3}>
@@ -102,7 +104,7 @@ const AdminNewPackage: React.FC = () => {
                 required
                 placeholder="Enter your fee"
                 onChange={(e) => handleChange("memberShipFee", e.target.value)}
-                value={packageData.memberShipFee.toString()} 
+                value={packageData.memberShipFee.toString() == "0" ? "": packageData.memberShipFee.toString()} 
               />
             </Descriptions.Item>
             <Descriptions.Item label="Month" span={3}>
@@ -111,7 +113,7 @@ const AdminNewPackage: React.FC = () => {
                 required
                 placeholder="Enter month"
                 onChange={(e) => handleChange("month", e.target.value)}
-                value={packageData.month.toString()}
+                value={packageData.month.toString() == "0" ? "": packageData.month.toString()}
               />
             </Descriptions.Item>
           </Descriptions>

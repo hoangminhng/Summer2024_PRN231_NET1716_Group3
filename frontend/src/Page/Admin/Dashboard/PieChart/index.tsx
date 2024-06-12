@@ -34,7 +34,7 @@ const PropertiesPie: React.FC<{ style?: React.CSSProperties }> = ({ style }) => 
     data: typeData,
     angleField: "numberOfMember", 
     colorField: "memberShipName", 
-    radius: 0.8,
+    radius: 0.6,
     label: {
       type: "outer",
     },
@@ -47,7 +47,7 @@ const PropertiesPie: React.FC<{ style?: React.CSSProperties }> = ({ style }) => 
 
   return(
   <div style={{ height: '100%', ...style }}>
-    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", margin: "30px" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", margin: "30px" }}>
         <div>
           <h2 style={{ fontSize: "20px", fontWeight: "bold", textTransform: "uppercase" }}>
           Package statistics chart

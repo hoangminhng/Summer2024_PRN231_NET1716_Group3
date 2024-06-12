@@ -133,7 +133,7 @@ export const getHostelType = async () => {
 export const getHostelOwnerContract = async (ownerId: number, token: string) => {
   try {
     const fetchData = await axios.get<HostelOwnerContract[]>(
-      `${baseUrl}/api/owner/${ownerId}/contract/hostels`,
+      `${baseUrl}/api/owner/${ownerId}/hostels`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

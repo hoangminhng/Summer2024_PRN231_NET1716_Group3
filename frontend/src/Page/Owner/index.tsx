@@ -4,6 +4,7 @@ import {
   MenuUnfoldOutlined,
   LogoutOutlined,
   HomeOutlined,
+  FormOutlined
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -38,7 +39,11 @@ const OwnerLayout: React.FC = () => {
 
   const items: MenuItem[] = [
     getItem("Hostel", "1", <HomeOutlined />),
-    getItem("Logout", "2", <LogoutOutlined />),
+    getItem("Contract", "sub1", <FormOutlined />, [
+      getItem("Contract", "2"),
+      getItem("Create Contract", "3"),
+    ]),
+    getItem("Logout", "4", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
 
   const handleMenuClick = (key: React.Key) => {
@@ -47,6 +52,12 @@ const OwnerLayout: React.FC = () => {
         navigate("/owner/hostels");
         break;
       case "2":
+        navigate("/owner/contracts");
+        break;
+      case "3":
+        navigate("/owner/contract/create");
+        break;
+      case "4":
         logout();
         navigate("/");
         break;
@@ -57,7 +68,7 @@ const OwnerLayout: React.FC = () => {
 
   return (
     <nav
-      className="fixed w-full z-20 top-0 start-0"
+      className="fixed w-full z-20 top-0 start-0 h-full overflow-y-auto"
       style={{ textAlign: "left" }}
     >
       <Layout style={{ minHeight: "100vh" }}>

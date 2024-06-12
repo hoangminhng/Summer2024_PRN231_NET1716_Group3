@@ -11,7 +11,7 @@ const OwnerViewContract : React.FC = () =>{
     const { token , userId } = useContext(UserContext);
     const [contractData, setContractData] = useState<ViewContract[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+    const itemsPerPage = 3;
 
     const fetchContractList = async () => {
         try {
@@ -74,8 +74,8 @@ const OwnerViewContract : React.FC = () =>{
                                     <p>Date Sign : <span>{DateFormat(contractItem.dateSign)}</span></p>
                                 </Col>
                                 <Col span={4}>
-                                    <div style={{padding: "20px"}}>
-                                        <p>Student Sign : <span>{contractItem.name}</span></p>
+                                    <div style={{paddingTop: "20px"}}>
+                                        <p>Student Sign : <span>{contractItem.studentLeadAccountName}</span></p>
                                     </div>
                                 </Col>
                                 <Col span={4}>

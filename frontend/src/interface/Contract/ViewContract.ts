@@ -2,7 +2,7 @@ interface ViewContract{
     contractID : number,
     hostelName : string,
     roomName : string,
-    name : string,
+    studentLeadAccountName : string,
     createdDate : Date,
     dateSign : Date,
     status : number

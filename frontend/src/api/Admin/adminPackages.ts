@@ -66,7 +66,11 @@ export const updatePackage = async ({
       const response = fetchData;
       return response;
     } catch (error : any) {
-      return error.response.data;
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || "Unknown error occurred");
+      } else {
+        throw new Error(error.message || "Unknown error occurred");
+      }
     }
   };
 
@@ -95,8 +99,12 @@ export const updatePackage = async ({
       );
       const response = fetchData;
       return response;
-    } catch (error : any) {
-      return error.response.data;
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || "Unknown error occurred");
+      } else {
+        throw new Error(error.message || "Unknown error occurred");
+      }
     }
   };
 

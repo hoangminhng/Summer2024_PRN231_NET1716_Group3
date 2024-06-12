@@ -4,7 +4,7 @@ const baseUrl = process.env.REACT_APP_BACK_END_URL;
 export const getServiceRoomOwnerContract = async (roomID: number, token: string) => {
   try {
     const fetchData = await axios.get<ServiceRoomContract[]>(
-      `${baseUrl}/api/owner/${roomID}/service_room/contracts`,
+      `${baseUrl}/api/owner/get-service/${roomID}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

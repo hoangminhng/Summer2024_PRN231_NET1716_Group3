@@ -1,7 +1,8 @@
 interface UserAppointmentContract{
+    viewerId : number,
     roomFee : number,
-    name : string,
-    phone : string,
-    email : string,
-    citizenCard : string
+    viewerName : string,
+    viewerPhone : string,
+    viewerEmail : string,
+    viewerCitizenCard : string
 }
