@@ -3,13 +3,17 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
 import { DateFormat } from "../../../Utils/dateFormat";
-import { getOwnerContract } from "../../../api/Owner/ownerContract";
+import { getOwnerContract , getContractDetail} from "../../../api/Owner/ownerContract";
+import { Document, Packer, Paragraph, TextRun} from "docx";
+import { saveAs } from "file-saver";
+import { NumberFormat } from "../../../Utils/numberFormat";
 
 const OwnerViewContract : React.FC = () =>{
 
     const navigate = useNavigate();
     const { token , userId } = useContext(UserContext);
     const [contractData, setContractData] = useState<ViewContract[]>([]);
+    const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3;
 
@@ -24,6 +28,18 @@ const OwnerViewContract : React.FC = () =>{
           console.error("Error fetching contract list:", error);
         }
       };
+      const fetchContractDetail = async (contractID : number) => {
+        try {
+            if (token) {
+                const data = await getContractDetail(contractID, token);
+                if (data) {
+                    setContractDetailData(data);
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching contract detail:", error);
+        }
+    };
 
     useEffect(() => {
         fetchContractList()
@@ -48,6 +64,213 @@ const OwnerViewContract : React.FC = () =>{
         setCurrentPage(page);
         };
 
+        const handleDownload = async (value : number) => {
+            await fetchContractDetail(value)
+            const doc = new Document({
+                sections: [
+            {
+                children: [
+                    new Paragraph({
+                        children: [
+                            new TextRun("CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"),
+                            new TextRun({
+                                text: "Độc lập - Tự do - Hạnh phúc",
+                                break: 2,
+                            }),
+                            new TextRun({
+                                text: "HỢP ĐỒNG THUÊ PHÒNG",
+                                break: 2,
+                                bold: true,
+                                size: 32,
+                            }),
+                        ],
+                        alignment: "center",
+                    }),
+                    new Paragraph({
+                        children: [
+                            new TextRun(
+                                `Hôm nay, ngày ${contactDetailData?.createdDate.getDate()} tháng ${
+                                    contactDetailData?.createdDate.getMonth()
+                                } năm ${
+                                    contactDetailData?.createdDate.getFullYear()
+                                } tại địa chỉ ${contactDetailData?.hostelAddress}.`
+                            ),
+                            new TextRun({
+                                text: "Chúng tôi gồm :",
+                                break: 2,
+                                bold: true,
+                            }),
+                            new TextRun({
+                                text: "1. Bên cho thuê phòng (Bên A):",
+                                break: 2,
+                                bold: true,
+                            }),
+                            new TextRun({
+                                text: `Ông/bà : ${contactDetailData?.ownerAccountName.toUpperCase()}`,
+                                break: 1,
+                            }),
+                            new TextRun({
+                                text: `Căn cước công dân : ${contactDetailData?.ownerCitizen}`,
+                                break: 1,
+                            }),
+                            new TextRun({
+                                text: `Số điện thoại : ${contactDetailData?.ownerPhone}`,
+                                break: 1,
+                            }),
+                            new TextRun({
+                                text: "2. Bên thuê phòng (Bên B):",
+                                break: 2,
+                                bold: true,
+                            }),
+                            new TextRun({
+                                text: `Ông/bà : ${contactDetailData?.studentLeadAccountName.toUpperCase()}`,
+                                break: 1,
+                            }),
+                            new TextRun({
+                                text: `Căn cước công dân : ${contactDetailData?.studentLeadCitizen}`,
+                                break: 1,
+                            }),
+                            new TextRun({
+                                text: `Số điện thoại : ${contactDetailData?.studentLeadPhone}`,
+                                break: 1,
+                            }),
+                            new TextRun({
+                                text: "Chúng tôi tự nguyện thỏa thuận, cam kết và chịu trách nhiệm trước pháp Luật về các điều khoản sau đây:",
+                                break: 2,
+                                bold: true,
+                            }),
+                            new TextRun({
+                                text: `Bên A đồng ý cho bên B thuê phòng ${contactDetailData?.roomName} tại địa chỉ ${contactDetailData?.hostelAddress}.`,
+                                break: 2,
+                            }),
+                            new TextRun({
+                                text: "Điều 1. GIÁ THUÊ VÀ PHƯƠNG THỨC THANH TOÁN",
+                                break: 2,
+                                bold: true,
+                                size: 24,
+                            }),
+                            new TextRun({
+                                text : `- Giá thuê phòng 1 tháng : ${NumberFormat(
+                                    contactDetailData?.roomFee || 0
+                                )}`,
+                                break: 2,
+                            }),
+                            new TextRun({
+                                text : `- Bên B phải đặt cọc cho Bên A với số tiền là : ${NumberFormat(
+                                    contactDetailData?.depositFee || 0
+                                )}`,
+                                break: 3,
+                            }),
+                        ],
+                    }),
+                    ...((contactDetailData?.service || []).map((service) =>
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: `${service.serviceName} : ${NumberFormat(service.servicePrice)} (${service.typeName})`,
+                                    break: 2,
+                                }),
+                            ],
+                        })
+                    )),
+                    new Paragraph({
+                        children: [
+                            new TextRun({
+                                text: "Điều 2. THỜI GIAN HỢP ĐỒNG",
+                                break: 2,
+                                bold: true,
+                                size: 24,
+                            }),
+                            new TextRun({
+                                text : `Thời gian hợp đồng : Kể từ ngày ${
+                                    contactDetailData?.dateStart.getDate()
+                                } tháng ${
+                                    contactDetailData?.dateStart.getMonth()
+                                } năm ${
+                                    contactDetailData?.dateStart.getFullYear()
+                                } đến hết ngày ${
+                                    contactDetailData?.dateEnd.getDate()
+                                } tháng ${
+                                    contactDetailData?.dateEnd.getMonth()
+                                } năm ${contactDetailData?.dateEnd.getFullYear()}`,
+                                break: 2,
+                            }),
+                        ],
+                    }),
+                    new Paragraph({
+                        children: [
+                            new TextRun({
+                                text: "Điều 3. CÁC THÔNG TIN VỀ PHÒNG",
+                                break: 2,
+                                bold: true,
+                                size: 24,
+                            }),
+                            new TextRun({text : `${contactDetailData?.roomDescription}`, break: 3}),
+                        ],
+                    }),
+                    new Paragraph({
+                        children: [
+                            new TextRun({
+                                text: "Điều 3. ĐIỀU KHOẢN HỢP ĐỒNG",
+                                break: 2,
+                                bold: true,
+                                size: 24,
+                            }),
+                            new TextRun({text :`${contactDetailData?.contractTerm}`, break: 3}),
+                        ],
+                    }),
+                    new Paragraph({
+                        children: [
+                            new TextRun({
+                                text: "Hợp đồng này được thành lập thành 02 bản có giá trị pháp lý như nhau, mỗi bên giữ 01 bản, hợp đồng này có hiệu lực kể từ ngày ký.",
+                                break: 2,
+                                bold: true,
+                            }),
+                            new TextRun({
+                                text: `\t\t\t\t\t\tHôm nay, ngày ${contactDetailData?.createdDate.getDate()} tháng ${
+                                    contactDetailData?.createdDate.getMonth()
+                                } năm ${
+                                    contactDetailData?.createdDate.getFullYear()
+                                }`,
+                                break: 2,
+                            }),
+                        ],
+                    }),
+                    new Paragraph({
+                        children: [
+                            new TextRun({
+                                text: "Bên A:\t\t\t\t\t\t\t\t\t",
+                                bold: true,
+                                size: 24,
+                            }),
+                            new TextRun({
+                                text: "Bên B:",
+                                bold: true,
+                                size: 24,
+                            }),
+                        ],
+                    }),
+    
+                    new Paragraph({
+                        children: [
+                            new TextRun({
+                                text: `${contactDetailData?.ownerAccountName || "......"}\t\t\t\t\t\t\t\t\t`,
+                            }),
+                            new TextRun({
+                                text: contactDetailData?.status === 0 ? contactDetailData?.studentLeadAccountName : "........",
+                            }),
+                        ],
+                    }),
+                ],
+            },
+        ],
+    });
+    
+            Packer.toBlob(doc).then((blob) => {
+                saveAs(blob, `${contactDetailData?.hostelName}_${contactDetailData?.roomName}.docx`);
+            });
+        };
+
     return (
             <div>
                 <div style={{width: "100%", textAlign: "center", fontSize: "20", fontWeight:"bold", backgroundColor:"aliceblue", padding:"20px", marginBottom: "20px"}}>
@@ -58,7 +281,7 @@ const OwnerViewContract : React.FC = () =>{
                     <Col span={24} key={index}>
                         <Card
                             extra={<div>
-                                <Button type="primary">Print contract</Button> <Button type="primary" onClick={() => navigate(`/owner/contracts/detail/${contractItem.contractID}`)}>View detail</Button>
+                                <Button type="primary" onClick={() => handleDownload(contractItem.contractID)}>Print contract</Button> <Button type="primary" onClick={() => navigate(`/owner/contracts/detail/${contractItem.contractID}`)}>View detail</Button>
                                 </div>}
                             style={{
                             width: "100%",

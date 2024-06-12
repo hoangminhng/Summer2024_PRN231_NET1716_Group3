@@ -28,6 +28,7 @@ import RoomDetail from "./Page/Owner/RoomDetail";
 import MemberRoomDetails from "./Page/Member/RoomDetail";
 import ForgetPassword from "./Page/ForgetPassword";
 import OwnerViewContract from "./Page/Owner/ViewContract";
+import OwnerContractDetail from "./Page/Owner/ContractDetail";
 
 const roles = {
   Admin: 1,
@@ -108,6 +109,10 @@ function App() {
               />
               <Route path="contract/create" element={<OwnerContractCreate />} />
               <Route path="contracts" element={<OwnerViewContract />} />
+              <Route
+                path="contracts/detail/:contractID"
+                element={<OwnerContractDetail />}
+              />
             </Route>
           </Route>
         </Routes>
