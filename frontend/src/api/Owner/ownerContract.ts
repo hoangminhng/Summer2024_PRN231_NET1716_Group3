@@ -22,7 +22,7 @@ export const getOwnerContract = async (ownerId: number, token: string) => {
 export const getContractDetail = async (contractID: number, token: string) => {
   try {
     const fetchData = await axios.get<ContractDetail>(
-      `${baseUrl}/api/owner/contracts/detail/${contractID}`,
+      `${baseUrl}/api/owner/contracts/getDetails/${contractID}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
