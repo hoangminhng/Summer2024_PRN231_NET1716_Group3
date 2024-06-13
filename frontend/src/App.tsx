@@ -31,6 +31,9 @@ import OwnerViewContract from "./Page/Owner/ViewContract";
 import OwnerContractDetail from "./Page/Owner/ContractDetail";
 import MemberViewContract from "./Page/Member/MemberContract";
 import MemberContractDetail from "./Page/Member/MemberContractDetail";
+import BillPayment from "./Page/Owner/BillPayment";
+import BillList from "./Page/Owner/BillList";
+import BillDetail from "./Page/Owner/BillDetail";
 
 const roles = {
   Admin: 1,
@@ -70,7 +73,6 @@ function App() {
             />
             <Route path="room/detail/:roomID" element={<MemberRoomDetails />} />
           </Route>
-
 
           <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
             <Route path="/admin" element={<AdminLayout />}>
@@ -114,6 +116,12 @@ function App() {
               <Route
                 path="contracts/detail/:contractID"
                 element={<OwnerContractDetail />}
+              />
+              <Route path="bill-payment" element={<BillPayment />} />
+              <Route path="bill-payment/bills" element={<BillList />} />
+              <Route
+                path="bill-payment/bills/:billPaymentId"
+                element={<BillDetail />}
               />
             </Route>
           </Route>
