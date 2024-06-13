@@ -34,6 +34,8 @@ import MemberContractDetail from "./Page/Member/MemberContractDetail";
 import BillPayment from "./Page/Owner/BillPayment";
 import BillList from "./Page/Owner/BillList";
 import BillDetail from "./Page/Owner/BillDetail";
+import PaymentSucess from "./Page/PaymentSuccess";
+import OwnerPackage from "./Page/Owner/MembershipPackage";
 
 const roles = {
   Admin: 1,
@@ -123,6 +125,7 @@ function App() {
                 path="bill-payment/bills/:billPaymentId"
                 element={<BillDetail />}
               />
+              <Route path="package" element={<OwnerPackage />} />
             </Route>
           </Route>
 
@@ -133,6 +136,11 @@ function App() {
                 path="contracts/detail/:contractID"
                 element={<MemberContractDetail />}
               />
+            </Route>
+          </Route>
+
+          <Route element={<RequiredAuth allowedRoles={[roles.Member, roles.Owner]} />}>
+            <Route path="/paymentsucess" element={<PaymentSucess />}>
             </Route>
           </Route>
         </Routes>

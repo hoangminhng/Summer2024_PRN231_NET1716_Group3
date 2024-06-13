@@ -6,10 +6,21 @@ export const registerByEmailPassword = async (
   email: string,
   roleId: number,
   name: string,
-  password: string
+  password: string,
+  phone: string,
+  address: string,
+  citizenCard: string
 ) => {
   try {
-    const param = { email, roleId, name, password };
+    const param = {
+      email,
+      roleId,
+      name,
+      password,
+      phone,
+      address,
+      citizenCard,
+    };
     const response = await axios.post(`${baseUrl}/api/register/email`, param);
     return response;
   } catch (error: any) {
