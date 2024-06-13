@@ -14,7 +14,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
 const { Sider, Header, Footer } = Layout;
 import type { MenuProps } from "antd";
-import { UserContext } from "../../../context/userContext";
+import { UserContext } from "../../context/userContext";
 
 type MenuItem = Required<MenuProps>["items"][number];
 function getItem(
