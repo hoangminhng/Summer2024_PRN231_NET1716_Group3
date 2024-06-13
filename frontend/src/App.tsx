@@ -34,6 +34,7 @@ import MemberContractDetail from "./Page/Member/MemberContractDetail";
 import BillPayment from "./Page/Owner/BillPayment";
 import BillList from "./Page/Owner/BillList";
 import BillDetail from "./Page/Owner/BillDetail";
+import BillMonthlyForm from "./Page/Owner/BillMonthlyForm";
 
 const roles = {
   Admin: 1,
@@ -123,6 +124,7 @@ function App() {
                 path="bill-payment/bills/:billPaymentId"
                 element={<BillDetail />}
               />
+              <Route path="bill-payment/bills/form" element={<BillMonthlyForm />} />
             </Route>
           </Route>
 
