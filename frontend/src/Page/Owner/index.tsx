@@ -7,13 +7,14 @@ import {
   FormOutlined,
   DollarOutlined,
   ShoppingOutlined,
+  CalendarFilled
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
 const { Sider, Header, Footer } = Layout;
 import type { MenuProps } from "antd";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../../../context/userContext";
 
 type MenuItem = Required<MenuProps>["items"][number];
 function getItem(
@@ -47,7 +48,8 @@ const OwnerLayout: React.FC = () => {
     ]),
     getItem("Bill", "4", <DollarOutlined />),
     getItem("Package", "5", <ShoppingOutlined />),
-    getItem("Logout", "6", <LogoutOutlined />),
+    getItem("Appointment", "6", <CalendarFilled />),
+    getItem("Logout", "7", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
 
   const handleMenuClick = (key: React.Key) => {
@@ -68,6 +70,9 @@ const OwnerLayout: React.FC = () => {
         navigate("/owner/package");
         break;
       case "6":
+        navigate("/owner/appointments");
+        break;
+      case "7":
         logout();
         navigate("/");
         break;

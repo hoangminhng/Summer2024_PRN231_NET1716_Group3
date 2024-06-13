@@ -194,7 +194,7 @@ const OwnerViewContract : React.FC = () =>{
                         new Paragraph({
                             children: [
                                 new TextRun({
-                                    text: `${service.serviceName} : ${NumberFormat(service.servicePrice)} (${service.typeName})`,
+                                    text: `${service.typeName} : ${NumberFormat(service.price)} (${service.unit})`,
                                     break: 2,
                                 }),
                             ],

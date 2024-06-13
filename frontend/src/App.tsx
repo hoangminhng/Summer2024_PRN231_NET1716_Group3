@@ -36,6 +36,8 @@ import BillList from "./Page/Owner/BillList";
 import BillDetail from "./Page/Owner/BillDetail";
 import PaymentSucess from "./Page/PaymentSuccess";
 import OwnerPackage from "./Page/Owner/MembershipPackage";
+import OwnerAppointment from "./Page/Owner/Appointment";
+import OwnerAppointmentDetail from "./Page/Owner/AppointmentDetail";
 
 const roles = {
   Admin: 1,
@@ -126,6 +128,11 @@ function App() {
                 element={<BillDetail />}
               />
               <Route path="package" element={<OwnerPackage />} />
+              <Route path="appointments" element={<OwnerAppointment />} />
+              <Route
+                path="appointments/detail/:hostelID"
+                element={<OwnerAppointmentDetail />}
+              />
             </Route>
           </Route>
 
