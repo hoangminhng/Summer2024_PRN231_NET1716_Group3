@@ -91,6 +91,10 @@ const MemberViewContract : React.FC = () =>{
         setCurrentPage(page);
         };
 
+    const handleSignContract = (contractID: number) => {
+        
+        };
+
         const handleDownload = async (value : number) => {
             await fetchContractDetail(value)
             const doc = new Document({
@@ -194,7 +198,7 @@ const MemberViewContract : React.FC = () =>{
                         new Paragraph({
                             children: [
                                 new TextRun({
-                                    text: `${service.serviceName} : ${NumberFormat(service.servicePrice)} (${service.typeName})`,
+                                    text: `${service.typeName} : ${NumberFormat(service.price)} (${service.unit})`,
                                     break: 2,
                                 }),
                             ],
@@ -308,7 +312,11 @@ const MemberViewContract : React.FC = () =>{
                     <Col span={23} key={index}>
                         <Card
                             extra={<div>
-                                <Button type="primary" onClick={() => handleDownload(contractItem.contractID)}>Print contract</Button> <Button type="primary" onClick={() => navigate(`/member/contracts/detail/${contractItem.contractID}`)}>View detail</Button>
+                                <Button type="primary" onClick={() => handleDownload(contractItem.contractID)}>Print contract</Button> 
+                                <Button type="primary" onClick={() => navigate(`/member/contracts/detail/${contractItem.contractID}`)}>View detail</Button>
+                                {contractItem.status === 0 && (
+                                    <Button type="primary" onClick={() => handleSignContract(contractItem.contractID)}>Sign contract</Button>
+                                )}
                                 </div>}
                             style={{
                             width: "100%",

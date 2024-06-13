@@ -28,6 +28,7 @@
         const [roomIDData, setRoomIDData] = useState<number>();
         const [hostelIDData, setHostelIDData] = useState<number>();
         const [userContract, setUserContract] = useState<UserAppointmentContract>();
+        const [selectedMemberAccount, setSelectedMemberAccount] = useState<MemberAppointment>();
         const [selectedMember, setSelectedMember] = useState<MemberContract | null>(null);
         const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
         const [startDate, setStartDate] = useState<Date | null>();
@@ -118,6 +119,10 @@
             getRoomContract(value);
             setHostelIDData(value);
         };
+        const handleAccountChange = (value: number) => {
+            const member = userContract?.accountAppointments.find(user => user.viewerId === value);
+            setSelectedMemberAccount(member);
+        };
 
         const handleRoomChange = async (value: number) => {
             const response = await getUserAppointmentContract(value);
@@ -164,13 +169,13 @@
                                         <Col span={3}>
                                             <Checkbox key={service.roomServiceId}
                                             onChange={(e) => handleCheckboxChange(service.roomServiceId, e.target.checked)}>
-                                                <span style={{fontWeight:"bold"}}>{service.serviceName}</span></Checkbox>
+                                                <span style={{fontWeight:"bold"}}>{service.typeName}</span></Checkbox>
                                         </Col>
                                         <Col span={5}>
-                                            <p>{NumberFormat(service.servicePrice)}</p>
+                                            <p>{NumberFormat(service.price)}</p>
                                         </Col>
                                         <Col span={5}>
-                                            <p>({service.typeName})</p>
+                                            <p>({service.unit})</p>
                                         </Col>
                                     </Row>
                                 </div>
@@ -240,11 +245,16 @@
             }
         };
 
+        const statusStringMap: { [key: number]: string } = {
+            3 : "Register directly",
+            0 : "Visit home",
+          };
+
         const handleCreateContract = async () => {
-            if(startDate && endDate && userId && userContract?.viewerId && roomIDData && roomDeposit && updatedContent){
+            if(startDate && endDate && userId && selectedMemberAccount?.viewerId && roomIDData && roomDeposit && updatedContent && userContract){
                 let data: CreateContract = {
                     ownerAccountID: userId, 
-                    studentAccountID: userContract.viewerId,
+                    studentAccountID: selectedMemberAccount?.viewerId,
                     roomID: roomIDData,
                     contractTerm: updatedContent,
                     dateStart: startDate,
@@ -283,6 +293,11 @@
                 label: room.roomName,
             }))
         ];
+
+        const memberOptions = userContract?.accountAppointments?.map((user) => ({
+            value: user.viewerId,
+            label: `${user.viewerName} (${statusStringMap[user.status]})`, // Sử dụng template string để kết hợp giá trị
+        })) || [];
 
         const generateHTML = (inputText : string) => {
             const paragraphs = inputText.split('\n').map((line: string) => `<p>${line}</p>`).join('');
@@ -413,15 +428,36 @@
                     <Form.Item
                     label="Name :"
                     name="Name"
+                    rules={[
+                        {
+                        required: true,
+                        message: 'Please input!',
+                        },
+                    ]}
                     >
-                    <Input placeholder={userContract?.viewerName} style={{width: "200px", borderRadius:"10px"}} disabled value={userContract?.viewerName} />
+                    <Select
+                            showSearch
+                            style={{
+                            width: 300,
+                            textAlign:"left"
+                            }}
+                            placeholder="Select the name"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                            filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            }
+                            onChange={handleAccountChange}
+                            options={memberOptions}
+                            aria-required
+                        />
                     </Form.Item>
 
                     <Form.Item
                     label="Phone :"
                     name="Phone"
                     >
-                    <Input placeholder={userContract?.viewerPhone} style={{width: "200px", borderRadius:"10px"}} disabled value={userContract?.viewerPhone} required/>
+                    <Input placeholder={selectedMemberAccount?.viewerPhone} style={{width: "200px", borderRadius:"10px"}} disabled value={selectedMemberAccount?.viewerPhone} required/>
                     </Form.Item>
                 </div>
 
@@ -430,14 +466,14 @@
                     label="Citizen Card :"
                     name="CitizenCard"
                     >
-                    <Input placeholder={userContract?.viewerCitizenCard} style={{width: "200px", borderRadius:"10px"}} disabled value={userContract?.viewerCitizenCard} />
+                    <Input placeholder={selectedMemberAccount?.viewerCitizenCard} style={{width: "200px", borderRadius:"10px"}} disabled value={selectedMemberAccount?.viewerCitizenCard} />
                     </Form.Item>
 
                     <Form.Item
                     label="Email :"
                     name="Email"
                     >
-                    <Input placeholder={userContract?.viewerEmail} style={{width: "200px", borderRadius:"10px"}} disabled value={userContract?.viewerEmail} required/>
+                    <Input placeholder={selectedMemberAccount?.viewerEmail} style={{width: "200px", borderRadius:"10px"}} disabled value={selectedMemberAccount?.viewerEmail} required/>
                     </Form.Item>
                 </div>
                 <div style={{display: "flex", justifyContent:"start", marginBottom: "20px", width: "100%", textAlign: "left"}}>
