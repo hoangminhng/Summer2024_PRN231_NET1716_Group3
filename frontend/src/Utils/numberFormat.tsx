@@ -1,9 +1,6 @@
 export const NumberFormat = (value: number): string => {
-  return Intl.NumberFormat("en-US", {
+  return Intl.NumberFormat("de-DE", {
     style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-    currencyDisplay: "narrowSymbol",
+    currency: "VND",
   }).format(value);
 };

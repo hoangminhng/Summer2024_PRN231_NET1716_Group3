@@ -1,6 +1,6 @@
 import { Card, Button, Col, Modal } from "antd"; 
 import { useEffect, useState, useContext } from "react";
-import { NumberFormat } from "../../../Utils/numberFormatVND";
+import { NumberFormat } from "../../../Utils/numberFormat";
 import { getPackages } from "../../../api/Packages";
 import { UserContext } from "../../../context/userContext";
 import LoginModal from "../../LoginModal";

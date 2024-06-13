@@ -31,6 +31,8 @@ import OwnerViewContract from "./Page/Owner/ViewContract";
 import OwnerContractDetail from "./Page/Owner/ContractDetail";
 import MemberViewContract from "./Page/Member/MemberContract";
 import MemberContractDetail from "./Page/Member/MemberContractDetail";
+import OwnerAppointment from "./Page/Owner/Appointment";
+import OwnerAppointmentDetail from "./Page/Owner/AppointmentDetail";
 
 const roles = {
   Admin: 1,
@@ -114,6 +116,11 @@ function App() {
               <Route
                 path="contracts/detail/:contractID"
                 element={<OwnerContractDetail />}
+              />
+              <Route path="appointments" element={<OwnerAppointment />} />
+              <Route
+                path="appointments/detail/:hostelID"
+                element={<OwnerAppointmentDetail />}
               />
             </Route>
           </Route>
