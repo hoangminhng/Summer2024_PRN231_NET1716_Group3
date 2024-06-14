@@ -32,7 +32,11 @@ const Header: React.FC = () => {
     <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          {/* <img src={Logo} className="h-10" alt="Flowbite Logo" /> */}
+          <img
+            src="https://res.cloudinary.com/dfdwupiah/image/upload/v1718272841/PRN231_GroupProject/glq77u926kxvcxggb9k9.png"
+            className="h-10"
+            alt="Flowbite Logo"
+          />
         </a>
         <button
           onClick={toggleMenu}
@@ -129,7 +133,7 @@ const Header: React.FC = () => {
             className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50  "
             // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
           >
-            <LoginModal closeModal={toggleModal}/>
+            <LoginModal closeModal={toggleModal} />
           </div>
         )}
       </div>
