@@ -1,12 +1,17 @@
 import { Button, Flex } from "antd";
-
-const handleOpenBillPaymentForm = () => {};
+import { useNavigate } from "react-router-dom";
 
 const BillList: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleOpenBillPaymentForm = () => {
+    navigate("/owner/bill-payment/bills/form");
+  };
+
   return (
     <div>
       <Flex justify="flex-end" style={{ margin: 20 }}>
-        <Button onClick={() => handleOpenBillPaymentForm()}>Create bill</Button>
+        <Button onClick={() => handleOpenBillPaymentForm()}>Create monthly bill</Button>
       </Flex>
       <h1>Bill list of specific contract/room</h1>
       <p>month</p>

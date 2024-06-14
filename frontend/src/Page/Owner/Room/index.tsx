@@ -21,6 +21,7 @@ import {
   getColorByStatus,
   getStatusText,
 } from "../../../Utils/roomStatusColor";
+import { NumberFormat } from "../../../Utils/numberFormat";
 const { Text } = Typography;
 
 const Room: React.FC = () => {
@@ -132,7 +133,8 @@ const Room: React.FC = () => {
                         {item.capacity}
                       </Text>
                       <Text>
-                        <Text strong>Room Fee: </Text>${item.roomFee}
+                        <Text strong>Room Fee: </Text>$
+                        {NumberFormat(item.roomFee ?? 0)}
                       </Text>
                       <Text>
                         <Text strong>Status: </Text>
