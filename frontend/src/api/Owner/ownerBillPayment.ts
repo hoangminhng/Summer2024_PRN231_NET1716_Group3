@@ -69,3 +69,18 @@ export const getBillPaymentDetail = async (
     throw error;
   }
 };
+
+export const getBillListByContractId = async (contractId: number, token: string) => {
+  try {
+    const fetchData = await axios.get(`${baseUrl}/api/bill-payment/contract/${contractId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return fetchData.data;
+  } catch (error) {
+    console.log("Error: " + error);
+    throw error;
+  }
+};

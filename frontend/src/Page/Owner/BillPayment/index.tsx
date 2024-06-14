@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Col, Row, Spin } from 'antd';
 import { getHiringRooms } from '../../../api/Owner/ownerRoom';
 import { UserContext } from "../../..//context/userContext";
@@ -7,6 +8,7 @@ const BillPayment: React.FC = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token, userId } = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -23,9 +25,10 @@ const BillPayment: React.FC = () => {
     fetchRooms();
   }, [userId, token]);
 
-  if (loading) {
-    return <Spin size="large" />;
-  }
+  const handleCardClick = (contractId) => {
+    navigate(`/owner/bill-payment/bills/${contractId}`); 
+    console.log(contractId);
+  };
 
   return (
     <div style={{ padding: '24px' }}>
@@ -35,6 +38,7 @@ const BillPayment: React.FC = () => {
             <Card
               hoverable
               cover={<img alt={room.roomName} src={room.roomThumbnail} style={{ width: '100%', height: '290px', objectFit: 'cover' }} />}
+              onClick={() => handleCardClick(room.contractId)}
             >
               <Card.Meta
                 title={room.roomName}
