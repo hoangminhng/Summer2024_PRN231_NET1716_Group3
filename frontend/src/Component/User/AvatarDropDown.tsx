@@ -13,14 +13,14 @@ import { ChevronDownIcon, PowerIcon, UserCircleIcon } from "@heroicons/react/24/
 
 const profileMenuItems = [
   {
-    label: "Sign Out",
-    path: "signout",
-    icon: PowerIcon,
-  },
-  {
     label: "My Profile",
     path: "profile",
     icon: UserCircleIcon,
+  },
+  {
+    label: "Sign Out",
+    path: "signout",
+    icon: PowerIcon,
   },
 ];
 
