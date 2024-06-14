@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GetHostelCard } from "../../../api/Hostels";
 import dayjs from "dayjs";
+import { NumberFormat } from "../../../Utils/numberFormat";
+import { truncateText } from "../../../Utils/truncateText";
 
 const CardHorizontal: React.FC = () => {
   const [hostelList, setHostelList] = useState<Hostel[] | undefined>([]);
@@ -42,28 +44,47 @@ const CardHorizontal: React.FC = () => {
   };
   return (
     <>
-      {currentHostels?.map((hostel) => (
+      {currentHostels?.map((hostel, key) => (
         <div
+          key={key}
           className="flex flex-col items-start bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 mb-4"
           onClick={() => handleCardClick(hostel.hostelID.toString())}
         >
           <div className="flex flex-row w-full mt-2">
-            <div className="flex flex-row justify-start ">
+            <div className="flex flex-row justify-start w-full">
               <img
                 className="object-cover w-1/3 h-auto rounded-lg"
                 src={hostel.images[0]}
                 alt=""
               />
-              <div className="flex flex-col justify-start items-start p-4">
-                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <div className="flex flex-col justify-start items-start p-4 w-2/3">
+                <h3 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {hostel.hostelName}
-                </h5>
+                </h3>
+                <div className="flex w-full">
+                  <h3 className="mb-2 text-lg font-bold tracking-tight text-red-900 dark:text-white">
+                    {NumberFormat(hostel.lowestPrice)}/month
+                  </h3>
+                  <span className="mx-2">-</span>
+                  <h3 className="mb-2 text-lg font-bold tracking-tight text-red-900 dark:text-white">
+                    {hostel.lowestArea} m<sup>2</sup>
+                  </h3>
+                </div>
                 <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                   {hostel.hostelAddress}
                 </p>
-                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                  {hostel.hostelDescription}
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 text-start">
+                  {truncateText(hostel.hostelDescription, 150)}
                 </p>
+                <div className="flex w-full">
+                  <p className="mb-2 text-sm font-bold text-gray-700 dark:text-gray-400">
+                    Available Rooms: {hostel.numOfAvailableRoom}
+                  </p>
+                  <span className="mx-2">/</span>
+                  <p className="mb-2 text-sm font-bold text-gray-700 dark:text-gray-400">
+                    Total Rooms: {hostel.numOfTotalRoom}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

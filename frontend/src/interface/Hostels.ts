@@ -12,4 +12,6 @@ interface Hostel {
   hostelServices: HostelService[];
   createDate: Date;
   phone: string;
+  lowestPrice: number;
+  lowestArea: number;
 }

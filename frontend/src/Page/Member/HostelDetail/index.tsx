@@ -65,16 +65,16 @@ const MemberHostelDetail: React.FC = () => {
         </Suspense>
       ),
     },
-    {
-      id: "facilities",
-      label: "Facilities & Policies",
-      content: (
-        <HostelFacilites
-          hostelName={hostel?.hostelName ?? ""}
-          hostelSerivces={hostel?.hostelServices ?? []}
-        />
-      ),
-    },
+    // {
+    //   id: "facilities",
+    //   label: "Facilities & Policies",
+    //   content: (
+    //     <HostelFacilites
+    //       hostelName={hostel?.hostelName ?? ""}
+    //       hostelSerivces={hostel?.hostelServices ?? []}
+    //     />
+    //   ),
+    // },
     // {
     //   id: "rules",
     //   label: "House rules",
