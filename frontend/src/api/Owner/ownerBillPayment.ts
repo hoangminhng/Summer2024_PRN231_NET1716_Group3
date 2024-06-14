@@ -46,3 +46,26 @@ export const createMonthlyBillPayment = async (
     throw error;
   }
 };
+
+export const getBillPaymentDetail = async (
+  billPaymentId: number,
+  token: string
+): Promise<BillPayment | BaseApiResponse> => {
+  try {
+    const fetchData = await axios.get<BillPayment | BaseApiResponse>(
+      `${baseUrl}/api/bill-payment/${billPaymentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error: any) {
+    console.log("Error:", error);
+    toast.error(error.response.data.message, { duration: 2000 });
+    throw error;
+  }
+};

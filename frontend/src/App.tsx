@@ -33,7 +33,7 @@ import MemberViewContract from "./Page/Member/MemberContract";
 import MemberContractDetail from "./Page/Member/MemberContractDetail";
 import BillPayment from "./Page/Owner/BillPayment";
 import BillList from "./Page/Owner/BillList";
-import BillDetail from "./Page/Owner/BillDetail";
+import BillPaymentDetail from "./Page/Owner/BillDetail";
 import BillMonthlyForm from "./Page/Owner/BillMonthlyForm";
 import PaymentSucess from "./Page/PaymentSuccess";
 import OwnerPackage from "./Page/Owner/MembershipPackage";
@@ -126,7 +126,7 @@ function App() {
               <Route path="bill-payment/bills" element={<BillList />} />
               <Route
                 path="bill-payment/bills/:billPaymentId"
-                element={<BillDetail />}
+                element={<BillPaymentDetail />}
               />
               <Route path="bill-payment/bills/form" element={<BillMonthlyForm />} />
               <Route path="package" element={<OwnerPackage />} />

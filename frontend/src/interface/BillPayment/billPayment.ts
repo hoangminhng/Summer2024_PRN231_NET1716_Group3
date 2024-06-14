@@ -11,6 +11,8 @@ interface BillPayment {
   billType: number;
   tnxRef: string | null;
   billPaymentDetails: BillPaymentDetail[];
+  roomName: string;
+  renterName: string;
 }
 
 interface BillPaymentDetail {

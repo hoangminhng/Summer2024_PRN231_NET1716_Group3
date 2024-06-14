@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Collapse, CollapseProps, Spin, Typography } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import { NumberFormat } from "../../../Utils/numberFormat";
 
 const { Title, Text } = Typography;
 
@@ -10,6 +11,24 @@ interface Props {
 }
 
 const BillDetail: React.FC<Props> = ({ billPayment, loading }) => {
+  if (!billPayment || billPayment.billPaymentID === 0) {
+    return (
+      <>
+        {loading ? (
+          <Spin
+            fullscreen={true}
+            spinning={loading}
+            indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+          />
+        ) : (
+          <Card title="Bill Payment Detail">
+            <p>No bill payment details available.</p>
+          </Card>
+        )}
+      </>
+    );
+  }
+
   const items: CollapseProps["items"] = billPayment?.billPaymentDetails.map(
     (detail) => ({
       key: detail.billPaymentDetailID.toString(),
@@ -20,10 +39,11 @@ const BillDetail: React.FC<Props> = ({ billPayment, loading }) => {
             <Text strong>Quantity:</Text> {detail.quantity} {detail.serviceUnit}
           </p>
           <p>
-            <Text strong>Price:</Text> {detail.servicePrice}
+            <Text strong>Price:</Text> {NumberFormat(detail.servicePrice)}
           </p>
           <p>
-            <Text strong>Total Amount:</Text> {detail.serviceTotalAmount}
+            <Text strong>Total Amount:</Text>{" "}
+            {NumberFormat(detail.serviceTotalAmount)}
           </p>
           <p>
             <Text strong>Old Number:</Text> {detail.oldNumberService}
@@ -49,7 +69,16 @@ const BillDetail: React.FC<Props> = ({ billPayment, loading }) => {
           indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
         />
       ) : (
-        <Card title="Last Bill Payment">
+        <Card title="Bill Payment Detail">
+          <p>
+            <Text strong>Room:</Text> {billPayment?.roomName}
+          </p>
+          <p>
+            <Text strong>Renter:</Text> {billPayment?.renterName}
+          </p>
+          <p>
+            <Text strong>Room Fee:</Text> {NumberFormat(billPayment.billAmount)}
+          </p>
           <p>
             <Text strong>Month:</Text> {billPayment?.month}
           </p>
@@ -60,7 +89,8 @@ const BillDetail: React.FC<Props> = ({ billPayment, loading }) => {
             <Text strong>Created Date:</Text> {createdDate}
           </p>
           <p>
-            <Text strong>Total Amount:</Text> {billPayment?.totalAmount}
+            <Text strong>Total Amount:</Text>{" "}
+            {NumberFormat(billPayment.totalAmount)}
           </p>
           <p>
             <Text strong>Status:</Text>{" "}

@@ -72,14 +72,18 @@ const BillForm: React.FC<Props> = ({ token, lastBillPayment }) => {
           form={form}
           layout="vertical"
           onFinish={onFinish}
-          initialValues={lastBillPayment?.billPaymentDetails.reduce(
-            (acc, detail) => ({
-              ...acc,
-              [`newNumberService_${detail.roomServiceID}`]:
-                detail.newNumberService,
-            }),
-            {}
-          )}
+          initialValues={
+            lastBillPayment && lastBillPayment.billPaymentDetails
+              ? lastBillPayment.billPaymentDetails.reduce(
+                  (acc, detail) => ({
+                    ...acc,
+                    [`newNumberService_${detail.roomServiceID}`]:
+                      detail.newNumberService,
+                  }),
+                  {}
+                )
+              : {}
+          }
         >
           {lastBillPayment?.billPaymentDetails.map(
             (detail) =>
@@ -99,7 +103,7 @@ const BillForm: React.FC<Props> = ({ token, lastBillPayment }) => {
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Submit
+              New Bill
             </Button>
           </Form.Item>
         </Form>

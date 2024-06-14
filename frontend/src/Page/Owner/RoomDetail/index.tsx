@@ -16,7 +16,7 @@ import {
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOwnerRoomDetail } from "../../../api/Owner/ownerRoom";
 import Column from "antd/es/table/Column";
@@ -25,6 +25,7 @@ import {
   getColorByStatus,
   getStatusText,
 } from "../../../Utils/roomStatusColor";
+import { UserContext } from "../../../context/userContext";
 const { Text } = Typography;
 
 const getStatusTag = (status: number) => {
@@ -43,15 +44,17 @@ const RoomDetail: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
+  const { token } = useContext(UserContext);
 
   const fetchRoomDetail = async () => {
     if (roomId !== undefined) {
       setLoading(true);
       try {
-        const response = await getOwnerRoomDetail(parseInt(roomId));
-        setRoomDetailData(response);
-        // setCurrentStatus(response?.status);
-        console.log(response);
+        if (token !== undefined) {
+          const response = await getOwnerRoomDetail(parseInt(roomId), token);
+          setRoomDetailData(response);
+          // setCurrentStatus(response?.status);
+        }
       } catch (error) {
         console.log(error);
       } finally {
