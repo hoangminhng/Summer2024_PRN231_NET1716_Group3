@@ -1,48 +1,97 @@
 import { useState, useEffect, useContext } from "react";
-import { Button } from "antd";
+import { Row, Col } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { UserContext } from "../../../context/userContext";
+import { getMemberProfle} from "../../../api/Owner/ownerProfile";
+import { useNavigate } from "react-router-dom";
 
 const MemberProfile : React.FC = () => {
-    const [profileData, setProfileData] = useState<ContractDetail>();
-    // const { token, userId } = useContext(UserContext);
+    const [profileData, setProfileData] = useState<AccountDetail>();
+    const { token, userId } = useContext(UserContext);
+    const navigate = useNavigate();
 
 
+    const fetchProfile = async () => {
+        try {
+            if (token && userId) {
+                const data = await getMemberProfle(userId, token);
+                if (data) {
+                    setProfileData(data);
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+        }
+    };
 
-    // const fetchProfile = async () => {
-    //     try {
-    //         if (token && userId) {
-    //             const data = await getProfile(userId, token);
-    //             if (data) {
-    //                 setProfileData(data);
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error("Error fetching profile:", error);
-    //     }
-    // };
+    useEffect(() => {
+        fetchProfile();
+    }, [userId, token]);
 
-    // useEffect(() => {
-    //     getProfile();
-    // }, [userId, token]);
+    const handleChangeInformation = () => {
+        navigate("/member/profile/change-information");
+    };
 
+    const handleChangePassword = () => {
+        navigate("/member/profile/change-password");
+    };
 
     return (
         <>
-            <div style={{ textAlign: "left" }}>
-                <div className="w-full rounded overflow-hidden shadow-lg">
-                <UserOutlined/>
-                <div className="px-6 py-4">
-                <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-                    <p className="text-gray-700 text-base">
-                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
-                    </p>
-                </div>
-                <div className="px-6 pt-4 pb-2">
-                    <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#photography</span>
-                    <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#travel</span>
-                    <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#winter</span>
-                </div>
+            <div style={{ textAlign: "left", padding:"20px", marginTop:"100px" }}>
+                <div className="max-w-full rounded overflow-hidden shadow-lg">
+                    <Row gutter={[24, 16]}>
+                        <Col span={8}>
+                            <div className="px-6 py-4 ">
+                                <UserOutlined style={{fontSize: "150px"}}/>
+                                <div className="font-bold text-sm mb-2 mt-2">{profileData?.name ? profileData.name : ""}</div>
+                                <div className="text-sm mb-2">{profileData?.email ? profileData.email : ""}</div>
+                            </div>
+                        </Col>
+                        <Col span={16}>
+                        <div className="px-6 py-4 ">
+                            <Row gutter={[24, 16]}>
+                                <Col span={8}>
+                                    <div className="text-lg mb-2 font-bold"> Phone :</div>
+                                </Col>
+                                <Col span={16}>
+                                    <div className="text-sm mb-2">{profileData?.phone ? profileData.phone : ""}</div>
+                                </Col>
+                                <Col span={8}>
+                                    <div className="text-lg mb-2 font-bold"> Citizen Card :</div>
+                                </Col>
+                                <Col span={16}>
+                                    <div className="text-sm mb-2"> {profileData?.citizenCard ? profileData.citizenCard : ""}</div>
+                                </Col>
+                                <Col span={8}>
+                                    <div className="text-lg mb-2 font-bold"> Address :</div>
+                                </Col>
+                                <Col span={16}>
+                                    <div className="text-sm mb-2"> {profileData?.address ? profileData.address : ""}</div>
+                                </Col>
+                                <Col span={8}>
+                                    <div className="text-lg mb-2 font-bold"> Gender :</div>
+                                </Col>
+                                <Col span={16}>
+                                    <div className="text-sm mb-2"> {profileData?.gender === 0 ? "Male" : "Female"}</div>
+                                </Col>
+                                <Col span={24}>
+                                <div style={{display: "flex", justifyContent:"center"}}>
+                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mr-10"
+                                    onClick={handleChangeInformation}
+                                    >
+                                    Change Information
+                                    </button>
+                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+                                    onClick={handleChangePassword}>
+                                    Change Password
+                                    </button>
+                                </div>
+                                </Col>
+                            </Row>
+                        </div>
+                        </Col>
+                    </Row>
                 </div>
             </div>
         </>

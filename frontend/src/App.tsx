@@ -43,6 +43,8 @@ import MemberProfile from "./Page/Member/Profile";
 import OwnerProfile from "./Page/Owner/OwnerProfile";
 import OwnerChangeProfile from "./Page/Owner/ChangeProfile";
 import OwnerChangePassword from "./Page/Owner/ChangePassword";
+import MemberChangeProfile from "./Page/Member/MemberChangeProfile";
+import MemberChangePassword from "./Page/Member/MemberChangePassword";
 
 const roles = {
   Admin: 1,
@@ -146,12 +148,15 @@ function App() {
           </Route>
 
           <Route element={<RequiredAuth allowedRoles={[roles.Member]} />}>
-            <Route path="/member" element={<OwnerLayout />}>
+            <Route path="/member" element={<MemberLayout />}>
               <Route path="contracts" element={<MemberViewContract />} />
               <Route
                 path="contracts/detail/:contractID"
                 element={<MemberContractDetail />}
               />
+              <Route path="profile" element={<MemberProfile/>}/>
+              <Route path="profile/change-information" element={<MemberChangeProfile/>}/>
+            <Route path="profile/change-password" element={<MemberChangePassword/>}/>
             </Route>
           </Route>
 

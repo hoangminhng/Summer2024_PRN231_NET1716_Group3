@@ -9,13 +9,18 @@ import React, { useContext, useState } from "react";
 import { UserContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
 
-import { ChevronDownIcon, PowerIcon } from "@heroicons/react/24/solid";
+import { ChevronDownIcon, PowerIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 
 const profileMenuItems = [
   {
     label: "Sign Out",
     path: "signout",
     icon: PowerIcon,
+  },
+  {
+    label: "My Profile",
+    path: "profile",
+    icon: UserCircleIcon,
   },
 ];
 
@@ -31,6 +36,9 @@ export function AvatarDropdown() {
     if (path === "signout") {
       logout();
       navigate("/");
+    }
+    else if(path === "profile"){
+      navigate("member/profile")
     }
     closeMenu();
   };
