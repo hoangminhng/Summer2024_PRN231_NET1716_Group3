@@ -128,7 +128,7 @@ const Sidebar: React.FC = () => {
             </Col>
           </Row>
         </Content>
-        <Footer style={{ textAlign: "center" }}>
+        <Footer style={{ textAlign: "center" , marginTop:"100px"}}>
           Hostel Management Flatform ©{new Date().getFullYear()} Created by Group 3
         </Footer>
       </Layout>

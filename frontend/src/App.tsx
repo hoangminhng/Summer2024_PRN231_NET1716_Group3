@@ -27,7 +27,17 @@ import AdminTransaction from "./Page/Admin/AdminTransaction";
 import RoomDetail from "./Page/Owner/RoomDetail";
 import MemberRoomDetails from "./Page/Member/RoomDetail";
 import ForgetPassword from "./Page/ForgetPassword";
-import React from "react";
+import OwnerViewContract from "./Page/Owner/ViewContract";
+import OwnerContractDetail from "./Page/Owner/ContractDetail";
+import MemberViewContract from "./Page/Member/MemberContract";
+import MemberContractDetail from "./Page/Member/MemberContractDetail";
+import BillPayment from "./Page/Owner/BillPayment";
+import BillList from "./Page/Owner/BillList";
+import BillDetail from "./Page/Owner/BillDetail";
+import PaymentSucess from "./Page/PaymentSuccess";
+import OwnerPackage from "./Page/Owner/MembershipPackage";
+import OwnerAppointment from "./Page/Owner/Appointment";
+import OwnerAppointmentDetail from "./Page/Owner/AppointmentDetail";
 
 const roles = {
   Admin: 1,
@@ -68,8 +78,6 @@ function App() {
             <Route path="room/detail/:roomID" element={<MemberRoomDetails />} />
           </Route>
 
-          <Route path="contract/create" element={<OwnerContractCreate />} />
-
           <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
@@ -107,6 +115,39 @@ function App() {
                 path="hostels/:hostelId/rooms/:roomId"
                 element={<RoomDetail />}
               />
+              <Route path="contract/create" element={<OwnerContractCreate />} />
+              <Route path="contracts" element={<OwnerViewContract />} />
+              <Route
+                path="contracts/detail/:contractID"
+                element={<OwnerContractDetail />}
+              />
+              <Route path="bill-payment" element={<BillPayment />} />
+              <Route path="bill-payment/bills" element={<BillList />} />
+              <Route
+                path="bill-payment/bills/:billPaymentId"
+                element={<BillDetail />}
+              />
+              <Route path="package" element={<OwnerPackage />} />
+              <Route path="appointments" element={<OwnerAppointment />} />
+              <Route
+                path="appointments/detail/:hostelID"
+                element={<OwnerAppointmentDetail />}
+              />
+            </Route>
+          </Route>
+
+          <Route element={<RequiredAuth allowedRoles={[roles.Member]} />}>
+            <Route path="/member" element={<OwnerLayout />}>
+              <Route path="contracts" element={<MemberViewContract />} />
+              <Route
+                path="contracts/detail/:contractID"
+                element={<MemberContractDetail />}
+              />
+            </Route>
+          </Route>
+
+          <Route element={<RequiredAuth allowedRoles={[roles.Member, roles.Owner]} />}>
+            <Route path="/paymentsucess" element={<PaymentSucess />}>
             </Route>
           </Route>
         </Routes>

@@ -4,38 +4,69 @@ import { useNavigate } from "react-router-dom";
 import { registerByEmailPassword } from "../../api/register";
 import ConfirmOtpModal from "../../Component/OtpModal";
 import { trackPromise } from 'react-promise-tracker';
+import { isValidEmail } from "../../Utils/emailFormat";
+import { LoadingSpinnerComponent } from "../../Component/LoadingSpinner";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
+
 
 const Register: React.FC = () => {
   // const { login } = useContext(UserContext);
+  const [isloading, setIsLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [citizenCard, setCitizenCard] = useState<string>("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = () => {
-    let roleId: number = 1; //default is user
+    let roleId: number = 3; //default is user
+    if (email === "" || password === "" || name === "" || address === "" || phone === "" || citizenCard === "") {
+      toast.error("Please input all fields.", {
+        duration: 2000,
+      });
+      return;
+    }
+    if (!isValidEmail(email)) {
+      console.log("this email is invalid " + email);
+      toast.error("Invalid email format.", {
+        duration: 2000,
+      });
+      return;
+    }
+    if (password.length < 6 || password.length > 20) {
+      toast.error("Password length must be between 6 and 20 character.", {
+        duration: 2000,
+      });
+      return;
+    }
+
 
     const register = async () => {
-      if (email === "" || password === "" || name === "") {
-        toast.error("Please input all fields.", {
-          duration: 2000,
-        });
-      } else {
-        if (isOwner) {
-          roleId = 2;
-        }
-        // trackPromise(registerByEmailPassword(email, roleId, name, password)).then(toggleModal);
-        const response = await registerByEmailPassword(email, roleId, name, password);
+
+      if (isOwner) {
+        roleId = 2;
+      }
+      // trackPromise(registerByEmailPassword(email, roleId, name, password)).then(toggleModal);
+      try {
+        setIsLoading(true);
+        const response = await registerByEmailPassword(email, roleId, name, password, phone, address, citizenCard);
         if (response != null) {
           toggleModal();
         }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
       }
 
 
+    }
 
-    };
     register();
   };
 
@@ -58,8 +89,12 @@ const Register: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="justify-center">
+    <div className="relative">
+      {isloading &&
+        <div className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50 ">
+          <Spin indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />} />
+        </div>}
+      <>  <div className="justify-center">
         <div className="w-3/5 mx-auto">
           <div
             className="w-full bg-[#f6f5ec] gap-4 mb-4 rounded-[12px] overflow-hidden"
@@ -76,6 +111,11 @@ const Register: React.FC = () => {
             </h3>
           </div>
           <form className="space-y-4" onKeyDown={handleKeyDown}>
+            <div>
+              <label className="block mb-2 text-xs font-italic text-red-500 dark:text-red-400 text-start">
+                * All fields are required
+              </label>
+            </div>
             <div>
               <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-white text-start">
                 Your email
@@ -100,7 +140,7 @@ const Register: React.FC = () => {
                 type="name"
                 name="name"
                 id="name"
-                placeholder="your name"
+                placeholder="John Doe"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
                 onChange={(e) => {
@@ -125,6 +165,54 @@ const Register: React.FC = () => {
                 }}
               />
             </div>
+            <div>
+              <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-white text-start">
+                Your phone number
+              </label>
+              <input
+                type="phone"
+                name="phone"
+                id="phone"
+                placeholder="09 123 456 78"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                }}
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-white text-start">
+                Your address
+              </label>
+              <input
+                type="address"
+                name="address"
+                id="address"
+                placeholder="123 Cong Quynh St, District 1, HCM"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                }}
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-white text-start">
+                Your citizen card
+              </label>
+              <input
+                type="citizenCard"
+                name="citizenCard"
+                id="citizenCard"
+                placeholder="060120032384"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+                onChange={(e) => {
+                  setCitizenCard(e.target.value);
+                }}
+              />
+            </div>
 
             <label className="inline-flex w-full cursor-pointer mb-2 text-lg font-medium text-gray-900 dark:text-white"> Register as:&nbsp;
               <input type="checkbox" value="" className="sr-only peer"
@@ -134,6 +222,9 @@ const Register: React.FC = () => {
               <div className="relative w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
               <span className="ms-3 text-lg font-medium text-gray-900 dark:text-gray-300"> {isOwner ? 'Owner' : 'User'}</span>
             </label>
+
+
+
             <button
               type="button"
               onClick={handleSubmit}
@@ -163,18 +254,19 @@ const Register: React.FC = () => {
           </form>
         </div>
       </div >
-      {isModalOpen && (
-        <div
-          tabIndex={-1}
-          aria-hidden="true"
-          onMouseDown={handleOverlayClick}
-          className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50  "
-        // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
-        >
-          <ConfirmOtpModal email={email} />
-        </div>
-      )}
-    </>
+        {isModalOpen && (
+          <div
+            tabIndex={-1}
+            aria-hidden="true"
+            onMouseDown={handleOverlayClick}
+            className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50  "
+          // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+          >
+            <ConfirmOtpModal email={email} />
+          </div>
+        )}</>
+
+    </div>
   );
 };
 

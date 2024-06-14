@@ -23,7 +23,7 @@ const AdminLogin: React.FC = () => {
             accountId: responseData?.accountId,
             email: responseData?.email,
             isLoginWithGmail: responseData?.isLoginWithGmail,
-            isNewAccount: responseData?.isNewAccount,
+            packageStatus: responseData?.packageStatus,
             name: responseData?.name,
             roleId: responseData?.roleId,
             status: responseData?.status,

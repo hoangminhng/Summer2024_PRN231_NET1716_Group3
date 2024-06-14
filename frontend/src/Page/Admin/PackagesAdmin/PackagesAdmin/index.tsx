@@ -3,7 +3,7 @@ import { Tag, Card, Button, Col, Row, Pagination, notification } from "antd";
 import { getPackages, changeStatusActivePackage, changeStatusBlockPackage } from "../../../../api/Admin/adminPackages";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../../context/userContext";
-import { NumberFormat } from "../../../../Utils/numberFormatVND";
+import { NumberFormat } from "../../../../Utils/numberFormat";
 
 const AdminPackage: React.FC = () => {
   const [packageData, setPackageData] = useState<Package[]>([]);

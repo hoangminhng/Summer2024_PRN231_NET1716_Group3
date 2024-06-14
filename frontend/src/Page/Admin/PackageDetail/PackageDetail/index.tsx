@@ -11,6 +11,7 @@ const AdminPackageDetail: React.FC = () => {
     const [packageDetailData, setPackageDetailData] = useState<Package | undefined>();
     const { packageID } = useParams<{ packageID: string }>();
     const [idnumber, setID] = useState<number>();
+    const [errorContent, setErrorContent] = useState<string>("");
     const navigate = useNavigate();
     const { token } = useContext(UserContext);
     const [packageData, setPackageData] = useState<Package>({
@@ -49,8 +50,8 @@ const AdminPackageDetail: React.FC = () => {
                 let data = await updatePackage(Package, token);
                 return data;
             }
-        } catch (error) {
-            console.error("Error fetching update package:", error);
+        } catch (error : any) {
+            setErrorContent(error.message);
         }
     };
 
@@ -77,10 +78,11 @@ const AdminPackageDetail: React.FC = () => {
         packageData.memberShipID = packageDetailData?.memberShipID || 0;
         packageData.status = packageDetailData?.status || 0;
         const response = await fetchUpdatePackage(packageData);
-        if (response == undefined) {
+        if (response != undefined && !errorContent) {
             openNotificationWithIcon("success", "Update package information successfully!");
         } else {
-            openNotificationWithIcon("error", response?.message || "Have some error");
+            setErrorContent("");
+            openNotificationWithIcon("error", errorContent || "Have some error");
         }
         await fetchPackageDetail();
         }

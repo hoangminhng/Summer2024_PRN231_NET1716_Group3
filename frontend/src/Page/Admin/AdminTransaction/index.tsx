@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { getTransactions } from "../../../api/Admin/adminTransaction";
 import { useContext } from "react";
 import { UserContext } from "../../../context/userContext";
-import { NumberFormat } from "../../../Utils/numberFormatVND";
+import { NumberFormat } from "../../../Utils/numberFormat";
 import { DateFormat } from "../../../Utils/dateFormat";
 
 const AdminTransaction: React.FC = () => {

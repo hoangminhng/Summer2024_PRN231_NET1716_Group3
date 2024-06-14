@@ -19,12 +19,31 @@ export const getRoomListOfHostel = async (hostelId: number, token: string) => {
   }
 };
 
-export const getOwnerRoomDetail = async (roomId: number) => {
+export const getOwnerRoomDetail = async (roomId: number, token: string) => {
   try {
     const fetchData = await axios.get<OwnerRoomDetail>(
       `${baseUrl}/api/rooms/${roomId}`,
       {
         headers: {
+          Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+              const response = fetchData.data;
+              return response;
+            } catch (error) {
+              console.log("Error: " + error);
+            }
+          };
+
+export const getRoomOwnerContract = async (hostelId: number, token: string) => {
+  try {
+    const fetchData = await axios.get<RoomOwnerContract[]>(
+      `${baseUrl}/api/rooms/${hostelId}/list`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       }

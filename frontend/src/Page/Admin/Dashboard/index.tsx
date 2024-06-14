@@ -1,28 +1,23 @@
 import React from "react";
-import { Card, Col, Row } from "antd";
+import {Col, Row } from "antd";
 import Summary from "./Summary";
-import Total from "./Card";
 import DemoLine from "./ProfitChart";
 import PropertiesPie from "./PieChart";
+import AccountLine from "./AccountChart";
 
 const Dashboard: React.FC = () => (
   <>
   <Summary />
 
-<Card>
-  <Card.Grid
-    style={{ width: "100%", textAlign: "center", padding: 0 }}
-    hoverable={false}
-  >
-    <Total />
-  </Card.Grid>
-</Card>
 <Row>
   <Col span={16} >
-    <DemoLine style={{ height: '400px' }} />
+    <DemoLine />
   </Col>
   <Col span={8}>
-    <PropertiesPie style={{ height: '400px' }} />
+    <PropertiesPie />
+  </Col>
+  <Col span={24}>
+    <AccountLine style={{height:'400px'}} />
   </Col>
 </Row>
   </>
