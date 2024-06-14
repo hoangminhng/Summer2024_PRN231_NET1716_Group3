@@ -271,12 +271,12 @@
                         window.location.reload();
                     }, 1500);
                 } else {
-                setErrorContent("");
                 openNotificationWithIcon("error", errorContent || "Appointment not found!");
+                setErrorContent("");
                 }
             } else {
-                setErrorContent("");
                 openNotificationWithIcon("error", "You must fill all fields");
+                setErrorContent("");
             }
         };
         

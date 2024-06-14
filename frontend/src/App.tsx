@@ -42,6 +42,7 @@ import OwnerAppointmentDetail from "./Page/Owner/AppointmentDetail";
 import MemberProfile from "./Page/Member/Profile";
 import OwnerProfile from "./Page/Owner/OwnerProfile";
 import OwnerChangeProfile from "./Page/Owner/ChangeProfile";
+import OwnerChangePassword from "./Page/Owner/ChangePassword";
 
 const roles = {
   Admin: 1,
@@ -115,6 +116,7 @@ function App() {
             <Route path="/owner" element={<OwnerLayout />}>
             <Route path="profile" element={<OwnerProfile/>}/>
             <Route path="profile/change-information" element={<OwnerChangeProfile/>}/>
+            <Route path="profile/change-password" element={<OwnerChangePassword/>}/>
               <Route path="hostels" element={<Hostel />} />
               <Route path="hostels/:hostelId" element={<Room />} />
               <Route

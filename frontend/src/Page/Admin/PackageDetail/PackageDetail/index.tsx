@@ -52,6 +52,7 @@ const AdminPackageDetail: React.FC = () => {
             }
         } catch (error : any) {
             setErrorContent(error.message);
+            throw error;
         }
     };
 
@@ -77,12 +78,14 @@ const AdminPackageDetail: React.FC = () => {
         if(token != undefined){
         packageData.memberShipID = packageDetailData?.memberShipID || 0;
         packageData.status = packageDetailData?.status || 0;
-        const response = await fetchUpdatePackage(packageData);
-        if (response != undefined && !errorContent) {
-            openNotificationWithIcon("success", "Update package information successfully!");
-        } else {
+        try{
+            const response = await fetchUpdatePackage(packageData);
+            if (response != undefined && !errorContent) {
+                openNotificationWithIcon("success", "Update package information successfully!");
+            }
+        }catch(error : any){
+            openNotificationWithIcon("error", error.message || "Have some error");
             setErrorContent("");
-            openNotificationWithIcon("error", errorContent || "Have some error");
         }
         await fetchPackageDetail();
         }

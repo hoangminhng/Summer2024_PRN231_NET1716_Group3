@@ -37,6 +37,52 @@ export const getOwnerProfleDetail = async (accountID: number, token: string) => 
   }
 };
 
+export const getOldPassword = async (accountPassword: AccountPassword, token: string) => {
+  try {
+    const fetchData = await axios.post<AccountPassword>(
+      `${baseUrl}/api/owner/password/get-old-password`,
+      accountPassword,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error : any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Unknown error occurred");
+    } else {
+      throw new Error(error.message || "Unknown error occurred");
+    }
+  }
+};
+
+export const updateOwnerPassword = async (accountPassword: AccountPassword, token: string) => {
+  try {
+    const fetchData = await axios.post<AccountPassword>(
+      `${baseUrl}/api/owner/password/update`,
+      accountPassword,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error : any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Unknown error occurred");
+    } else {
+      throw new Error(error.message || "Unknown error occurred");
+    }
+  }
+};
+
 export const updateOwnerProfile = async (account: AccountUpdate, token: string) => {
   try {
     const fetchData = await axios.post<AccountUpdate>(

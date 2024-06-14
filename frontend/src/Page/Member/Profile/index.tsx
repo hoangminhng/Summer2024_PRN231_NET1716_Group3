@@ -3,7 +3,7 @@ import { Button } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { UserContext } from "../../../context/userContext";
 
-const MemberProfile = () => {
+const MemberProfile : React.FC = () => {
     const [profileData, setProfileData] = useState<ContractDetail>();
     // const { token, userId } = useContext(UserContext);
 

@@ -1,15 +1,15 @@
 import { useState, useEffect, useContext } from "react";
-import { Button, notification, Form, Input, InputNumber } from "antd";
+import { Button, notification, Form, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { UserContext } from "../../../context/userContext";
 import { useNavigate } from "react-router-dom";
-import { updateOwnerProfile, getOwnerProfleDetail } from "../../../api/Owner/ownerProfile";
+import { getOldPassword, getOwnerProfleDetail, updateOwnerPassword } from "../../../api/Owner/ownerProfile";
 
-const OwnerChangeProfile : React.FC = () => {
+const OwnerChangePassword : React.FC = () => {
     const [profileData, setProfileData] = useState<AccountDetail>();
     const { token, userId } = useContext(UserContext);
-    const [errorContent, setErrorContent] = useState<any>("");
+    const [errorContent, setErrorContent] = useState<any>();
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
@@ -27,10 +27,22 @@ const OwnerChangeProfile : React.FC = () => {
         }
     };
 
-    const fetchUpdateInformation = async (account: AccountUpdate) => {
+    const fetchUpdatePassword = async (account: AccountPassword) => {
         try {
             if (token != undefined) {
-                let data = await updateOwnerProfile(account, token);
+                let data = await updateOwnerPassword(account, token);
+                return data;
+            }
+        } catch (error: any) {
+            setErrorContent(error.message);
+            throw error;
+        }
+    };
+
+    const fetchGetOldPassword = async (account: AccountPassword) => {
+        try {
+            if (token != undefined) {
+                let data = await getOldPassword(account, token);
                 return data;
             }
         } catch (error: any) {
@@ -51,21 +63,41 @@ const OwnerChangeProfile : React.FC = () => {
         navigate("/owner/profile");
     };
 
-    const updateInformation = async (value: any) => {
-        let account: AccountUpdate = {
+    const updatePassword = async (value: any) => {
+        let accountOld: AccountPassword = {
             accountID: userId ? userId : 0,
-            address: value.address,
-            citizenCard: value.citizenCard.toString(),
-            email: value.email,
-            name: value.name,
-            phone: value.phone.toString()
+            password: value.old_password
+        };
+        let accountNew: AccountPassword = {
+            accountID: userId ? userId : 0,
+            password: value.new_password
         };
         try{
-            const response = await fetchUpdateInformation(account);
+            const response = await fetchGetOldPassword(accountOld);
             if (response != undefined && !errorContent) {
-                openNotificationWithIcon("success", "Update information successfully!");
+                if(value.old_password == value.new_password){
+                    openNotificationWithIcon("error", "New password is not the same with old password!");
+                }else{
+                    if(value.new_password != value.confirm_password){
+                        openNotificationWithIcon("error", "Confirm password is not the same with new password!");
+                    }
+                    else{
+                        try{
+                            const responseUpdate = await fetchUpdatePassword(accountNew);
+                            if (responseUpdate != undefined && !errorContent) {
+                                openNotificationWithIcon("success", "Change password successfully!");
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
+                            }
+                        }catch(error : any){
+                            openNotificationWithIcon("error", error.message || "Have some error when execute!");
+                            setErrorContent("");
+                        }
+                    }
+                }
             }
-        }catch(error : any){
+        }catch(error: any){
             openNotificationWithIcon("error", error.message || "Have some error when execute!");
             setErrorContent("");
         }
@@ -89,7 +121,7 @@ const OwnerChangeProfile : React.FC = () => {
                         </Button>
                     </div>
                 </div>
-                <p style={{textAlign:"center", fontSize:"24px", fontWeight:"bold"}}>CHANGE  PROFILE</p>
+                <p style={{textAlign:"center", fontSize:"24px", fontWeight:"bold"}}>CHANGE  PASSWORD</p>
                 <br />
                 <br />
                 <br />
@@ -108,7 +140,7 @@ const OwnerChangeProfile : React.FC = () => {
                                 maxWidth: 900,
                             }}
                             initialValues={profileData} // Initial values set here
-                            onFinish={updateInformation}
+                            onFinish={updatePassword}
                             onFinishFailed={onFinishFailed}
                             autoComplete="off"
                         >
@@ -120,67 +152,42 @@ const OwnerChangeProfile : React.FC = () => {
                             </Form.Item>
 
                             <Form.Item
-                                label="Name"
-                                name="name"
+                                label="Old Password"
+                                name="old_password"
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Please input your name!',
+                                        message: 'Please input your old password!',
                                     },
                                 ]}
                             >
-                                <Input />
+                                <Input type="password"/>
                             </Form.Item>
 
                             <Form.Item
-                                label="Citizen Card"
-                                name="citizenCard"
+                                label="New password"
+                                name="new_password"
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Please input your citizen card!',
-                                    },
-                                    {
-                                        validator: (_, value) =>
-                                            value && value.toString().length === 12
-                                                ? Promise.resolve()
-                                                : Promise.reject(new Error('Citizen card must be exactly 12 digits!')),
+                                        message: 'Please input your new password!',
                                     },
                                 ]}
                             >
-                                <InputNumber style={{width:"100%"}} />
+                                <Input type="password"/>
                             </Form.Item>
 
                             <Form.Item
-                                label="Phone"
-                                name="phone"
+                                label="Confirm password"
+                                name="confirm_password"
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Please input your phone!',
-                                    },
-                                    {
-                                        validator: (_, value) =>
-                                            value && value.toString().length === 10
-                                                ? Promise.resolve()
-                                                : Promise.reject(new Error('Phone number must be exactly 10 digits!')),
+                                        message: 'Please input confirm password!',
                                     },
                                 ]}
                             >
-                                <InputNumber style={{width:"100%"}} />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Address"
-                                name="address"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your address!',
-                                    },
-                                ]}
-                            >
-                                <Input />
+                                <Input type="password"/>
                             </Form.Item>
 
                             <Form.Item
@@ -195,7 +202,7 @@ const OwnerChangeProfile : React.FC = () => {
                                         htmlType="submit"
                                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 rounded-full mr-10"
                                     >
-                                        Update Information
+                                        Update Password
                                     </Button>
                                 </div>
                             </Form.Item>
@@ -207,4 +214,4 @@ const OwnerChangeProfile : React.FC = () => {
     );
 };
 
-export default OwnerChangeProfile;
+export default OwnerChangePassword;

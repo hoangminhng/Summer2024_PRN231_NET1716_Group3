@@ -27,6 +27,7 @@ const AdminNewPackage: React.FC = () => {
       }
     } catch (error: any) {
       setErrorContent(error.message);
+      throw error;
     }
   };
 
@@ -65,13 +66,15 @@ const AdminNewPackage: React.FC = () => {
     if (packageData.capacityHostel == undefined) {
       packageData.capacityHostel = 0;
     }
-    const response = await fetchCreatePackage(packageData);
-    if (response != undefined && !errorContent) {
-      openNotificationWithIcon("success", "Create new package successfully!");
-      setPackageData(initialPackageData);
-    } else {
+    try{
+      const response = await fetchCreatePackage(packageData);
+      if (response != undefined && !errorContent) {
+        openNotificationWithIcon("success", "Create new package successfully!");
+        setPackageData(initialPackageData);
+      }
+    }catch(error : any){
+      openNotificationWithIcon("error", error.message || "Have some error");
       setErrorContent("");
-      openNotificationWithIcon("error", errorContent || "Have some error");
     }
   };
 

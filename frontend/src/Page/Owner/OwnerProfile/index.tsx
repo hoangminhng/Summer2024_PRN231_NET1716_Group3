@@ -7,7 +7,7 @@ import { DateFormat } from "../../../Utils/dateFormat";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { useNavigate } from "react-router-dom";
 
-const OwnerProfile = () => {
+const OwnerProfile : React.FC = () => {
     const [profileData, setProfileData] = useState<Profile>();
     const { token, userId } = useContext(UserContext);
     const navigate = useNavigate();
@@ -32,6 +32,10 @@ const OwnerProfile = () => {
 
     const handleChangeInformation = () => {
         navigate("/owner/profile/change-information");
+    };
+
+    const handleChangePassword = () => {
+        navigate("/owner/profile/change-password");
     };
 
     return (
@@ -80,7 +84,8 @@ const OwnerProfile = () => {
                                     >
                                     Change Information
                                     </button>
-                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+                                    onClick={handleChangePassword}>
                                     Change Password
                                     </button>
                                 </div>
