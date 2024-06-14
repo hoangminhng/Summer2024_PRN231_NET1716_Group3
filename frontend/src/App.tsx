@@ -39,6 +39,9 @@ import PaymentSucess from "./Page/PaymentSuccess";
 import OwnerPackage from "./Page/Owner/MembershipPackage";
 import OwnerAppointment from "./Page/Owner/Appointment";
 import OwnerAppointmentDetail from "./Page/Owner/AppointmentDetail";
+import MemberProfile from "./Page/Member/Profile";
+import OwnerProfile from "./Page/Owner/OwnerProfile";
+import OwnerChangeProfile from "./Page/Owner/ChangeProfile";
 
 const roles = {
   Admin: 1,
@@ -110,6 +113,8 @@ function App() {
 
           <Route element={<RequiredAuth allowedRoles={[roles.Owner]} />}>
             <Route path="/owner" element={<OwnerLayout />}>
+            <Route path="profile" element={<OwnerProfile/>}/>
+            <Route path="profile/change-information" element={<OwnerChangeProfile/>}/>
               <Route path="hostels" element={<Hostel />} />
               <Route path="hostels/:hostelId" element={<Room />} />
               <Route
