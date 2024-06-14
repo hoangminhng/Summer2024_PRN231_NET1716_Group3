@@ -4,7 +4,7 @@ import { GetHostelCard } from "../../../api/Hostels";
 import dayjs from "dayjs";
 
 const CardHorizontal: React.FC = () => {
-  const [hostelList, setHostelList] = useState<Hostel[]>([]);
+  const [hostelList, setHostelList] = useState<Hostel[] | undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const hostelsPerPage = 10;
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const CardHorizontal: React.FC = () => {
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const indexOfLastHostel = currentPage * hostelsPerPage;
@@ -33,7 +33,9 @@ const CardHorizontal: React.FC = () => {
     indexOfFirstHostel,
     indexOfLastHostel
   );
-  const totalPages = Math.ceil(hostelList.length / hostelsPerPage);
+  const totalPages = hostelList
+    ? Math.ceil(hostelList.length / hostelsPerPage)
+    : 1;
 
   const handleCardClick = (hostelID: string) => {
     navigate(`/hostel/detail/${hostelID}`);
