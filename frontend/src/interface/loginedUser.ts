@@ -2,7 +2,7 @@ interface LoginedUser {
   accountId: number;
   email: string;
   isLoginWithGmail: boolean;
-  isNewAccount: boolean;
+  packageStatus: number;
   name: string;
   roleId: number;
   status: number;

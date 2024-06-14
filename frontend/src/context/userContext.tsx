@@ -9,7 +9,9 @@ interface UserContextType {
   userId: number | undefined;
   token: string | undefined;
   userAccountName: string | undefined;
+  userPackageStatus: number | undefined;
   login: (user: LoginedUser, token: string) => void;
+  updatePackageStatus(status: number): void;
   logout: () => void;
   isAuth: () => boolean;
 }
@@ -19,13 +21,16 @@ export const UserContext = createContext<UserContextType>({
   userId: undefined,
   token: undefined,
   userAccountName: undefined,
-  login: () => {},
-  logout: () => {},
+  userPackageStatus: undefined,
+  updatePackageStatus: () => { },
+  login: () => { },
+  logout: () => { },
   isAuth: () => false,
 });
 
 const UserContextProvider = ({ children }: UserProviderProps) => {
   const [userRole, setUserRole] = useState<number | undefined>();
+  const [userPackageStatus, setuserPackageStatus] = useState<number | undefined>();
   const [userAccountName, setUserAccountName] = useState<string | undefined>();
   const [userId, setUserId] = useState<number | undefined>();
   const [token, setToken] = useState<string | undefined>();
@@ -73,12 +78,14 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     setUserRole(user?.roleId);
     setUserId(user?.accountId);
     setToken(token);
+    setuserPackageStatus(user?.packageStatus);
   };
 
   const logout = () => {
     setUserAccountName(undefined);
     setUserRole(undefined);
     setUserId(undefined);
+    setuserPackageStatus(undefined);
     setToken(undefined);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
@@ -95,6 +102,11 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     }
   };
 
+  const updatePackageStatus = (status: number) => {
+    setuserPackageStatus(status);
+
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -102,6 +114,8 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
         userId,
         token,
         userAccountName,
+        userPackageStatus,
+        updatePackageStatus,
         login,
         logout,
         isAuth,

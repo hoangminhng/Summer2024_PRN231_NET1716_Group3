@@ -1,6 +1,6 @@
 interface ServiceRoomContract{
     roomServiceId : number,
-    serviceName : string,
+    price : number,
     typeName : string,
-    servicePrice : number,
+    unit : string,
 }

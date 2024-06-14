@@ -6,6 +6,8 @@ import {
   HomeOutlined,
   FormOutlined,
   DollarOutlined,
+  ShoppingOutlined,
+  CalendarFilled
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -45,7 +47,9 @@ const OwnerLayout: React.FC = () => {
       getItem("Create Contract", "3"),
     ]),
     getItem("Bill", "4", <DollarOutlined />),
-    getItem("Logout", "5", <LogoutOutlined />),
+    getItem("Package", "5", <ShoppingOutlined />),
+    getItem("Appointment", "6", <CalendarFilled />),
+    getItem("Logout", "7", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
 
   const handleMenuClick = (key: React.Key) => {
@@ -63,6 +67,12 @@ const OwnerLayout: React.FC = () => {
         navigate("/owner/bill-payment");
         break;
       case "5":
+        navigate("/owner/package");
+        break;
+      case "6":
+        navigate("/owner/appointments");
+        break;
+      case "7":
         logout();
         navigate("/");
         break;

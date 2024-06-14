@@ -169,7 +169,7 @@ const OwnerContractDetail = () => {
                     new Paragraph({
                         children: [
                             new TextRun({
-                                text: `${service.serviceName} : ${NumberFormat(service.servicePrice)} (${service.typeName})`,
+                                text: `${service.typeName} : ${NumberFormat(service.price)} (${service.unit})`,
                                 break: 2,
                             }),
                         ],
@@ -392,9 +392,9 @@ const OwnerContractDetail = () => {
                         {...(contactDetailData?.service || []).map((service) => (
                             <div key={service.roomServiceId}>
                                 <p style={{ fontWeight: "bold" }}>
-                                    {service.serviceName} :{" "}
-                                    {NumberFormat(service.servicePrice)} (
-                                    {service.typeName})
+                                    {service.typeName} :{" "}
+                                    {NumberFormat(service.price)} (
+                                    {service.unit})
                                 </p>
                             </div>
                         ))}
