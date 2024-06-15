@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from "../../..//context/userContext";
 import { getBillListByContractId } from '../../../api/Owner/ownerBillPayment';
+import { NumberFormat } from '../../../Utils/numberFormat'; 
 
 const BillList: React.FC = () => {
   const navigate = useNavigate();
@@ -48,11 +49,13 @@ const BillList: React.FC = () => {
       title: 'Amount',
       dataIndex: 'billAmount',
       key: 'billAmount',
+      render: (text) => NumberFormat(text),
     },
     {
       title: 'Total Amount',
       dataIndex: 'totalAmount',
       key: 'totalAmount',
+      render: (text) => NumberFormat(text),
     },
     {
       title: 'Status',
