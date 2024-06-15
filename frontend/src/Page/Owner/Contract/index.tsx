@@ -416,7 +416,7 @@
                     >
                     <InputNumber
                         defaultValue={0}
-                        formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        formatter={(value) => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                         style={{width: "200px", borderRadius:"10px"}}
                         required
                         onChange={handleChangeDeposit}
