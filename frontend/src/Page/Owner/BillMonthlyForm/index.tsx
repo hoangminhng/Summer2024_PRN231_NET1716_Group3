@@ -4,18 +4,28 @@ import BillForm from "../../../Component/Owner/BillForm";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/userContext";
 import { getLastMonthBillPayment } from "../../../api/Owner/ownerBillPayment";
+import { useLocation } from "react-router-dom";
+
+interface LocationState {
+  contractId: string;
+}
 
 const BillMonthlyForm: React.FC = () => {
   const [billPayment, setBillPayment] = useState<BillPayment | null>(null);
   const [loading, setLoading] = useState(true);
   const { token } = useContext(UserContext);
 
-  const contractId = 4;
+  const location = useLocation();
+  const { contractId } = location.state as LocationState;
+
   const fetchLastMonthBillPayment = async () => {
     if (token !== undefined) {
       setLoading(true);
       try {
-        const response = await getLastMonthBillPayment(contractId, token);
+        const response = await getLastMonthBillPayment(
+          parseInt(contractId),
+          token
+        );
         if (response) {
           console.log("Last month bill: ", response);
           setBillPayment(response);

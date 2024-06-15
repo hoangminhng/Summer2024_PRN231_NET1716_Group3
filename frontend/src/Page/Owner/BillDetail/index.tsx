@@ -27,7 +27,7 @@ const BillPaymentDetail: React.FC = () => {
         }
       } catch (error) {
         console.log(error);
-        navigate("/owner/bill-payment/bills");
+        navigate("/owner/bill-payment");
       } finally {
         setLoading(false);
       }

@@ -25,7 +25,7 @@ const BillList: React.FC = () => {
   }, [contractId, token]);
 
   const handleOpenBillPaymentForm = () => {
-    navigate("/owner/bill-payment/bills/form");
+    navigate("/owner/bill-payment/bills/form", { state: { contractId } });
   };
 
   const columns = [
