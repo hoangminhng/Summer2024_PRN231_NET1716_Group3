@@ -132,12 +132,18 @@ function App() {
                 element={<OwnerContractDetail />}
               />
               <Route path="bill-payment" element={<BillPayment />} />
-              <Route path="bill-payment/bills" element={<BillList />} />
               <Route
-                path="bill-payment/bills/:billPaymentId"
+                path="bill-payment/bills/:contractId"
+                element={<BillList />}
+              />
+              <Route
+                path="bill-payment/bills/details/:billPaymentId"
                 element={<BillPaymentDetail />}
               />
-              <Route path="bill-payment/bills/form" element={<BillMonthlyForm />} />
+              <Route
+                path="bill-payment/bills/form"
+                element={<BillMonthlyForm />}
+              />
               <Route path="package" element={<OwnerPackage />} />
               <Route path="appointments" element={<OwnerAppointment />} />
               <Route
@@ -160,9 +166,12 @@ function App() {
             </Route>
           </Route>
 
-          <Route element={<RequiredAuth allowedRoles={[roles.Member, roles.Owner]} />}>
-            <Route path="/paymentsucess" element={<PaymentSucess />}>
-            </Route>
+          <Route
+            element={
+              <RequiredAuth allowedRoles={[roles.Member, roles.Owner]} />
+            }
+          >
+            <Route path="/paymentsucess" element={<PaymentSucess />}></Route>
           </Route>
         </Routes>
       </Router>

@@ -107,3 +107,18 @@ export const uploadImage = async (
     throw error;
   }
 };
+
+export const getHiringRooms = async (ownerId: number, token: string) => {
+  try {
+    const fetchData = await axios.get(`${baseUrl}/api/rooms/hiring/${ownerId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return fetchData.data;
+  } catch (error) {
+    console.log("Error: " + error);
+    throw error;
+  }
+};
