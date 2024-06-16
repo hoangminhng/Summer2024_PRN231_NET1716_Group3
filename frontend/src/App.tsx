@@ -39,6 +39,7 @@ import PaymentSucess from "./Page/PaymentSuccess";
 import OwnerPackage from "./Page/Owner/MembershipPackage";
 import OwnerAppointment from "./Page/Owner/Appointment";
 import OwnerAppointmentDetail from "./Page/Owner/AppointmentDetail";
+import PaymentHistory from "./Page/Member/PaymentHistory";
 import MemberProfile from "./Page/Member/Profile";
 import OwnerProfile from "./Page/Owner/OwnerProfile";
 import OwnerChangeProfile from "./Page/Owner/ChangeProfile";
@@ -160,6 +161,7 @@ function App() {
                 path="contracts/detail/:contractID"
                 element={<MemberContractDetail />}
               />
+              <Route path="payment" element={<PaymentHistory />} />
               <Route path="profile" element={<MemberProfile/>}/>
               <Route path="profile/change-information" element={<MemberChangeProfile/>}/>
             <Route path="profile/change-password" element={<MemberChangePassword/>}/>
