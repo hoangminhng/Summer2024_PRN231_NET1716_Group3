@@ -37,11 +37,11 @@ const PaymentSucess = () => {
             if (response?.data?.paymentType == 0) {
               homeTimeout = setTimeout(() => navigate("/member/contracts"), 1000);
             }
-            if (response?.data?.paymentType === "1") {
+            if (response?.data?.paymentType == 1) {
               //bill_payment
               homeTimeout = setTimeout(() => navigate("/"), 2000);
             }
-            if (response?.data?.paymentType === "2") {
+            if (response?.data?.paymentType == 2) {
               //package_register
               updatePackageStatus(0); //set status of register package to active
               homeTimeout = setTimeout(() => navigate("/owner"), 2000);
