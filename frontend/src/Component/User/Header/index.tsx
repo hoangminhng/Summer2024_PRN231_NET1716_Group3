@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import LoginModal from "../../LoginModal";
 import { UserContext } from "../../../context/userContext";
 import { AvatarDropdown } from "../AvatarDropDown";
+import { AvatarDropdownOwner } from "../../Owner/AvatarDropDownOwner";
 // import Logo from "../../../assets/logo.png";
 
 const Header: React.FC = () => {
@@ -110,6 +111,10 @@ const Header: React.FC = () => {
           userRole == 3 ? (
             <div className="hidden md:flex md:order-2">
               <AvatarDropdown />
+            </div>
+          ) : userRole == 2 ? (
+            <div className="hidden md:flex md:order-2">
+              <AvatarDropdownOwner />
             </div>
           ) : null
         ) : (

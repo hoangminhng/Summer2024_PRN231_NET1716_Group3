@@ -271,12 +271,12 @@
                         window.location.reload();
                     }, 1500);
                 } else {
-                setErrorContent("");
                 openNotificationWithIcon("error", errorContent || "Appointment not found!");
+                setErrorContent("");
                 }
             } else {
-                setErrorContent("");
                 openNotificationWithIcon("error", "You must fill all fields");
+                setErrorContent("");
             }
         };
         
@@ -416,7 +416,7 @@
                     >
                     <InputNumber
                         defaultValue={0}
-                        formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        formatter={(value) => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                         style={{width: "200px", borderRadius:"10px"}}
                         required
                         onChange={handleChangeDeposit}

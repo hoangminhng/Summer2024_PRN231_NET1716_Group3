@@ -7,7 +7,9 @@ import {
   FormOutlined,
   DollarOutlined,
   ShoppingOutlined,
-  CalendarFilled
+  CalendarFilled,
+  UserOutlined,
+  DesktopOutlined
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -41,38 +43,46 @@ const OwnerLayout: React.FC = () => {
   const navigate = useNavigate();
 
   const items: MenuItem[] = [
-    getItem("Hostel", "1", <HomeOutlined />),
+    getItem("Profile", "1", <UserOutlined />),
+    getItem("Hostel", "2", <HomeOutlined />),
     getItem("Contract", "sub1", <FormOutlined />, [
-      getItem("Contract", "2"),
-      getItem("Create Contract", "3"),
+      getItem("Contract", "3"),
+      getItem("Create Contract", "4"),
     ]),
-    getItem("Bill", "4", <DollarOutlined />),
-    getItem("Package", "5", <ShoppingOutlined />),
-    getItem("Appointment", "6", <CalendarFilled />),
-    getItem("Logout", "7", <LogoutOutlined />),
+    getItem("Bill", "5", <DollarOutlined />),
+    getItem("Package", "6", <ShoppingOutlined />),
+    getItem("Appointment", "7", <CalendarFilled />),
+    getItem("View Home", "8", <DesktopOutlined />),
+    getItem("Logout", "9", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
 
   const handleMenuClick = (key: React.Key) => {
     switch (key) {
       case "1":
-        navigate("/owner/hostels");
+        navigate("/owner/profile");
         break;
       case "2":
-        navigate("/owner/contracts");
+        navigate("/owner/hostels");
         break;
       case "3":
-        navigate("/owner/contract/create");
+        navigate("/owner/contracts");
         break;
       case "4":
-        navigate("/owner/bill-payment");
+        navigate("/owner/contract/create");
         break;
       case "5":
-        navigate("/owner/package");
+        navigate("/owner/bill-payment");
         break;
       case "6":
-        navigate("/owner/appointments");
+        navigate("/owner/package");
         break;
       case "7":
+        navigate("/owner/appointments");
+        break;
+      case "8":
+        navigate("/");
+        break;
+      case "9":
         logout();
         navigate("/");
         break;

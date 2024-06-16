@@ -33,12 +33,19 @@ import MemberViewContract from "./Page/Member/MemberContract";
 import MemberContractDetail from "./Page/Member/MemberContractDetail";
 import BillPayment from "./Page/Owner/BillPayment";
 import BillList from "./Page/Owner/BillList";
-import BillDetail from "./Page/Owner/BillDetail";
+import BillPaymentDetail from "./Page/Owner/BillDetail";
+import BillMonthlyForm from "./Page/Owner/BillMonthlyForm";
 import PaymentSucess from "./Page/PaymentSuccess";
 import OwnerPackage from "./Page/Owner/MembershipPackage";
 import OwnerAppointment from "./Page/Owner/Appointment";
 import OwnerAppointmentDetail from "./Page/Owner/AppointmentDetail";
 import PaymentHistory from "./Page/Member/PaymentHistory";
+import MemberProfile from "./Page/Member/Profile";
+import OwnerProfile from "./Page/Owner/OwnerProfile";
+import OwnerChangeProfile from "./Page/Owner/ChangeProfile";
+import OwnerChangePassword from "./Page/Owner/ChangePassword";
+import MemberChangeProfile from "./Page/Member/MemberChangeProfile";
+import MemberChangePassword from "./Page/Member/MemberChangePassword";
 
 const roles = {
   Admin: 1,
@@ -110,6 +117,9 @@ function App() {
 
           <Route element={<RequiredAuth allowedRoles={[roles.Owner]} />}>
             <Route path="/owner" element={<OwnerLayout />}>
+            <Route path="profile" element={<OwnerProfile/>}/>
+            <Route path="profile/change-information" element={<OwnerChangeProfile/>}/>
+            <Route path="profile/change-password" element={<OwnerChangePassword/>}/>
               <Route path="hostels" element={<Hostel />} />
               <Route path="hostels/:hostelId" element={<Room />} />
               <Route
@@ -123,10 +133,17 @@ function App() {
                 element={<OwnerContractDetail />}
               />
               <Route path="bill-payment" element={<BillPayment />} />
-              <Route path="bill-payment/bills" element={<BillList />} />
               <Route
-                path="bill-payment/bills/:billPaymentId"
-                element={<BillDetail />}
+                path="bill-payment/bills/:contractId"
+                element={<BillList />}
+              />
+              <Route
+                path="bill-payment/bills/details/:billPaymentId"
+                element={<BillPaymentDetail />}
+              />
+              <Route
+                path="bill-payment/bills/form"
+                element={<BillMonthlyForm />}
               />
               <Route path="package" element={<OwnerPackage />} />
               <Route path="appointments" element={<OwnerAppointment />} />
@@ -138,13 +155,16 @@ function App() {
           </Route>
 
           <Route element={<RequiredAuth allowedRoles={[roles.Member]} />}>
-            <Route path="/member" element={<OwnerLayout />}>
+            <Route path="/member" element={<MemberLayout />}>
               <Route path="contracts" element={<MemberViewContract />} />
               <Route
                 path="contracts/detail/:contractID"
                 element={<MemberContractDetail />}
               />
               <Route path="payment" element={<PaymentHistory />} />
+              <Route path="profile" element={<MemberProfile/>}/>
+              <Route path="profile/change-information" element={<MemberChangeProfile/>}/>
+            <Route path="profile/change-password" element={<MemberChangePassword/>}/>
             </Route>
           </Route>
 
