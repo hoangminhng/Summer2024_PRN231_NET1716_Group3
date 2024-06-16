@@ -38,6 +38,7 @@ import PaymentSucess from "./Page/PaymentSuccess";
 import OwnerPackage from "./Page/Owner/MembershipPackage";
 import OwnerAppointment from "./Page/Owner/Appointment";
 import OwnerAppointmentDetail from "./Page/Owner/AppointmentDetail";
+import PaymentHistory from "./Page/Member/PaymentHistory";
 
 const roles = {
   Admin: 1,
@@ -143,12 +144,16 @@ function App() {
                 path="contracts/detail/:contractID"
                 element={<MemberContractDetail />}
               />
+              <Route path="payment" element={<PaymentHistory />} />
             </Route>
           </Route>
 
-          <Route element={<RequiredAuth allowedRoles={[roles.Member, roles.Owner]} />}>
-            <Route path="/paymentsucess" element={<PaymentSucess />}>
-            </Route>
+          <Route
+            element={
+              <RequiredAuth allowedRoles={[roles.Member, roles.Owner]} />
+            }
+          >
+            <Route path="/paymentsucess" element={<PaymentSucess />}></Route>
           </Route>
         </Routes>
       </Router>
