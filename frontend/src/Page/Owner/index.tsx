@@ -8,7 +8,8 @@ import {
   DollarOutlined,
   ShoppingOutlined,
   CalendarFilled,
-  UserOutlined
+  UserOutlined,
+  DesktopOutlined
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -51,7 +52,8 @@ const OwnerLayout: React.FC = () => {
     getItem("Bill", "5", <DollarOutlined />),
     getItem("Package", "6", <ShoppingOutlined />),
     getItem("Appointment", "7", <CalendarFilled />),
-    getItem("Logout", "8", <LogoutOutlined />),
+    getItem("View Home", "8", <DesktopOutlined />),
+    getItem("Logout", "9", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
 
   const handleMenuClick = (key: React.Key) => {
@@ -78,6 +80,9 @@ const OwnerLayout: React.FC = () => {
         navigate("/owner/appointments");
         break;
       case "8":
+        navigate("/");
+        break;
+      case "9":
         logout();
         navigate("/");
         break;
