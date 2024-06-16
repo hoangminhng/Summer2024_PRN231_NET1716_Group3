@@ -65,7 +65,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ closeModal }) => {
       }
     };
     loginStaff();
-    closeModal();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
