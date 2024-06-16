@@ -103,7 +103,7 @@ const MemberViewContract: React.FC = () => {
         if (userId && token) {
           const response = await payDeposit(contractID, token);
           if (response) {
-            window.location.href = response?.paymentUrl ;
+            window.location.href = response?.paymentUrl;
           }
         }
       };
@@ -384,6 +384,7 @@ const MemberViewContract: React.FC = () => {
                     Print contract
                   </Button>
                   <Button
+                    className="mx-2"
                     type="primary"
                     onClick={() =>
                       navigate(
