@@ -7,7 +7,7 @@ export const payDeposit = async (contractId: number, token: string) => {
   var returnUrl = feAddress + '/paymentsucess';
   try {
     const param = { contractId, returnUrl };
-    const response = await axios.post(
+    const response = await axios.post<ContractDeposit>(
       `${baseUrl}/api/bill-payment/deposit`,
       param,
       {
@@ -17,7 +17,7 @@ export const payDeposit = async (contractId: number, token: string) => {
         },
       }
     );
-    return response;
+    return response.data;
   } catch (error: any) {
     toast.error(error.response.data.message, { duration: 2000 });
   }
