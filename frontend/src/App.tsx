@@ -15,7 +15,6 @@ import Packages from "./Page/Admin/PackagesAdmin";
 import PackageDetail from "./Page/Admin/PackageDetail";
 import NewPackage from "./Page/Admin/NewPackage";
 import PermissionPage from "./Page/Permission";
-import Package from "./Page/Package";
 import OwnerLayout from "./Page/Owner";
 import Hostel from "./Page/Owner/Hostel";
 import Room from "./Page/Owner/Room";
@@ -62,7 +61,6 @@ function App() {
 
           <Route path="/" element={<MemberLayout />}>
             <Route index element={<Home />} />
-            <Route path="package" element={<Package />} />
             <Route
               path="/register"
               element={
@@ -117,9 +115,9 @@ function App() {
 
           <Route element={<RequiredAuth allowedRoles={[roles.Owner]} />}>
             <Route path="/owner" element={<OwnerLayout />}>
-            <Route path="profile" element={<OwnerProfile/>}/>
-            <Route path="profile/change-information" element={<OwnerChangeProfile/>}/>
-            <Route path="profile/change-password" element={<OwnerChangePassword/>}/>
+              <Route path="profile" element={<OwnerProfile />} />
+              <Route path="profile/change-information" element={<OwnerChangeProfile />} />
+              <Route path="profile/change-password" element={<OwnerChangePassword />} />
               <Route path="hostels" element={<Hostel />} />
               <Route path="hostels/:hostelId" element={<Room />} />
               <Route
@@ -162,9 +160,9 @@ function App() {
                 element={<MemberContractDetail />}
               />
               <Route path="payment" element={<PaymentHistory />} />
-              <Route path="profile" element={<MemberProfile/>}/>
-              <Route path="profile/change-information" element={<MemberChangeProfile/>}/>
-            <Route path="profile/change-password" element={<MemberChangePassword/>}/>
+              <Route path="profile" element={<MemberProfile />} />
+              <Route path="profile/change-information" element={<MemberChangeProfile />} />
+              <Route path="profile/change-password" element={<MemberChangePassword />} />
             </Route>
           </Route>
 

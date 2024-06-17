@@ -1,9 +1,12 @@
-interface MemberShipDetail{
-    memberShipTransactionID : number,
-    membershipName : string,
-    capacityHostel: number,
-    month: number,
-    packageFee: number,
-    dateRegister : Date,
-    dateExpire : Date,
+interface MemberShipDetail {
+  memberShipTransactionID: number;
+  memberShipName: string;
+  memberShipID: number;
+  capacityHostel: number;
+  month: number;
+  packageFee: number;
+  dateRegister: Date;
+  dateExpire: Date;
+  status: number;
+  memberShipFee: number;
 }
