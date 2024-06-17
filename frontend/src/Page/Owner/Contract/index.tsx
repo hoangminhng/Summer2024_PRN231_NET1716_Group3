@@ -13,8 +13,8 @@
     import { createContract, getUserAppointmentOwnerContract } from "../../../api/Owner/ownerContract";
     import { NumberFormat } from "../../../Utils/numberFormat";
     import { LoadingOutlined } from "@ant-design/icons";
-    //import ReactQuill from 'react-quill';
-    //import 'react-quill/dist/quill.snow.css'; 
+    import ReactQuill from 'react-quill';
+    import 'react-quill/dist/quill.snow.css'; 
 
     const OwnerContractCreate : React.FC = () => {
         const [updatedContent, setUpdatedContent] = useState<string>("");
