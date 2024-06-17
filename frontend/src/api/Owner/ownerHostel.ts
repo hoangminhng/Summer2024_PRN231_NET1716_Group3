@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 const baseUrl = process.env.REACT_APP_BACK_END_URL;
 
 export const getOwnerHostels = async (ownerId: number, token: string) => {
@@ -54,8 +55,9 @@ export const updateHostelStatus = async (
     );
     const response = fetchData.data;
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.log("Error:", error);
+    toast.error(error.response.data.message, { duration: 2000 });
     throw error;
   }
 };
@@ -130,7 +132,10 @@ export const getHostelType = async () => {
   }
 };
 
-export const getHostelOwnerContract = async (ownerId: number, token: string) => {
+export const getHostelOwnerContract = async (
+  ownerId: number,
+  token: string
+) => {
   try {
     const fetchData = await axios.get<HostelOwnerContract[]>(
       `${baseUrl}/api/owner/${ownerId}/hostels`,
