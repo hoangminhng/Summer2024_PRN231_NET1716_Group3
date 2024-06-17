@@ -54,7 +54,7 @@ const BillForm: React.FC<Props> = ({ token, lastBillPayment }) => {
           setDelayedNavigation(true);
 
           setTimeout(() => {
-            navigate("/owner/bill-payment/bills");
+            navigate(`/owner/bill-payment/bills/${lastBillPayment.contractId}`);
           }, 1500);
         }
       } catch (error: any) {

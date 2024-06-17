@@ -9,12 +9,21 @@ import React, { useContext, useState } from "react";
 import { UserContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
 
-import { ChevronDownIcon, PowerIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import {
+  ChevronDownIcon,
+  PowerIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/solid";
 
 const profileMenuItems = [
   {
     label: "My Profile",
     path: "profile",
+    icon: UserCircleIcon,
+  },
+  {
+    label: "Contract",
+    path: "contracts",
     icon: UserCircleIcon,
   },
   {
@@ -36,9 +45,10 @@ export function AvatarDropdown() {
     if (path === "signout") {
       logout();
       navigate("/");
-    }
-    else if(path === "profile"){
-      navigate("member/profile")
+    } else if (path === "profile") {
+      navigate("member/profile");
+    }else if (path === "contracts") {
+      navigate("member/contracts");
     }
     closeMenu();
   };
@@ -80,7 +90,7 @@ export function AvatarDropdown() {
         {profileMenuItems.map(({ label, icon, path }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
           return (
-            <div
+            <button
               key={label}
               onClick={() => handleClick(path)}
               className={`flex items-center gap-2 rounded p-3 text-sm text-gray-700 dark:text-gray-400${
@@ -96,7 +106,7 @@ export function AvatarDropdown() {
               <p className="font-normal" color={isLastItem ? "red" : "inherit"}>
                 {label}
               </p>
-            </div>
+            </button>
           );
         })}
       </MenuList>

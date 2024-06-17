@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Col, Row, Spin } from 'antd';
+import { Table, Spin, Image } from 'antd';
 import { getHiringRooms } from '../../../api/Owner/ownerRoom';
-import { UserContext } from "../../..//context/userContext";
+import { UserContext } from "../../../context/userContext";
 
 const BillPayment: React.FC = () => {
   const [rooms, setRooms] = useState([]);
@@ -25,35 +25,63 @@ const BillPayment: React.FC = () => {
     fetchRooms();
   }, [userId, token]);
 
-  const handleCardClick = (contractId) => {
-    navigate(`/owner/bill-payment/bills/${contractId}`); 
-    console.log(contractId);
+  const handleRowClick = (record) => {
+    navigate(`/owner/bill-payment/bills/${record.contractId}`);
+    console.log(record.contractId);
   };
+
+  const columns = [
+    {
+      title: 'Image',
+      dataIndex: 'roomThumbnail',
+      key: 'roomThumbnail',
+      render: (text, record) => (
+        <Image
+          width={50}
+          height={50}
+          src={record.roomThumbnail}
+          alt={record.roomName}
+          style={{ objectFit: 'cover' }}
+        />
+      ),
+    },
+    {
+      title: 'Room Name',
+      dataIndex: 'roomName',
+      key: 'roomName',
+    },
+    {
+      title: 'Hostel',
+      dataIndex: 'hostelName',
+      key: 'hostelName',
+    },
+    {
+      title: 'Student',
+      dataIndex: 'studentName',
+      key: 'studentName',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: status => (status === 2 ? 'Hiring' : 'Available'),
+    },
+  ];
 
   return (
     <div style={{ padding: '24px' }}>
-      <Row gutter={[16, 16]}>
-        {rooms.map(room => (
-          <Col key={room.roomID} span={8}>
-            <Card
-              hoverable
-              cover={<img alt={room.roomName} src={room.roomThumbnail} style={{ width: '100%', height: '290px', objectFit: 'cover' }} />}
-              onClick={() => handleCardClick(room.contractId)}
-            >
-              <Card.Meta
-                title={room.roomName}
-                description={
-                  <>
-                    <p>Hostel: {room.hostelName}</p>
-                    <p>Student: {room.studentName}</p>
-                    <p>Status: {room.status === 2 ? 'Hiring' : 'Available'}</p>
-                  </>
-                }
-              />
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={rooms}
+          rowKey="roomID"
+          onRow={(record) => ({
+            onClick: () => handleRowClick(record),
+          })}
+        />
+      )}
     </div>
   );
 };

@@ -3,6 +3,8 @@ import { NumberFormat } from "../../Utils/numberFormat";
 import { useEffect, useState } from "react";
 import { GetHostelCard } from "../../api/Hostels";
 import CardHorizontal from "../../Component/User/HostelCardHorizontal";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const Home: React.FC = () => {
   const [hostelList, setHostelList] = useState<Hostel[] | undefined>([]);
@@ -66,7 +68,10 @@ const Home: React.FC = () => {
   const filteredHostels = filterHostels();
   const indexOfLastHostel = currentPage * hostelsPerPage;
   const indexOfFirstHostel = indexOfLastHostel - hostelsPerPage;
-  const currentHostels = filteredHostels?.slice(indexOfFirstHostel, indexOfLastHostel);
+  const currentHostels = filteredHostels?.slice(
+    indexOfFirstHostel,
+    indexOfLastHostel
+  );
   const totalPages = filteredHostels
     ? Math.ceil(filteredHostels.length / hostelsPerPage)
     : 1;
@@ -174,41 +179,49 @@ const Home: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className="flex flex-col mx-4 w-4/5">
-          {currentHostels?.map((hostel, key) => (
-            <CardHorizontal hostel={hostel} key={key} />
-          ))}
-
-          <div className="flex justify-center mt-4">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
-            >
-              Previous
-            </button>
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index + 1}
-                onClick={() => handlePageChange(index + 1)}
-                className={`px-4 py-2 mx-1 text-sm rounded-md ${
-                  currentPage === index + 1
-                    ? "bg-slate-950 text-white"
-                    : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
-                }`}
-              >
-                {index + 1}
-              </button>
+        {currentHostels?.length == 0 ? (
+          <Spin
+            fullscreen={true}
+            size="large"
+            indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+          />
+        ) : (
+          <div className="flex flex-col mx-4 w-4/5">
+            {currentHostels?.map((hostel, key) => (
+              <CardHorizontal hostel={hostel} key={key} />
             ))}
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
-            >
-              Next
-            </button>
+
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => handlePageChange(index + 1)}
+                  className={`px-4 py-2 mx-1 text-sm rounded-md ${
+                    currentPage === index + 1
+                      ? "bg-slate-950 text-white"
+                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+              >
+                Next
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

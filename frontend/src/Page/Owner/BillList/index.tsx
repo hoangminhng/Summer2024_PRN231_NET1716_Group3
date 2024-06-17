@@ -29,6 +29,9 @@ const BillList: React.FC = () => {
     navigate("/owner/bill-payment/bills/form", { state: { contractId } });
   };
 
+  const handleViewContract = () => {
+    navigate(`/owner/contracts/detail/${contractId}`);
+  }
   const columns = [
     {
       title: 'Bill ID',
@@ -86,8 +89,9 @@ const BillList: React.FC = () => {
 
   return (
     <div>
-      <Flex justify="flex-end" style={{ margin: 20 }}>
-        <Button onClick={() => handleOpenBillPaymentForm()}>Create monthly bill</Button>
+      <Flex justify="flex-end" align="center" style={{ margin: 20 }}>
+        <Button onClick={handleOpenBillPaymentForm} style={{ marginRight: 8 }}>Create monthly bill</Button>
+        <Button onClick={handleViewContract}>View contract</Button>
       </Flex>
       <div style={{ padding: '24px' }}>
       <Table dataSource={bills} columns={columns} rowKey="billPaymentID" />
