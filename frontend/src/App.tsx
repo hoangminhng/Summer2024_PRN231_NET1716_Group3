@@ -35,6 +35,7 @@ import BillPayment from "./Page/Owner/BillPayment";
 import BillList from "./Page/Owner/BillList";
 import BillPaymentDetail from "./Page/Owner/BillDetail";
 import BillMonthlyForm from "./Page/Owner/BillMonthlyForm";
+import BillCreate from "./Page/Owner/BillCreate";
 import PaymentSucess from "./Page/PaymentSuccess";
 import OwnerPackage from "./Page/Owner/MembershipPackage";
 import OwnerAppointment from "./Page/Owner/Appointment";
@@ -144,6 +145,10 @@ function App() {
               <Route
                 path="bill-payment/bills/form"
                 element={<BillMonthlyForm />}
+              />
+              <Route
+                path="bill-payment/create"
+                element={<BillCreate />}
               />
               <Route path="package" element={<OwnerPackage />} />
               <Route path="appointments" element={<OwnerAppointment />} />

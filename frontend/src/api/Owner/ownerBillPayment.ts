@@ -84,3 +84,17 @@ export const getBillListByContractId = async (contractId: number, token: string)
     throw error;
   }
 };
+
+export const getLastMonthBills = async (ownerId: number, token: string) => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/bill-payment/last-month-bills/${ownerId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching last month bills:', error);
+    throw error;
+  }
+};
