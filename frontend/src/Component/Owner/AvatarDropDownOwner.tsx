@@ -38,7 +38,7 @@ import {
         navigate("/");
       }
       else if(path === "view"){
-        navigate("owner")
+        navigate("owner/hostels")
       }
       closeMenu();
     };
