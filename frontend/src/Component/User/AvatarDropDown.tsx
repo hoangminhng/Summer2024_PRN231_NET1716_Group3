@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 import {
   ChevronDownIcon,
+  CreditCardIcon,
   PowerIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/solid";
@@ -25,6 +26,11 @@ const profileMenuItems = [
     label: "Contract",
     path: "contracts",
     icon: UserCircleIcon,
+  },
+  {
+    label: "Payment",
+    path: "payment",
+    icon: CreditCardIcon,
   },
   {
     label: "Sign Out",
@@ -46,9 +52,11 @@ export function AvatarDropdown() {
       logout();
       navigate("/");
     } else if (path === "profile") {
-      navigate("member/profile");
-    }else if (path === "contracts") {
-      navigate("member/contracts");
+      navigate("profile");
+    } else if (path === "contracts") {
+      navigate("contracts");
+    } else if (path === "payment") {
+      navigate("payment");
     }
     closeMenu();
   };
@@ -58,7 +66,7 @@ export function AvatarDropdown() {
         <Button
           variant="text"
           color="blue-gray"
-          className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
+          className="flex items-center gap-1 py-0.5 pr-2 pl-0.5 lg:ml-auto"
           placeholder=""
           onPointerEnterCapture={() => {}}
           onPointerLeaveCapture={() => {}}
@@ -82,7 +90,7 @@ export function AvatarDropdown() {
         </Button>
       </MenuHandler>
       <MenuList
-        className="p-1"
+        className="p-2"
         placeholder=""
         onPointerEnterCapture={() => {}}
         onPointerLeaveCapture={() => {}}
@@ -93,10 +101,10 @@ export function AvatarDropdown() {
             <button
               key={label}
               onClick={() => handleClick(path)}
-              className={`flex items-center gap-2 rounded p-3 text-sm text-gray-700 dark:text-gray-400${
+              className={`flex items-center gap-2 rounded py-3 text-sm text-gray-700 dark:text-gray-400${
                 isLastItem
                   ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : ""
+                  : "hover:bg-slate-500/10 focus:bg-slate-500/10 active:bg-slate-500/10"
               }`}
             >
               {React.createElement(icon, {

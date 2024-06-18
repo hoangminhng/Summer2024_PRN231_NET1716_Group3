@@ -106,7 +106,7 @@ const MemberRoomDetails: React.FC = () => {
                       {service.serviceName}
                     </h3>
                     <p className="text-gray-700">
-                      Price: ${service.servicePrice}
+                      Price: {NumberFormat(service.servicePrice)}
                     </p>
                     <p
                       className={`text-sm ${

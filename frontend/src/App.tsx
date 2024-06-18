@@ -155,7 +155,7 @@ function App() {
           </Route>
 
           <Route element={<RequiredAuth allowedRoles={[roles.Member]} />}>
-            <Route path="/member" element={<MemberLayout />}>
+            <Route path="/" element={<MemberLayout />}>
               <Route path="contracts" element={<MemberViewContract />} />
               <Route
                 path="contracts/detail/:contractID"
