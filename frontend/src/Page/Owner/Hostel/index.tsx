@@ -10,7 +10,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined, ApiOutlined } from "@ant-design/icons";
 import HostelForm from "../../../Component/Owner/HostelForm";
 import { getOwnerHostels } from "../../../api/Owner/ownerHostel";
 import { UserContext } from "../../../context/userContext";
@@ -30,7 +30,7 @@ const Hostel: React.FC = () => {
   const [selectedHostelId, setSelectedHostelId] = useState(0);
   const [loading, setLoading] = useState(false);
   const pageSize = 2;
-  const { userId, token } = useContext(UserContext);
+  const { userId, token, userPackageStatus } = useContext(UserContext);
   const navigate = useNavigate();
 
   const fetchOwnerHostels = async () => {
@@ -70,6 +70,8 @@ const Hostel: React.FC = () => {
   };
 
   return (
+    <>
+    {userPackageStatus == 0 ? (
     <Layout>
       <Space
         size={20}
@@ -181,6 +183,13 @@ const Hostel: React.FC = () => {
         />
       </Space>
     </Layout>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

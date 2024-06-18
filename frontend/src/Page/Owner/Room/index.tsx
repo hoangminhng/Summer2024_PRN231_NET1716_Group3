@@ -10,7 +10,7 @@ import {
   Typography,
 } from "antd";
 import Title from "antd/es/typography/Title";
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined , ApiOutlined} from "@ant-design/icons";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
@@ -30,7 +30,7 @@ const Room: React.FC = () => {
   const [current, setCurrent] = useState(1);
   const [modalFormOpen, setModalFormOpen] = useState(false);
   const { hostelId } = useParams<{ hostelId: string }>();
-  const { token } = useContext(UserContext);
+  const { token , userPackageStatus } = useContext(UserContext);
   const navigate = useNavigate();
 
   const pageSize = 4;
@@ -64,6 +64,8 @@ const Room: React.FC = () => {
   };
 
   return (
+    <>
+    {userPackageStatus == 0 ? (
     <Layout>
       <Space
         size={20}
@@ -158,6 +160,13 @@ const Room: React.FC = () => {
         />
       </Space>
     </Layout>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

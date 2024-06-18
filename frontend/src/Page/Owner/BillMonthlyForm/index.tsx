@@ -1,4 +1,5 @@
 import { Col, Row } from "antd";
+import {ApiOutlined} from "@ant-design/icons"
 import BillDetail from "../../../Component/Owner/BillDetail/indext";
 import BillForm from "../../../Component/Owner/BillForm";
 import { useContext, useEffect, useState } from "react";
@@ -13,7 +14,7 @@ interface LocationState {
 const BillMonthlyForm: React.FC = () => {
   const [billPayment, setBillPayment] = useState<BillPayment | null>(null);
   const [loading, setLoading] = useState(true);
-  const { token } = useContext(UserContext);
+  const { token , userPackageStatus } = useContext(UserContext);
 
   const location = useLocation();
   const { contractId } = location.state as LocationState;
@@ -43,6 +44,8 @@ const BillMonthlyForm: React.FC = () => {
   }, []);
 
   return (
+    <>
+    {userPackageStatus == 0 ? (
     <div style={{ margin: 16 }}>
       <Row gutter={16}>
         <Col span={12}>
@@ -53,6 +56,13 @@ const BillMonthlyForm: React.FC = () => {
         </Col>
       </Row>
     </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

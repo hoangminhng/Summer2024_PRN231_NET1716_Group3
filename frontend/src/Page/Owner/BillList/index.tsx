@@ -1,5 +1,6 @@
 import { Button, Flex, Table } from 'antd';
 import { useNavigate, useParams, Link } from "react-router-dom";
+import {ApiOutlined} from "@ant-design/icons"
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from "../../..//context/userContext";
 import { getBillListByContractId } from '../../../api/Owner/ownerBillPayment';
@@ -9,7 +10,7 @@ const BillList: React.FC = () => {
   const navigate = useNavigate();
   const { contractId } = useParams();
   const [bills, setBills] = useState([]);
-  const { token } = useContext(UserContext);
+  const { token, userPackageStatus } = useContext(UserContext);
 
   useEffect(() => {
     console.log(contractId);
@@ -88,6 +89,8 @@ const BillList: React.FC = () => {
   ];
 
   return (
+    <>
+    {userPackageStatus == 0 ? (
     <div>
       <Flex justify="flex-end" align="center" style={{ margin: 20 }}>
         <Button onClick={handleOpenBillPaymentForm} style={{ marginRight: 8 }}>Create monthly bill</Button>
@@ -97,6 +100,13 @@ const BillList: React.FC = () => {
       <Table dataSource={bills} columns={columns} rowKey="billPaymentID" />
       </div>
     </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 
