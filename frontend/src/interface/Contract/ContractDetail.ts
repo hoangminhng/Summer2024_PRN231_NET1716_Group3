@@ -12,12 +12,14 @@ interface ContractDetail{
     ownerAccountName : string,
     ownerPhone : string,
     ownerCitizen : string,
+    initWaterNumber : number,
+    initElectricityNumber : number,
     contractTerm : string,
     createdDate : Date,
     dateSign : Date,
     dateStart : Date,
     dateEnd : Date,
     memberContract : MemberContract[],
-    service : ServiceRoomContract[],
+    roomServiceDetails : ServiceRoomContract[],
     status : number
 }

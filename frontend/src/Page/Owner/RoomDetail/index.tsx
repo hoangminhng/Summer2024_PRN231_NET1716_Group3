@@ -16,7 +16,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined, ApiOutlined } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -50,7 +50,7 @@ const RoomDetail: React.FC = () => {
   );
   const [popConfirmOpen, setPopConfirmOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
-  const { token } = useContext(UserContext);
+  const { token, userPackageStatus } = useContext(UserContext);
 
   const fetchRoomDetail = async () => {
     if (roomId !== undefined) {
@@ -112,6 +112,8 @@ const RoomDetail: React.FC = () => {
   };
 
   return (
+    <>
+    {userPackageStatus == 0 ? (
     <Layout>
       <Space
         size={20}
@@ -256,6 +258,13 @@ const RoomDetail: React.FC = () => {
         )}
       </Space>
     </Layout>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

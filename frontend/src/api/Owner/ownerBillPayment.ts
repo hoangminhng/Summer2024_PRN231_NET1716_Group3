@@ -98,3 +98,22 @@ export const getLastMonthBills = async (ownerId: number, token: string) => {
     throw error;
   }
 };
+
+export const postMonthlyBillPayment = async (
+  token: string | undefined,
+  data: PostData
+): Promise<BaseApiResponse> => {
+  try {
+    const response = await axios.post(`${baseUrl}/api/bill-payment/monthly`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    // Handle the error appropriately
+    console.error('API Error:', error);
+    throw new Error('Failed to post monthly bill payment');
+  }
+};

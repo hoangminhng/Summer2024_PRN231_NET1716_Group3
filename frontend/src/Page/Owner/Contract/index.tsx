@@ -1,7 +1,8 @@
     import {  DatePicker, Select, Input, Collapse, Row, Col, InputNumber, Button, Modal, Card, Checkbox, notification, Form, Spin} from "antd";
     import {
         PlusCircleFilled,
-        UserOutlined
+        UserOutlined,
+        ApiOutlined
     } from "@ant-design/icons";
     const { RangePicker } = DatePicker;
     import { useContext } from "react";
@@ -21,7 +22,10 @@
         const [loading, setLoading] = useState(false);
         const [errorContent, setErrorContent] = useState<any>("");
         const [roomDeposit, setRoomDeposit] = useState<number>(0);
+        const [initWater, setInitWater] = useState<number>(0);
+        const [initElec, setInitElec] = useState<number>(0);
         const [roomFee, setRoomFee] = useState<number>(0);
+        const [capacity, setCapacity] = useState<number>(0);
         const [hostelData, setHostelData] = useState<HostelOwnerContract[]>([]);
         const [newMember, setNewMember] = useState({name:'', phone: '', citizenCard: ''} as MemberContract);
         const [formErrors, setFormErrors] = useState({ name: '', phone: '', citizenCard: '' });
@@ -37,7 +41,7 @@
         const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
         const [startDate, setStartDate] = useState<Date | null>();
         const [endDate, setEndDate] = useState<Date | null>();
-        const { token , userId} = useContext(UserContext); 
+        const { token , userId, userPackageStatus} = useContext(UserContext); 
         const [form] = Form.useForm();
 
         const onChangeDate = (dates : any) => {
@@ -139,6 +143,7 @@
             await getServiceRoomContract(value);  
             setRoomIDData(value);
             setUserContract(response);
+            setCapacity(response.capacity)
             form.setFieldsValue({ roomFee : response.roomFee, depositFee : response.roomFee }); 
             setRoomDeposit(response.roomFee);
             setRoomFee(response.roomFee);
@@ -172,6 +177,16 @@
 
         };
 
+        const handleChangeWaterNumber = async (value: number | null) => {
+            setInitWater(value ? value : 0);
+
+        };
+
+        const handleChangeElecNumber = async (value: number | null) => {
+            setInitElec(value ? value : 0);
+
+        };
+
         const items = [
             {
                 key: '1',
@@ -186,13 +201,13 @@
                                         <Col span={3}>
                                             <Checkbox key={service.roomServiceId}
                                             onChange={(e) => handleCheckboxChange(service.roomServiceId, e.target.checked)}>
-                                                <span style={{fontWeight:"bold"}}>{service.typeName}</span></Checkbox>
+                                                <span style={{fontWeight:"bold"}}>{service.typeServiceName}</span></Checkbox>
                                         </Col>
                                         <Col span={5}>
-                                            <p>{NumberFormat(service.price)}</p>
+                                            <p>{NumberFormat(service.servicePrice)}</p>
                                         </Col>
                                         <Col span={5}>
-                                            <p>({service.unit})</p>
+                                            <p>({service.serviceName})</p>
                                         </Col>
                                     </Row>
                                 </div>
@@ -215,24 +230,36 @@
         };
         
         const handleOk = () => {
-            const errors = { name: '', phone: '', citizenCard: '' };
+            if(memberData.length < capacity){
+                const errors = { name: '', phone: '', citizenCard: '' };
         
-            if (!newMember.name) {
-            errors.name = 'Name is required';
-            }
-            if (!newMember.phone) {
-            errors.phone = 'Phone is required';
-            }
-            if (!newMember.citizenCard) {
-            errors.citizenCard = 'Citizen card is required';
-            }
-        
-            setFormErrors(errors);
-        
-            if (!errors.name && !errors.phone && !errors.citizenCard) {
-            setMemberData([...memberData, newMember]);
-            setNewMember({ name: '', phone: '', citizenCard: '' });
-            setIsModalOpen(false);
+                if (!newMember.name) {
+                errors.name = 'Name is required';
+                }
+                if (!newMember.phone) {
+                errors.phone = 'Phone is required';
+                }
+                if (!newMember.citizenCard) {
+                errors.citizenCard = 'Citizen card is required';
+                }
+
+                if(newMember.citizenCard.length != 12){
+                    errors.citizenCard = 'Citizen card must be 12 digits';
+                }
+
+                if(newMember.phone.length != 10){
+                    errors.phone = 'Phone must be 10 digits';
+                }
+            
+                setFormErrors(errors);
+            
+                if (!errors.name && !errors.phone && !errors.citizenCard) {
+                setMemberData([...memberData, newMember]);
+                setNewMember({ name: '', phone: '', citizenCard: '' });
+                setIsModalOpen(false);
+                }
+            }else{
+                openNotificationWithIcon("error", "The number of people in the room has exceeded the limit.");
             }
         };
         
@@ -279,7 +306,9 @@
                     roomFee: roomFee || userContract.roomFee,
                     depositFee: roomDeposit,
                     contractMember: memberData || null,
-                    roomService: selectedServices
+                    roomService: selectedServices,
+                    initWater: initWater,
+                    initElec: initElec
                 };
                 const response = await fetchCreateContract(data);
                 if (response != undefined && !errorContent) {      
@@ -328,6 +357,7 @@
 
     return (
         <>
+        {userPackageStatus == 0 ? (
         <div>
             <div style={{width: "100%", textAlign: "center", fontSize: "20", fontWeight:"bold", backgroundColor:"aliceblue", padding:"20px"}}>
                 <h2>CREATE NEW CONTRACT</h2>
@@ -336,8 +366,8 @@
             <Form
                 form={form}
                 variant="filled"
-                initialValues={{roomFee: 0,
-                    depositFee: 0}}
+                initialValues={{roomFee: "",
+                    depositFee: ""}}
                 style={{
                 maxWidth: "100%",
                 }}  
@@ -349,7 +379,7 @@
                     rules={[
                         {
                         required: true,
-                        message: 'Please input!',
+                        message: 'Please input data start and date end for contract!',
                         },
                     ]}
                     >
@@ -359,10 +389,11 @@
                 <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
                     label="Hostel :"
+                    name = "hostel"
                     rules={[
                         {
                         required: true,
-                        message: 'Please input!',
+                        message: 'Please select hostel to create contract!',
                         },
                     ]}
                     >
@@ -386,10 +417,11 @@
 
                     <Form.Item
                     label="Room :"
+                    name="room"
                     rules={[
                         {
                         required: true,
-                        message: 'Please input!',
+                        message: 'Please select room to create contract!',
                         },
                     ]}
                     >
@@ -414,12 +446,18 @@
 
                 <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
-                    label="Room Fee :"
+                    label="Room Amount :"
                     name="roomFee"
                     rules={[
                         {
                         required: true,
-                        message: 'Please input!',
+                        message: 'Please input your fee room (This is the room amount for the contract)!',
+                        },
+                        {
+                            validator: (_, value) =>
+                                value && value > 0
+                                    ? Promise.resolve()
+                                    : Promise.reject(new Error('Please input positive number!')),
                         },
                     ]}
                     >
@@ -436,7 +474,13 @@
                     rules={[
                         {
                         required: true,
-                        message: 'Please input!',
+                        message: 'Please input your deposit room!',
+                        },
+                        {
+                            validator: (_, value) =>
+                                value && value > 0
+                                    ? Promise.resolve()
+                                    : Promise.reject(new Error('Please input positive number!')),
                         },
                     ]}
                     >
@@ -450,11 +494,60 @@
 
                 <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
+                    label="Init Water Number :"
+                    name="waterNumber"
+                    rules={[
+                        {
+                        required: true,
+                        message: 'Please input the initial of water number!',
+                        },
+                        {
+                            validator: (_, value) =>
+                                value && value >= 0
+                                    ? Promise.resolve()
+                                    : Promise.reject(new Error('Please input positive number!')),
+                        },
+                    ]}
+                    >
+                   <InputNumber
+                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        style={{width: "200px", borderRadius:"10px"}}
+                        onChange={handleChangeWaterNumber}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                    label="Init Electric Number : "
+                    name="elecNumber"
+                    rules={[
+                        {
+                        required: true,
+                        message: 'Input the initial of electric number!',
+                        },
+                        {
+                            validator: (_, value) =>
+                                value && value >= 0
+                                    ? Promise.resolve()
+                                    : Promise.reject(new Error('Please input positive number!')),
+                        },
+                    ]}
+                    >
+                    <InputNumber
+                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        style={{width: "200px", borderRadius:"10px"}}
+                        onChange={handleChangeElecNumber}
+                        />
+                    </Form.Item>
+                </div>
+
+                <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
+                    <Form.Item
+                    name="name"
                     label="Name :"
                     rules={[
                         {
                         required: true,
-                        message: 'Please input!',
+                        message: 'Please select user to hire the room!',
                         },
                     ]}
                     >
@@ -655,6 +748,12 @@
     }
             </div>      
         </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
     </>
     );
     }
