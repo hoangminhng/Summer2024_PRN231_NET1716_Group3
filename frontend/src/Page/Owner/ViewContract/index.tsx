@@ -188,13 +188,21 @@ const OwnerViewContract : React.FC = () =>{
                                 )}`,
                                 break: 3,
                             }),
+                            new TextRun({
+                                text : `- Số nước hiện tại khi bắt đầu thuê phòng : ${contactDetailData?.initWaterNumber || 0} m³`,
+                                break: 3,
+                            }),
+                            new TextRun({
+                                text : `- Số điện hiện tại khi bắt đầu thuê phòng : ${contactDetailData?.initElectricityNumber || 0} kWh`,
+                                break: 3,
+                            }),
                         ],
                     }),
-                    ...((contactDetailData?.service || []).map((service) =>
+                    ...((contactDetailData?.roomServiceDetails || []).map((service) =>
                         new Paragraph({
                             children: [
                                 new TextRun({
-                                    text: `${service.typeName} : ${NumberFormat(service.price)} (${service.unit})`,
+                                    text: `- ${service.typeServiceName} : ${NumberFormat(service.servicePrice)} (${service.serviceName})`,
                                     break: 2,
                                 }),
                             ],

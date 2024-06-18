@@ -7,6 +7,8 @@ interface CreateContract{
     dateEnd : Date,
     roomFee : number,
     depositFee : number,
+    initWater : number,
+    initElec : number,
     contractMember : MemberContract[],
     roomService : number[]
 }
