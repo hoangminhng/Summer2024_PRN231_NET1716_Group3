@@ -32,7 +32,7 @@ const BillCreate: React.FC = () => {
     }).format(value);
   };
 
-  const handleInputChange = (serviceID, value) => {
+  const handleInputChange = (serviceID: number, value: number) => {
     setBills(prevBills =>
       prevBills.map(bill => ({
         ...bill,
@@ -50,7 +50,7 @@ const BillCreate: React.FC = () => {
       roomBillPayments: bills.map(bill => ({
         contractId: bill.contractId,
         serviceReadings: bill.billPaymentDetails.map(service => ({
-          roomServiceId: service.roomServiceID,
+          roomServiceID: service.roomServiceID,
           newNumberService: service.newNumberService ?? 0
         }))
       }))
@@ -60,7 +60,7 @@ const BillCreate: React.FC = () => {
   const handleSubmit = async () => {
     const requestData = collectDataForAPI();
     try {
-      const response = await postMonthlyBillPayment(requestData, token);
+      const response = await postMonthlyBillPayment(token, requestData);
       console.log('API Response:', response);
     } catch (error) {
       console.error('API Error:', error);
@@ -101,11 +101,11 @@ const BillCreate: React.FC = () => {
                               <p><strong>Service Total Amount:</strong> {NumberFormat(service.serviceTotalAmount)}</p>
                               {service.serviceUnit !== 'Month' && (
                                 <p>
-                                  <strong>New Number Service:</strong> 
+                                  <strong>New Number Service:</strong>
                                   <Input 
                                     type="number" 
                                     value={service.newNumberService}
-                                    onChange={e => handleInputChange(service.billPaymentDetailID, e.target.value)}
+                                    onChange={e => handleInputChange(service.billPaymentDetailID, parseInt(e.target.value))}
                                   />
                                 </p>
                               )}
