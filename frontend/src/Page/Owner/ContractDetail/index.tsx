@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { Button } from "antd";
+import {ApiOutlined} from "@ant-design/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,7 +15,7 @@ const OwnerContractDetail = () => {
     const { contractID } = useParams<{ contractID: string }>();
     const [idnumber, setID] = useState<number>();
     const navigate = useNavigate();
-    const { token } = useContext(UserContext);
+    const { token, userPackageStatus } = useContext(UserContext);
 
     const formatDate = (date : Date) => {
         if (!date) return null;
@@ -283,6 +284,7 @@ const OwnerContractDetail = () => {
 
     return (
         <>
+    {userPackageStatus == 0 ? (
             <div style={{ textAlign: "left" }}>
                 <div
                     style={{
@@ -484,7 +486,13 @@ const OwnerContractDetail = () => {
                     </div>
                 </div>
             </div>
-        </>
+        ) : (
+            <div className="w-full text-center items-center justify-between">
+              <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+              <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+            </div>
+          )}
+          </>
     );
 };
 

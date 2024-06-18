@@ -1,7 +1,8 @@
     import {  DatePicker, Select, Input, Collapse, Row, Col, InputNumber, Button, Modal, Card, Checkbox, notification, Form, Spin} from "antd";
     import {
         PlusCircleFilled,
-        UserOutlined
+        UserOutlined,
+        ApiOutlined
     } from "@ant-design/icons";
     const { RangePicker } = DatePicker;
     import { useContext } from "react";
@@ -40,7 +41,7 @@
         const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
         const [startDate, setStartDate] = useState<Date | null>();
         const [endDate, setEndDate] = useState<Date | null>();
-        const { token , userId} = useContext(UserContext); 
+        const { token , userId, userPackageStatus} = useContext(UserContext); 
         const [form] = Form.useForm();
 
         const onChangeDate = (dates : any) => {
@@ -200,13 +201,13 @@
                                         <Col span={3}>
                                             <Checkbox key={service.roomServiceId}
                                             onChange={(e) => handleCheckboxChange(service.roomServiceId, e.target.checked)}>
-                                                <span style={{fontWeight:"bold"}}>{service.typeName}</span></Checkbox>
+                                                <span style={{fontWeight:"bold"}}>{service.typeServiceName}</span></Checkbox>
                                         </Col>
                                         <Col span={5}>
-                                            <p>{NumberFormat(service.price)}</p>
+                                            <p>{NumberFormat(service.servicePrice)}</p>
                                         </Col>
                                         <Col span={5}>
-                                            <p>({service.unit})</p>
+                                            <p>({service.serviceName})</p>
                                         </Col>
                                     </Row>
                                 </div>
@@ -356,6 +357,7 @@
 
     return (
         <>
+        {userPackageStatus == 0 ? (
         <div>
             <div style={{width: "100%", textAlign: "center", fontSize: "20", fontWeight:"bold", backgroundColor:"aliceblue", padding:"20px"}}>
                 <h2>CREATE NEW CONTRACT</h2>
@@ -746,6 +748,12 @@
     }
             </div>      
         </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
     </>
     );
     }

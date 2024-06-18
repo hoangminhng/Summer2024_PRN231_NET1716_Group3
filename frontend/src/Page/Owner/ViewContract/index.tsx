@@ -1,4 +1,5 @@
 import {Card, Button, Col, Row, Pagination, Tag} from "antd";
+import {ApiOutlined} from "@ant-design/icons"
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
@@ -11,7 +12,7 @@ import { NumberFormat } from "../../../Utils/numberFormat";
 const OwnerViewContract : React.FC = () =>{
 
     const navigate = useNavigate();
-    const { token , userId } = useContext(UserContext);
+    const { token , userId, userPackageStatus } = useContext(UserContext);
     const [contractData, setContractData] = useState<ViewContract[]>([]);
     const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const [currentPage, setCurrentPage] = useState(1);
@@ -307,6 +308,8 @@ const OwnerViewContract : React.FC = () =>{
         };
 
     return (
+        <>
+        {userPackageStatus == 0 ? (
             <div>
                 <div style={{width: "100%", textAlign: "center", fontSize: "20", fontWeight:"bold", backgroundColor:"aliceblue", padding:"20px", marginBottom: "20px"}}>
                 <h2>CONTRACT LIST</h2>
@@ -358,6 +361,13 @@ const OwnerViewContract : React.FC = () =>{
                     style={{ textAlign: "center", marginTop: "20px" }}
                 />
         </div>
+        ) : (
+            <div className="w-full text-center items-center justify-between">
+              <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+              <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+            </div>
+          )}
+          </>
     );
 }
 export default OwnerViewContract;

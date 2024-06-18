@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import {ApiOutlined} from "@ant-design/icons"
 import { Card, Spin, List, Row, Col, Collapse } from 'antd';
 import { getLastMonthBills } from '../../../api/Owner/ownerBillPayment';
 import { UserContext } from '../../../context/userContext';
@@ -8,7 +9,7 @@ const { Panel } = Collapse;
 const BillCreate: React.FC = () => {
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token, userId } = useContext(UserContext);
+  const { token, userId, userPackageStatus } = useContext(UserContext);
 
   useEffect(() => {
     const fetchBills = async () => {
@@ -33,6 +34,8 @@ const BillCreate: React.FC = () => {
   };
 
   return (
+    <>
+    {userPackageStatus == 0 ? (
     <div style={{ padding: '24px' }}>
       {loading ? (
         <Spin size="large" />
@@ -75,6 +78,13 @@ const BillCreate: React.FC = () => {
         />
       )}
     </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

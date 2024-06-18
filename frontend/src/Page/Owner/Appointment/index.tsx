@@ -3,6 +3,7 @@ import {
   Table,
   TableProps
 } from "antd";
+import {ApiOutlined} from "@ant-design/icons"
 import { useState, useEffect } from "react";
 import { useContext } from "react";
 import { UserContext } from "../../..//context/userContext";
@@ -15,7 +16,7 @@ const OwnerAppointment: React.FC = () => {
   const [filteredData, setFilteredData] = useState<AppointmentView[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const navigate = useNavigate();
-  const { token, userId } = useContext(UserContext);
+  const { token, userId, userPackageStatus } = useContext(UserContext);
 
   const fetchAppointmentList = async () => {
     try {
@@ -75,22 +76,29 @@ const OwnerAppointment: React.FC = () => {
 
   return (
     <>
-        <div>
-          {/* Bảng danh sách */}
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <h3 title="Appointment List"/>
-            <br />
-            <div className="w-full md:w-72 flex flex-row justify-start">
-            <Input
-              label="Search by Hostel Name or Room Name"
-              value={searchInput}
-              crossOrigin={undefined}
-              onChange={(e) => { setSearchInput(e.target.value); } } onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}           
-             />
-            </div>
-          </div>
-          <Table columns={columns} dataSource={filteredData} bordered pagination={{ pageSize: 8 }}/>
+    {userPackageStatus == 0 ? (
+      <div>
+      {/* Bảng danh sách */}
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+      <h3 title="Appointment List"/>
+        <br />
+        <div className="w-full md:w-72 flex flex-row justify-start">
+        <Input
+          label="Search by Hostel Name or Room Name"
+          value={searchInput}
+          crossOrigin={undefined}
+          onChange={(e) => { setSearchInput(e.target.value); } } onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}           
+         />
         </div>
+      </div>
+      <Table columns={columns} dataSource={filteredData} bordered pagination={{ pageSize: 8 }}/>
+    </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
     </>
   );
 };

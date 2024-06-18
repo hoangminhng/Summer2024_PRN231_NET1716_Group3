@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {ApiOutlined} from "@ant-design/icons"
 import { Table, Spin, Image } from 'antd';
 import { getHiringRooms } from '../../../api/Owner/ownerRoom';
 import { UserContext } from "../../../context/userContext";
@@ -7,7 +8,7 @@ import { UserContext } from "../../../context/userContext";
 const BillPayment: React.FC = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token, userId } = useContext(UserContext);
+  const { token, userId , userPackageStatus } = useContext(UserContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,6 +70,8 @@ const BillPayment: React.FC = () => {
   ];
 
   return (
+    <>
+    {userPackageStatus == 0 ? (
     <div style={{ padding: '24px' }}>
       {loading ? (
         <Spin size="large" />
@@ -83,6 +86,13 @@ const BillPayment: React.FC = () => {
         />
       )}
     </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 
