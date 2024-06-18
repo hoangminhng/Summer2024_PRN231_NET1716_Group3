@@ -3,7 +3,7 @@ import { Card, Spin, List, Row, Col, Collapse, Input, Button } from 'antd';
 import { getLastMonthBills, postMonthlyBillPayment } from '../../../api/Owner/ownerBillPayment';
 import {ApiOutlined} from "@ant-design/icons"
 import { UserContext } from '../../../context/userContext';
-
+import { NumberFormat, DateFormat } from '../../../Utils/numberFormat';
 const { Panel } = Collapse;
 
 const BillCreate: React.FC = () => {
@@ -26,12 +26,12 @@ const BillCreate: React.FC = () => {
     fetchBills();
   }, [userId, token]);
 
-  const NumberFormat = (value: number): string => {
-    return Intl.NumberFormat("de-DE", {
-      style: "currency",
-      currency: "VND",
-    }).format(value);
-  };
+  // const NumberFormat = (value: number): string => {
+  //   return Intl.NumberFormat("de-DE", {
+  //     style: "currency",
+  //     currency: "VND",
+  //   }).format(value);
+  // };
 
   const handleInputChange = (serviceID: number, value: number) => {
     setBills(prevBills =>
@@ -68,6 +68,7 @@ const BillCreate: React.FC = () => {
     }
   };
 
+
   return (
     <>
     {userPackageStatus == 0 ? (
@@ -90,6 +91,8 @@ const BillCreate: React.FC = () => {
                       <p><strong>Total Amount:</strong> {NumberFormat(bill.totalAmount)}</p>
                       <p><strong>Month:</strong> {bill.month}</p>
                       <p><strong>Year:</strong> {bill.year}</p>
+                      <p><strong>Start Date:</strong> {DateFormat(bill.startDate)}</p>
+                      <p><strong>End Date:</strong> {DateFormat(bill.endDate)}</p>
                       <p><strong>Status:</strong> {bill.billPaymentStatus === 0 ? 'Unpaid' : 'Paid'}</p>
                     </Col>
                     <Col span={12}>

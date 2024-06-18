@@ -7,3 +7,7 @@ export const NumberFormat = (value: number | undefined): string | undefined => {
     currency: "VND",
   }).format(value);
 };
+
+export const DateFormat = (dateString: string): string => {
+  return new Date(dateString).toISOString().split('T')[0];
+};
