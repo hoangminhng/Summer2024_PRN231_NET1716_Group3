@@ -13,6 +13,7 @@ interface BillPayment {
   billPaymentDetails: BillPaymentDetail[];
   roomName: string;
   renterName: string;
+  roomId: number;
 }
 
 interface BillPaymentDetail {
