@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 const baseUrl = process.env.REACT_APP_BACK_END_URL;
 
 export const getRoomListOfHostel = async (hostelId: number, token: string) => {
@@ -26,16 +27,16 @@ export const getOwnerRoomDetail = async (roomId: number, token: string) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                  },
-                }
-              );
-              const response = fetchData.data;
-              return response;
-            } catch (error) {
-              console.log("Error: " + error);
-            }
-          };
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+};
 
 export const getRoomOwnerContract = async (hostelId: number, token: string) => {
   try {
@@ -110,15 +111,43 @@ export const uploadImage = async (
 
 export const getHiringRooms = async (ownerId: number, token: string) => {
   try {
-    const fetchData = await axios.get(`${baseUrl}/api/rooms/hiring/${ownerId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const fetchData = await axios.get(
+      `${baseUrl}/api/rooms/hiring/${ownerId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return fetchData.data;
   } catch (error) {
     console.log("Error: " + error);
+    throw error;
+  }
+};
+
+export const updateRoomStatus = async (
+  token: string | undefined,
+  roomId: number | undefined,
+  status: number | undefined
+) => {
+  try {
+    const fetchData = await axios.put(
+      `${baseUrl}/api/rooms/${roomId}/status/${status}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error: any) {
+    console.log("Error:", error);
+    toast.error(error.response.data.message, { duration: 2000 });
     throw error;
   }
 };

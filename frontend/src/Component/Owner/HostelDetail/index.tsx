@@ -147,14 +147,14 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
             </Descriptions.Item>
             <Descriptions.Item label="Status" span={3}>
               <Select
-                //value={statusToChange !== null ? statusToChange : currentStatus}
-                value={statusToChange ? statusToChange : currentStatus}
+                value={statusToChange !== null ? statusToChange : currentStatus}
                 onChange={handleStatusChange}
                 style={{ width: 120 }}
                 options={[
                   { value: 0, label: "Prepare" },
                   { value: 1, label: "Available" },
                   { value: 2, label: "Block" },
+                  { value: 3, label: "Full" },
                 ]}
               ></Select>
               {statusToChange !== null && (

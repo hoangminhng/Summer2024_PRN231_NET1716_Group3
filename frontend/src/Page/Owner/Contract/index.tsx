@@ -1,9 +1,8 @@
-    import {  DatePicker, Select, Input, Collapse, Row, Col, InputNumber, Button, Modal, Card, Checkbox, notification, Form} from "antd";
+    import {  DatePicker, Select, Input, Collapse, Row, Col, InputNumber, Button, Modal, Card, Checkbox, notification, Form, Spin} from "antd";
     import {
         PlusCircleFilled,
         UserOutlined
     } from "@ant-design/icons";
-    const { TextArea } = Input;
     const { RangePicker } = DatePicker;
     import { useContext } from "react";
     import { UserContext } from "../../../context/userContext";
@@ -13,11 +12,16 @@
     import { getServiceRoomOwnerContract } from "../../../api/Owner/ownerService";
     import { createContract, getUserAppointmentOwnerContract } from "../../../api/Owner/ownerContract";
     import { NumberFormat } from "../../../Utils/numberFormat";
+    import { LoadingOutlined } from "@ant-design/icons";
+    import ReactQuill from 'react-quill';
+    import 'react-quill/dist/quill.snow.css'; 
 
     const OwnerContractCreate : React.FC = () => {
         const [updatedContent, setUpdatedContent] = useState<string>("");
+        const [loading, setLoading] = useState(false);
         const [errorContent, setErrorContent] = useState<any>("");
         const [roomDeposit, setRoomDeposit] = useState<number>(0);
+        const [roomFee, setRoomFee] = useState<number>(0);
         const [hostelData, setHostelData] = useState<HostelOwnerContract[]>([]);
         const [newMember, setNewMember] = useState({name:'', phone: '', citizenCard: ''} as MemberContract);
         const [formErrors, setFormErrors] = useState({ name: '', phone: '', citizenCard: '' });
@@ -34,6 +38,7 @@
         const [startDate, setStartDate] = useState<Date | null>();
         const [endDate, setEndDate] = useState<Date | null>();
         const { token , userId} = useContext(UserContext); 
+        const [form] = Form.useForm();
 
         const onChangeDate = (dates : any) => {
             const dateStart = new Date(dates[0].$d);
@@ -41,6 +46,7 @@
             setStartDate(dateStart);
             setEndDate(dateEnd);
         };
+
 
         const getHostelContract = async () =>{
             try{
@@ -95,6 +101,7 @@
         }
 
         const fetchCreateContract = async (contract: CreateContract) => {
+            setLoading(true);
             try {
               if (token != undefined) {
                 let data = await createContract(contract, token);
@@ -102,7 +109,9 @@
               }
             } catch (error: any) {
               setErrorContent(error.message);
-            }
+            }finally {
+                setLoading(false);
+              }
           };
 
         useEffect(() => {
@@ -110,12 +119,12 @@
             await getHostelContract();
             await getRoomContract(hostelIDData || 0);
             await getServiceRoomContract(roomIDData || 0);
-            await getUserAppointmentContract(roomIDData || 0)
+            await getUserAppointmentContract(roomIDData || 0);
             }
             fetchData();
         }, [token]);
 
-        const handleHostelChange = (value: number) => {
+        const handleHostelChange = async (value: number) => {
             getRoomContract(value);
             setHostelIDData(value);
         };
@@ -127,9 +136,12 @@
         const handleRoomChange = async (value: number) => {
             const response = await getUserAppointmentContract(value);
         if (response != undefined && !errorContent) {
-            await getServiceRoomContract(value);        
+            await getServiceRoomContract(value);  
             setRoomIDData(value);
             setUserContract(response);
+            form.setFieldsValue({ roomFee : response.roomFee, depositFee : response.roomFee }); 
+            setRoomDeposit(response.roomFee);
+            setRoomFee(response.roomFee);
         } else {
             setErrorContent("");
         openNotificationWithIcon("error", errorContent || "Appointment not found!");
@@ -151,8 +163,13 @@
             }
         };
 
-        const handleChangeDeposit = (value: number | null) => {
-            setRoomDeposit(value !== null ? value : 0);
+        const handleChangeDeposit = async (value: number | null) => {
+            setRoomDeposit(value !== null ? value : roomDeposit);
+
+        };
+        const handleChangeFee = async (value: number | null) => {
+            setRoomFee(value ? value : roomFee);
+
         };
 
         const items = [
@@ -259,7 +276,7 @@
                     contractTerm: updatedContent,
                     dateStart: startDate,
                     dateEnd: endDate,
-                    roomFee: userContract.roomFee || 0,
+                    roomFee: roomFee || userContract.roomFee,
                     depositFee: roomDeposit,
                     contractMember: memberData || null,
                     roomService: selectedServices
@@ -279,6 +296,12 @@
                 setErrorContent("");
             }
         };
+
+        useEffect(() => {
+            if (userContract) {
+                setRoomDeposit(userContract.roomFee || 0);
+            }
+        }, [userContract]);
         
         const hostelOptions = [
             ...hostelData.map((hostel) => ({
@@ -294,21 +317,14 @@
             }))
         ];
 
+        const handleChange = (content :any) => {
+            setUpdatedContent(content);
+        };
+
         const memberOptions = userContract?.accountAppointments?.map((user) => ({
             value: user.viewerId,
-            label: `${user.viewerName} (${statusStringMap[user.status]})`, // Sử dụng template string để kết hợp giá trị
+            label: `${user.viewerName} (${statusStringMap[user.status]})`,
         })) || [];
-
-        const generateHTML = (inputText : string) => {
-            const paragraphs = inputText.split('\n').map((line: string) => `<p>${line}</p>`).join('');
-            return paragraphs;
-        }
-    
-        const handleInputAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-            const inputValue = event.target.value;
-            const htmlContent = generateHTML(inputValue);
-            setUpdatedContent(htmlContent);
-        }
 
     return (
         <>
@@ -318,16 +334,18 @@
             </div>
             <div style={{marginTop:"30px", padding: "20px"}}>
             <Form
-                // {...formItemLayout}
+                form={form}
                 variant="filled"
+                initialValues={{roomFee: 0,
+                    depositFee: 0}}
                 style={{
                 maxWidth: "100%",
                 }}  
+                autoComplete="off"
             >
                 <div style={{display: "flex", justifyContent:"start", marginBottom: "20px"}}>
                     <Form.Item
                     label="Date Start --> Date End :"
-                    name="Date"
                     rules={[
                         {
                         required: true,
@@ -341,7 +359,6 @@
                 <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
                     label="Hostel :"
-                    name="Hostel"
                     rules={[
                         {
                         required: true,
@@ -369,7 +386,6 @@
 
                     <Form.Item
                     label="Room :"
-                    name="Room"
                     rules={[
                         {
                         required: true,
@@ -399,14 +415,24 @@
                 <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
                     label="Room Fee :"
-                    name="RoomFee"
+                    name="roomFee"
+                    rules={[
+                        {
+                        required: true,
+                        message: 'Please input!',
+                        },
+                    ]}
                     >
-                    <Input placeholder={NumberFormat(userContract?.roomFee || 0)} style={{width: "200px", borderRadius:"10px"}} disabled  value={userContract?.roomFee} />
+                   <InputNumber
+                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        style={{width: "200px", borderRadius:"10px"}}
+                        onChange={handleChangeFee}
+                        />
                     </Form.Item>
 
                     <Form.Item
                     label="Deposit Room : "
-                    name="DepositRoom"
+                    name="depositFee"
                     rules={[
                         {
                         required: true,
@@ -415,10 +441,8 @@
                     ]}
                     >
                     <InputNumber
-                        defaultValue={0}
-                        formatter={(value) => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                         style={{width: "200px", borderRadius:"10px"}}
-                        required
                         onChange={handleChangeDeposit}
                         />
                     </Form.Item>
@@ -427,7 +451,6 @@
                 <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
                     label="Name :"
-                    name="Name"
                     rules={[
                         {
                         required: true,
@@ -455,7 +478,6 @@
 
                     <Form.Item
                     label="Phone :"
-                    name="Phone"
                     >
                     <Input placeholder={selectedMemberAccount?.viewerPhone} style={{width: "200px", borderRadius:"10px"}} disabled value={selectedMemberAccount?.viewerPhone} required/>
                     </Form.Item>
@@ -464,14 +486,12 @@
                 <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
                     label="Citizen Card :"
-                    name="CitizenCard"
                     >
                     <Input placeholder={selectedMemberAccount?.viewerCitizenCard} style={{width: "200px", borderRadius:"10px"}} disabled value={selectedMemberAccount?.viewerCitizenCard} />
                     </Form.Item>
 
                     <Form.Item
                     label="Email :"
-                    name="Email"
                     >
                     <Input placeholder={selectedMemberAccount?.viewerEmail} style={{width: "200px", borderRadius:"10px"}} disabled value={selectedMemberAccount?.viewerEmail} required/>
                     </Form.Item>
@@ -576,26 +596,41 @@
                     </h2>
                 </div>
                 </Modal>
-                <div style={{display:"flex", justifyContent: "left", marginBottom: "20px"}}>
                 <Form.Item
-                label="Contract Term : "
-                name="ContractTerm"
-                rules={[
-                    {
-                    required: true,
-                    message: 'Please input!',
-                    },
+                    name="Rule General"
+                    label="Rule General :"
+                    rules={[
+                        {
+                        required: true,
+                        message: 'Please input!',
+                        },
+                    ]}
+                    >
+                        <div style={{display:"flex", justifyContent: "left", marginBottom: "20px"}}>
+                    <ReactQuill 
+                theme="snow" 
+                onChange={handleChange}
+                modules={{
+                    toolbar: [
+                        [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+                        [{size: []}],
+                        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                        [{'list': 'ordered'}, {'list': 'bullet'}, 
+                        {'indent': '-1'}, {'indent': '+1'}],
+                        ['link', 'image', 'video'],
+                        ['clean']                                         
+                    ],
+                }}
+                formats={[
+                    'header', 'font', 'size',
+                    'bold', 'italic', 'underline', 'strike', 'blockquote',
+                    'list', 'bullet', 'indent',
+                    'link', 'image', 'video'
                 ]}
-                labelCol={{
-                    span: 24,
-                  }}
-                  wrapperCol={{
-                    span: 24,
-                  }}
-                >
-                <TextArea rows={20} style={{width:"1280px"}} onChange={handleInputAreaChange} />
-                </Form.Item>
-                </div>
+                style={{ height: '400px', marginBottom: '40px', width: "100%"}}
+            />
+            </div>
+                    </Form.Item> 
                     <Form.Item
                     >
                         <div style={{display:"flex", justifyContent: "center", marginBottom: "20px", marginTop: "50px"}}>
@@ -606,7 +641,19 @@
                     </div>
                 </Form.Item>
             </Form>
+            {loading ? (
+          <Spin
+            fullscreen={true}
+            spinning={loading}
+            indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+          />
+        ) :(
+            <div>
+
             </div>
+        )
+    }
+            </div>      
         </div>
     </>
     );

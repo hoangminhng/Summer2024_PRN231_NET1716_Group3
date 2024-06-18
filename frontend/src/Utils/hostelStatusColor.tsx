@@ -6,6 +6,8 @@ export const getColorByStatus = (status: number) => {
       return "green";
     case 2:
       return "red";
+    case 3:
+      return "blue";
     default:
       return "default";
   }
@@ -19,6 +21,8 @@ export const getStatusText = (status: number) => {
       return "Available";
     case 2:
       return "Block";
+    case 3:
+      return "Full";
     default:
       return "Unknown";
   }
