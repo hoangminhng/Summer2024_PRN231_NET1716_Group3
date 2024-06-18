@@ -37,33 +37,27 @@ const OwnerPackage: React.FC = () => {
 
     console.log("user package status", userPackageStatus);
 
-    const handleBuy = (packageID: number) => {
-        if (userRole !== 2) {
-            toast.error("You are not owner")
-        }
-        // if (userPackageStatus === 0) {
-        //   toast.error("You have already registered a package")
-        // }
 
-        else {
-            // redirect payment thanh toán
-            const fetchPaymentUrl = async () => {
-                if (userId && token) {
-                    const response = await registerMembership(
-                        userId,
-                        packageID,
-                        token
-                    )
-                    if (response) {
-                        window.location.href = response.data?.paymentUrl as string;
-                    }
-                }
-            };
-            fetchPaymentUrl();
-        }
-    };
 
-    const handleUpdate = (packageID: number, oldFee: number) => {
+    const handleBuy = (packageID: number, fee: number, packageName: string, month: number) => {
+        var currentDate = new Date();
+
+        const newUpdatePackageProps: UpdatePackageProps = {
+            type: 0,
+            membershipId: packageID,
+            fee: fee,
+            membershipName: packageName,
+            expiredDate: moment(currentDate).add(month, "months").format('DD-MM-YYYY'),
+        };
+
+        // Update the state with the new object
+        setUpdatePackageProps(newUpdatePackageProps);
+        toggleModal();
+    }
+
+
+
+    const handleUpdate = (packageID: number, oldFee: number, packageName: string, month: number) => {
         var expireDate = currentMembership?.dateExpire;
         console.log("exprireDate ", expireDate);
         var currentDate = new Date();
@@ -78,12 +72,31 @@ const OwnerPackage: React.FC = () => {
             return;
         }
 
+
         const fee = oldFee - ((currentMembership.memberShipFee / (currentMembership.month * 30)) * diffDays)
         const newUpdatePackageProps: UpdatePackageProps = {
             type: 1,
             membershipId: packageID,
             oldFee: oldFee,
-            fee: fee
+            fee: fee,
+            membershipName: packageName,
+            expiredDate: moment(currentDate).add(month, "months").format('DD-MM-YYYY'),
+        };
+
+        // Update the state with the new object
+        setUpdatePackageProps(newUpdatePackageProps);
+        toggleModal();
+    }
+
+    const handleExtend = (packageID: number, fee: number, packageName: string, month: number) => {
+        var currentDate = new Date();
+
+        const newUpdatePackageProps: UpdatePackageProps = {
+            type: 2,
+            membershipId: packageID,
+            fee: fee,
+            membershipName: packageName,
+            expiredDate: moment(currentDate).add(month, "months").format('DD-MM-YYYY'),
         };
 
         // Update the state with the new object
@@ -192,7 +205,9 @@ const OwnerPackage: React.FC = () => {
                                                 marginTop: "20px",
                                             }}
                                         >
-                                            <Button type="primary" onClick={() => handleBuy(packageItem.memberShipID)}>
+                                            <Button type="primary" onClick={() => handleBuy(packageItem.memberShipID,
+                                                packageItem.memberShipFee,
+                                                packageItem.memberShipName, packageItem.month)}>
                                                 Buy Now
                                             </Button>
                                         </div>
@@ -206,7 +221,9 @@ const OwnerPackage: React.FC = () => {
                                                 marginTop: "20px",
                                             }}
                                         >
-                                            <Button type="primary" onClick={() => handleBuy(packageItem.memberShipID)}>
+                                            <Button type="primary" onClick={() => handleExtend(packageItem.memberShipID,
+                                                packageItem.memberShipFee,
+                                                packageItem.memberShipName, packageItem.month)}>
                                                 Extend
                                             </Button>
                                         </div>
@@ -221,7 +238,10 @@ const OwnerPackage: React.FC = () => {
                                                 marginTop: "20px",
                                             }}
                                         >
-                                            <Button type="primary" onClick={() => handleUpdate(packageItem.memberShipID, packageItem.memberShipFee)}>
+                                            <Button type="primary" onClick={
+                                                () => handleUpdate(packageItem.memberShipID,
+                                                    packageItem.memberShipFee,
+                                                    packageItem.memberShipName, packageItem.month)}>
                                                 Update
                                             </Button>
                                         </div>
