@@ -53,8 +53,11 @@ const OwnerLayout: React.FC = () => {
     getItem("Bill", "sub2", <DollarOutlined />, [
       getItem("Bill", "5"),
       getItem("Create Bill", "6"),
-  ]),
-    getItem("Package", "7", <ShoppingOutlined />),
+    ]),
+    getItem("Package", "sub3", <ShoppingOutlined />, [
+      getItem("Package", "7"),
+      getItem("Register History", "11"),
+    ]),
     getItem("Appointment", "8", <CalendarFilled />),
     getItem("View Home", "9", <DesktopOutlined />),
     getItem("Logout", "10", <LogoutOutlined />),
@@ -92,6 +95,9 @@ const OwnerLayout: React.FC = () => {
       case "10":
         logout();
         navigate("/");
+        break;
+      case "11":
+        navigate("/owner/package/history");
         break;
       default:
         break;

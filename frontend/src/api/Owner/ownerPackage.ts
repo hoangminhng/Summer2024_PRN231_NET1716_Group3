@@ -78,8 +78,26 @@ export const updateMembership = async (
 
 export const getOwnerCurrentActiveMembership = async (token: string) => {
   try {
-    const fetchData = await axios.get<MemberShipDetail>(
+    const fetchData = await axios.get<RegisterPackage>(
       `${baseUrl}/api/memberships/current-active`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error: any) {
+    toast.error(error.response.data.message, { duration: 2000 });
+  }
+};
+
+export const getOwnerMembershipHistory = async (token: string) => {
+  try {
+    const fetchData = await axios.get<RegisterPackage[]>(
+      `${baseUrl}/api/memberships/history`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

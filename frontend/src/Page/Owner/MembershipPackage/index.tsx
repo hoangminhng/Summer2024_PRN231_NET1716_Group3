@@ -10,10 +10,10 @@ import { NumberFormat } from "../../../Utils/numberFormat";
 import UpdatePackageModal, { UpdatePackageProps } from "../../../Component/Owner/UpdatePackageModel";
 
 const OwnerPackage: React.FC = () => {
-    const { token, userPackageStatus, userRole, userId } = useContext(UserContext);
+    const { token, userPackageStatus } = useContext(UserContext);
     const [packageList, setPackageList] = useState<Package[]>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [currentMembership, setCurrentMembership] = useState<MemberShipDetail>();
+    const [currentMembership, setCurrentMembership] = useState<RegisterPackage>();
     const [updatePackageProps, setUpdatePackageProps] = useState<UpdatePackageProps>();
 
 
@@ -66,14 +66,24 @@ const OwnerPackage: React.FC = () => {
         }
         var diff = Math.abs(new Date(expireDate).getTime() - new Date(currentDate).getTime());
         var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
-        console.log("Diff in Days: " + diffDays);
+        var diffMonths = Math.ceil((diff + (1000 * 3600 * 24)) / (1000 * 3600 * 24 * 30));
+
+        console.log("Diff in months: " + diffMonths);
 
         if (!currentMembership?.memberShipFee) {
             return;
         }
 
+        if (diffMonths > month) {
+            toast.error("You cannot make this update because your current membership deadline still is longer than this package duration, which will end at: "
+                + moment(currentDate).add(month, "months").format('DD-MM-YYYY'), { duration: 2000 });
+            return;
+        }
 
         const fee = oldFee - ((currentMembership.memberShipFee / (currentMembership.month * 30)) * diffDays)
+        if (fee < 10000) {
+            toast.error("You cannot make this update because your current membership has higher value", { duration: 2000 });
+        }
         const newUpdatePackageProps: UpdatePackageProps = {
             type: 1,
             membershipId: packageID,
@@ -89,14 +99,27 @@ const OwnerPackage: React.FC = () => {
     }
 
     const handleExtend = (packageID: number, fee: number, packageName: string, month: number) => {
+        var oldExpireDate = currentMembership?.dateExpire;
+        if (oldExpireDate === undefined) {
+            return;
+        }
+        var newExpireDate = moment(oldExpireDate).add(month, "months")
+
         var currentDate = new Date();
+        var diff = Math.abs(new Date(oldExpireDate).getTime() - new Date(currentDate).getTime());
+        var diffMonths = Math.ceil(diff / (1000 * 3600 * 24 * 30));
+        if (diffMonths > month * 2) {
+            toast.error("You cannot make this extend because it goes too long in the future", { duration: 2000 });
+            return;
+        }
+
 
         const newUpdatePackageProps: UpdatePackageProps = {
             type: 2,
             membershipId: packageID,
             fee: fee,
             membershipName: packageName,
-            expiredDate: moment(currentDate).add(month, "months").format('DD-MM-YYYY'),
+            expiredDate: newExpireDate.format('DD-MM-YYYY'),
         };
 
         // Update the state with the new object

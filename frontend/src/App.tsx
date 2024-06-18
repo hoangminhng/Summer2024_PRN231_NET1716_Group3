@@ -46,6 +46,7 @@ import OwnerChangeProfile from "./Page/Owner/ChangeProfile";
 import OwnerChangePassword from "./Page/Owner/ChangePassword";
 import MemberChangeProfile from "./Page/Member/MemberChangeProfile";
 import MemberChangePassword from "./Page/Member/MemberChangePassword";
+import PackageRegisterHistory from "./Page/Owner/MembershipPackage/PackageRegisterHistory";
 
 const roles = {
   Admin: 1,
@@ -149,6 +150,7 @@ function App() {
                 element={<BillCreate />}
               />
               <Route path="package" element={<OwnerPackage />} />
+              <Route path="package/history" element={<PackageRegisterHistory />} />
               <Route path="appointments" element={<OwnerAppointment />} />
               <Route
                 path="appointments/detail/:hostelID"

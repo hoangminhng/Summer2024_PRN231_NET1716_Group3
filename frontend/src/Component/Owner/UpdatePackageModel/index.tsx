@@ -3,6 +3,7 @@ import { UserContext } from "../../../context/userContext";
 import moment from 'moment'
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { extendMembership, registerMembership, updateMembership } from "../../../api/Owner/ownerPackage";
+import toast from "react-hot-toast";
 
 
 export interface UpdatePackageProps {
@@ -40,6 +41,11 @@ const UpdatePackageModal: React.FC<UpdatePackageProps> = ({ type, membershipId, 
     const handleUpdate = (packageID: number | undefined, fee: number | undefined) => {
         // redirect payment thanh toán
         if (packageID === undefined || fee === undefined) {
+            return;
+        }
+
+        if (fee <= 100000) {
+            toast.error("You cannot make this update", { duration: 2000 });
             return;
         }
         const fetchPaymentUrl = async () => {

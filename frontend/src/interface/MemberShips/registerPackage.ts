@@ -1,4 +1,4 @@
-interface MemberShipDetail {
+interface RegisterPackage {
   memberShipTransactionID: number;
   memberShipName: string;
   memberShipID: number;
@@ -8,4 +8,5 @@ interface MemberShipDetail {
   dateRegister: Date;
   dateExpire: Date;
   status: number;
+  memberShipFee: number;
 }
