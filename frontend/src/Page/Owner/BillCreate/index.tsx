@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Card, Spin, List, Row, Col, Collapse, Input, Button } from 'antd';
+import { Card, Spin, List, Row, Col, Collapse, Input, Button, notification } from 'antd';
 import { getLastMonthBills, postMonthlyBillPayment } from '../../../api/Owner/ownerBillPayment';
 import { ApiOutlined } from "@ant-design/icons";
 import { UserContext } from '../../../context/userContext';
@@ -57,11 +57,20 @@ const BillCreate: React.FC = () => {
 
   const handleSubmit = async () => {
     const requestData = collectDataForAPI();
+    //alert(`Request Data: ${JSON.stringify(requestData, null, 2)}`);
     try {
       const response = await postMonthlyBillPayment(token, requestData);
       console.log('API Response:', response);
+      notification.success({
+        message: 'Success',
+        description: 'Bill payments submitted successfully!',
+      });
     } catch (error) {
       console.error('API Error:', error);
+      notification.error({
+        message: 'Error',
+        description: 'There was an error submitting the bill payments.',
+      });
     }
   };
 
@@ -105,6 +114,7 @@ const BillCreate: React.FC = () => {
                                     <p>
                                       <strong>New Number Service:</strong>
                                       <Input 
+                                        key={`${bill.roomId}-${service.roomServiceID}`} 
                                         type="number" 
                                         value={service.newNumberService}
                                         onChange={e => handleInputChange(bill.roomId, service.roomServiceID, parseInt(e.target.value))}
