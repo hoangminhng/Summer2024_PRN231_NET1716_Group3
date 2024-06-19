@@ -187,8 +187,8 @@ const Home: React.FC = () => {
           />
         ) : (
           <div className="flex flex-col mx-4 w-4/5">
-            {currentHostels?.map((hostel, key) => (
-              <CardHorizontal hostel={hostel} key={key} />
+            {currentHostels?.map((hostel, index) => (
+              <CardHorizontal hostel={hostel} key={index} />
             ))}
 
             <div className="flex justify-center mt-4">

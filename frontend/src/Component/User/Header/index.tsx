@@ -4,6 +4,7 @@ import LoginModal from "../../LoginModal";
 import { UserContext } from "../../../context/userContext";
 import { AvatarDropdown } from "../AvatarDropDown";
 import { AvatarDropdownOwner } from "../../Owner/AvatarDropDownOwner";
+import { BellIcon } from "@heroicons/react/24/solid";
 // import Logo from "../../../assets/logo.png";
 
 const Header: React.FC = () => {
@@ -79,37 +80,73 @@ const Header: React.FC = () => {
                 Home
               </a>
             </li>
-            <li>
+            {/* <li>
               <a
                 href="/package"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Package
               </a>
-            </li>
-            <li className="md:hidden mt-2">
-              <button
-                type="button"
-                className="flex items-center justify-center text-white bg-slate-950 hover:bg-slate-600 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-base px-5 py-3 text-center mb-2 w-full"
-              >
-                <UserPlusIcon className="w-4 h-4 mr-1" />
-                Sign up
-              </button>
-            </li>
-            <li className="md:hidden mt-2">
-              <button
-                type="button"
-                className="flex items-center justify-center text-white bg-slate-600 hover:bg-slate-950 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-base px-5 py-3 text-center mb-2 w-full"
-              >
-                <LockOpenIcon className="w-4 h-4 mr-1" />
-                Sign in
-              </button>
-            </li>
+            </li> */}
+            {isAuth() ? (
+              userRole == 3 ? (
+                <div className="md:hidden md:flex md:flex-col items-center md:order-2">
+                  <button
+                    type="button"
+                    className="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-slate-950 hover:bg-slate-600 rounded-3xl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    <BellIcon className="w-6 h-6" />
+                    <span className="sr-only">Notifications</span>
+                    <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+                      20
+                    </div>
+                  </button>
+
+                  <AvatarDropdown />
+                </div>
+              ) : userRole == 2 ? (
+                <div className="md:hidden md:flex md:order-2">
+                  <AvatarDropdownOwner />
+                </div>
+              ) : null
+            ) : (
+              <>
+                <li className="md:hidden mt-2">
+                  <button
+                    type="button"
+                    className="flex items-center justify-center text-white bg-slate-950 hover:bg-slate-600 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-base px-5 py-3 text-center mb-2 w-full"
+                  >
+                    <UserPlusIcon className="w-4 h-4 mr-1" />
+                    Sign up
+                  </button>
+                </li>
+                <li className="md:hidden mt-2">
+                  <button
+                    type="button"
+                    className="flex items-center justify-center text-white bg-slate-600 hover:bg-slate-950 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-base px-5 py-3 text-center mb-2 w-full"
+                  >
+                    <LockOpenIcon className="w-4 h-4 mr-1" />
+                    Sign in
+                  </button>
+                </li>
+              </>
+            )}
           </ul>
         </div>
         {isAuth() ? (
           userRole == 3 ? (
             <div className="hidden md:flex md:order-2">
+              <button
+                type="button"
+                className="mr-1 relative inline-flex items-center p-2 text-sm font-medium text-center text-slate-950 bg-[#e4e6eb] rounded-3xl"
+              >
+                <BellIcon className="w-6 h-6" />
+                <span className="sr-only">Notifications</span>
+                <div className="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-1 -end-1 dark:border-gray-900">
+                  1
+                </div>
+              </button>
+
               <AvatarDropdown />
             </div>
           ) : userRole == 2 ? (
