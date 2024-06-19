@@ -1,14 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../../context/userContext";
-import { getOwnerCurrentActiveMembership, getOwnerMembershipHistory, registerMembership } from "../../../../api/Owner/ownerPackage";
-import { getPackages } from "../../../../api/Packages";
-import toast from "react-hot-toast";
-import { Package } from "../../../../interface/MemberShips/package";
-import moment from 'moment'
-import { Button, Card, Col, Descriptions, Table, TableProps } from "antd";
+import { getOwnerMembershipHistory } from "../../../../api/Owner/ownerPackage";
+import { Table, TableProps, Tag } from "antd";
 import { NumberFormat } from "../../../../Utils/numberFormat";
-import UpdatePackageModal, { UpdatePackageProps } from "../../../../Component/Owner/UpdatePackageModel";
 import { DateFormat } from "../../../../Utils/dateFormat";
+import { months } from "moment";
 
 const PackageRegisterHistory: React.FC = () => {
     const [membershipDetailData, setMembershipDetailData] = useState<RegisterPackage[]>();
@@ -16,11 +12,19 @@ const PackageRegisterHistory: React.FC = () => {
     // const [idnumber, setID] = useState<number>();
     const { userId, token } = useContext(UserContext);
 
+    const statusStringMap: { [key: number]: string } = {
+        1: "CURRENT",
+        2: "EXPIRED",
+        3: "BE UPDATED",
+        4: "BE EXTENDED"
+    };
+
 
     const statusColorMap: { [key: number]: string } = {
-        0: "green",
-        1: "red",
-        2: "grey",
+        1: "green",
+        2: "red",
+        3: "grey",
+        4: "orange"
     };
 
     const fetchMembershipHistory = async () => {
@@ -35,69 +39,10 @@ const PackageRegisterHistory: React.FC = () => {
         }
     };
 
-    // const fetchMemberShipInformationDetail = async () => {
-    //     try {
-    //         if (token != undefined && accountID != undefined) {
-    //             let data: MemberShipInformation | undefined;
-    //             data = await getMemberShipInformationDetail(parseInt(accountID), token);
-    //             setID(parseInt(accountID));
-    //             setInfoData(data);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error fetching membership detail:", error);
-    //     }
-    // };
-
     useEffect(() => {
         fetchMembershipHistory();
     }, [token]);
 
-
-    // const renderBorderedAccount = () => {
-    //     const items = [
-    //         {
-    //             key: "1",
-    //             label: "Name",
-    //             children: infoData?.name || "",
-    //             span: 3,
-    //         },
-    //         {
-    //             key: "2",
-    //             label: "Email",
-    //             children: infoData?.email || "",
-    //             span: 3,
-    //         },
-    //         {
-    //             key: "3",
-    //             label: "Phone",
-    //             children: infoData?.phone || "",
-    //         },
-    //         {
-    //             key: "4",
-    //             label: "Address",
-    //             children: infoData?.address || "",
-    //         },
-    //         {
-    //             key: "5",
-    //             label: "Status",
-    //             children: infoData ? (
-    //                 <Tag
-    //                     color={statusColorMap[infoData.isPackage]}
-    //                     key={statusStringMap[infoData.isPackage]}
-    //                 >
-    //                     {statusStringMap[infoData.isPackage].toUpperCase()}
-    //                 </Tag>
-    //             ) : (
-    //                 ""
-    //             ),
-    //         }
-    //     ];
-    //     return items.map((item) => (
-    //         <Descriptions.Item key={item.key} label={item.label}>
-    //             {item.children}
-    //         </Descriptions.Item>
-    //     ));
-    // };
 
     const memberpackageHistory: TableProps<RegisterPackage>["columns"] = [
         {
@@ -111,17 +56,27 @@ const PackageRegisterHistory: React.FC = () => {
             width: "15%",
         },
         {
-            title: "Capacity",
+            title: "Package Capacity",
             dataIndex: "capacityHostel",
             width: "10%",
         },
         {
-            title: "Month",
+            title: "Package Duration",
             dataIndex: "month",
             width: "10%",
+            render: (month: number) => {
+                let unit = "months";
+                if (month === 1) {
+                    unit = "month"
+                }
+                const display = month + " " + unit;
+                return (
+                    display
+                )
+            }
         },
         {
-            title: "Package Fee",
+            title: "You Paid",
             dataIndex: "packageFee",
             width: "15%",
             render: (packageFee: number) => {
@@ -154,20 +109,25 @@ const PackageRegisterHistory: React.FC = () => {
             title: "Status",
             dataIndex: "status",
             width: "10%",
-            // render: (status: number) => {
-            //     return (
-            //         DateFormat(dateExpire)
-            //     )
-            // },
+            render: (status: number) => {
+                const statusString = statusStringMap[status];
+                const statusColor = statusColorMap[status];
+                if (statusString && statusColor) {
+                    return (
+                        <Tag
+                            color={statusColor}
+                            key={statusString}
+                        >
+                            {statusString}
+                        </Tag>
+                    );
+                } else {
+                    // Handle cases where status is not found in maps
+                    return <span>Unknown Status ({status})</span>;
+                }
+            },
         },
     ];
-
-
-
-    // const handleBackToList = () => {
-    //     navigate("/admin/memberships");
-    // };
-
 
     return (
         <>

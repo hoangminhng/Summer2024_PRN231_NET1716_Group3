@@ -47,6 +47,7 @@ import OwnerChangePassword from "./Page/Owner/ChangePassword";
 import MemberChangeProfile from "./Page/Member/MemberChangeProfile";
 import MemberChangePassword from "./Page/Member/MemberChangePassword";
 import PackageRegisterHistory from "./Page/Owner/MembershipPackage/PackageRegisterHistory";
+import MemberRentedRoom from "./Page/Member/MemberRentedRoom";
 
 const roles = {
   Admin: 1,
@@ -168,6 +169,7 @@ function App() {
               />
               <Route path="payment" element={<PaymentHistory />} />
               <Route path="profile" element={<MemberProfile />} />
+              <Route path="rentedRooms" element={<MemberRentedRoom />} />
               <Route path="profile/change-information" element={<MemberChangeProfile />} />
               <Route path="profile/change-password" element={<MemberChangePassword />} />
             </Route>
