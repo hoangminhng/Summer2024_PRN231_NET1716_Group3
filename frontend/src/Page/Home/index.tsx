@@ -10,11 +10,19 @@ const Home: React.FC = () => {
   const [hostelList, setHostelList] = useState<Hostel[] | undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<number[]>([]);
+  const [loading, setLoading] = useState(false);
   const hostelsPerPage = 10;
 
   const fetchHostels = async () => {
-    let respone = await GetHostelCard();
-    setHostelList(respone?.data);
+    try {
+      setLoading(true);
+      let respone = await GetHostelCard();
+      setHostelList(respone?.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -179,7 +187,7 @@ const Home: React.FC = () => {
             </ul>
           </div>
         </div>
-        {currentHostels == undefined ? (
+        {loading == true ? (
           <Spin
             fullscreen={true}
             size="large"
