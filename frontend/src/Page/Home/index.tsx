@@ -179,7 +179,7 @@ const Home: React.FC = () => {
             </ul>
           </div>
         </div>
-        {currentHostels?.length == 0 ? (
+        {currentHostels == undefined ? (
           <Spin
             fullscreen={true}
             size="large"
