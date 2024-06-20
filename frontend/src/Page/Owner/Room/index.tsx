@@ -22,6 +22,7 @@ import {
   getStatusText,
 } from "../../../Utils/roomStatusColor";
 import { NumberFormat } from "../../../Utils/numberFormat";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 const { Text } = Typography;
 
 const Room: React.FC = () => {
@@ -30,7 +31,8 @@ const Room: React.FC = () => {
   const [current, setCurrent] = useState(1);
   const [modalFormOpen, setModalFormOpen] = useState(false);
   const { hostelId } = useParams<{ hostelId: string }>();
-  const { token , userPackageStatus } = useContext(UserContext);
+  const [activePackage, setActivePackage] = useState<RegisterPackage>();
+  const { token } = useContext(UserContext);
   const navigate = useNavigate();
 
   const pageSize = 4;
@@ -51,8 +53,20 @@ const Room: React.FC = () => {
     }
   };
 
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
+    }
+  };
+
   useEffect(() => {
     fetchRoomListOfHostel();
+    fetchStatusPackage();
   }, [hostelId]);
 
   const handleBackClick = () => {
@@ -65,7 +79,7 @@ const Room: React.FC = () => {
 
   return (
     <>
-    {userPackageStatus == 0 ? (
+    {activePackage ? (
     <Layout>
       <Space
         size={20}

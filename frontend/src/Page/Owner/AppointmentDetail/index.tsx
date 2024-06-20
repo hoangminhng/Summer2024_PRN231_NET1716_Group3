@@ -16,6 +16,7 @@ import { UserContext } from "../../..//context/userContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { CancelAppointment, getOwnerAppointmentDetail } from "../../../api/Owner/ownerAppointment";
 import { DateFormat } from "../../../Utils/dateFormat";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 const OwnerAppointmentDetail: React.FC = () => {
 
@@ -23,11 +24,12 @@ const OwnerAppointmentDetail: React.FC = () => {
   const [filteredData, setFilteredData] = useState<Appointment[]>([]);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment>();
   const [searchInput, setSearchInput] = useState<string>("");
+  const [activePackage ,setActivePackage] = useState<RegisterPackage>();
   const { hostelID } = useParams<{ hostelID: string }>();
   const [idnumber, setID] = useState<number>();
   const [errorContent, setErrorContent] = useState<any>("");
   const navigate = useNavigate();
-  const { token, userPackageStatus } = useContext(UserContext);
+  const { token } = useContext(UserContext);
 
   const fetchAppointmentDetailList = async () => {
     try {
@@ -40,6 +42,17 @@ const OwnerAppointmentDetail: React.FC = () => {
         }
       } catch (error) {
       console.error("Error fetching appointment list:", error);
+    }
+  };
+
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
     }
   };
 
@@ -56,6 +69,7 @@ const OwnerAppointmentDetail: React.FC = () => {
 
   useEffect(() => {
     fetchAppointmentDetailList();
+    fetchStatusPackage();
   }, [idnumber, token]);
 
   useEffect(() => {
@@ -193,7 +207,7 @@ const handleBackToList = () => {
 
   return (
     <>
-    {userPackageStatus == 0 ? (
+    {activePackage? (
         <div>
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <div style={{display:"flex", justifyContent:"space-between", marginTop: "10px"}}>
