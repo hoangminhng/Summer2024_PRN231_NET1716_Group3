@@ -35,7 +35,7 @@ const PaymentSucess = () => {
 
             console.log(response?.data?.paymentType);
             if (response?.data?.paymentType == 0) {
-              homeTimeout = setTimeout(() => navigate("/member/contracts"), 1000);
+              homeTimeout = setTimeout(() => navigate("contracts"), 1000);
             }
             if (response?.data?.paymentType == 1) {
               //bill_payment

@@ -122,7 +122,7 @@ const BillCreate: React.FC = () => {
                 renderItem={(bill) => (
                   <List.Item key={bill.roomId}>
                     <Card
-                      title={`Bill for Room ID: ${bill.roomId}`}
+                      title={`Bill for Room: ${bill.roomId}`}
                       bordered={false}
                     >
                       <Row gutter={[16, 16]}>
