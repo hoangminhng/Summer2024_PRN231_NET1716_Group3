@@ -9,14 +9,16 @@ import { useContext } from "react";
 import { UserContext } from "../../..//context/userContext";
 import { useNavigate } from "react-router-dom";
 import { getOwnerAppointment } from "../../../api/Owner/ownerAppointment";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 const OwnerAppointment: React.FC = () => {
 
   const [appointmenttData, setAppointmentData] = useState<AppointmentView[]>([]);
   const [filteredData, setFilteredData] = useState<AppointmentView[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
+  const [activePackage, getActivePackage] = useState<RegisterPackage>();
   const navigate = useNavigate();
-  const { token, userId, userPackageStatus } = useContext(UserContext);
+  const { token, userId } = useContext(UserContext);
 
   const fetchAppointmentList = async () => {
     try {
@@ -31,8 +33,20 @@ const OwnerAppointment: React.FC = () => {
     }
   };
 
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined && userId) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        getActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
+    }
+  };
+
   useEffect(() => {
     fetchAppointmentList();
+    fetchStatusPackage();
   }, [userId, token]);
 
   useEffect(() => {
@@ -76,7 +90,7 @@ const OwnerAppointment: React.FC = () => {
 
   return (
     <>
-    {userPackageStatus == 0 ? (
+    {activePackage ? (
       <div>
       {/* Bảng danh sách */}
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">

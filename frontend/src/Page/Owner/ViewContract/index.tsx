@@ -8,14 +8,16 @@ import { getOwnerContract , getContractDetail} from "../../../api/Owner/ownerCon
 import { Document, Packer, Paragraph, TextRun} from "docx";
 import { saveAs } from "file-saver";
 import { NumberFormat } from "../../../Utils/numberFormat";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 const OwnerViewContract : React.FC = () =>{
 
     const navigate = useNavigate();
-    const { token , userId, userPackageStatus } = useContext(UserContext);
+    const { token , userId } = useContext(UserContext);
     const [contractData, setContractData] = useState<ViewContract[]>([]);
     const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [activePackage, setActivePackage] = useState<RegisterPackage>()
     const itemsPerPage = 3;
     const formatDate = (date : Date) => {
         if (!date) return null;
@@ -69,8 +71,20 @@ const OwnerViewContract : React.FC = () =>{
         }
     };
 
+    const fetchStatusPackage = async () => {
+        try {
+          if (token != undefined) {
+            let data = await getOwnerCurrentActiveMembership(token);
+            setActivePackage(data)
+            }
+          } catch (error) {
+          console.error("Error fetching status package:", error);
+        }
+      };
+
     useEffect(() => {
-        fetchContractList()
+        fetchContractList();
+        fetchStatusPackage();
     }, []);
 
     const statusStringMap: { [key: number]: string } = {
@@ -309,7 +323,7 @@ const OwnerViewContract : React.FC = () =>{
 
     return (
         <>
-        {userPackageStatus == 0 ? (
+        {activePackage ? (
             <div>
                 <div style={{width: "100%", textAlign: "center", fontSize: "20", fontWeight:"bold", backgroundColor:"aliceblue", padding:"20px", marginBottom: "20px"}}>
                 <h2>CONTRACT LIST</h2>
