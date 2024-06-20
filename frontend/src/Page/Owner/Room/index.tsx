@@ -66,6 +66,7 @@ const Room: React.FC = () => {
 
   useEffect(() => {
     fetchRoomListOfHostel();
+    fetchStatusPackage();
   }, [hostelId]);
 
   const handleBackClick = () => {
