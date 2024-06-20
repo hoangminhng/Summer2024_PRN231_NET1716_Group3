@@ -46,6 +46,12 @@ import OwnerChangeProfile from "./Page/Owner/ChangeProfile";
 import OwnerChangePassword from "./Page/Owner/ChangePassword";
 import MemberChangeProfile from "./Page/Member/MemberChangeProfile";
 import MemberChangePassword from "./Page/Member/MemberChangePassword";
+import { useContext, useEffect } from "react";
+import { generateToken, messaging } from "./Config/firebase_config";
+import { onMessage } from "firebase/messaging";
+import { NotificationContext } from "./context/notificationContext";
+import { UserContext } from "./context/userContext";
+import toast from "react-hot-toast";
 import PackageRegisterHistory from "./Page/Owner/MembershipPackage/PackageRegisterHistory";
 
 const roles = {
@@ -55,6 +61,61 @@ const roles = {
 };
 
 function App() {
+  const { updateNotiStatus } = useContext(NotificationContext);
+  const { userId } = useContext(UserContext);
+
+  useEffect(() => {
+    generateToken();
+    onMessage(messaging, (payload) => {
+      console.log("Message received. ", payload);
+      updateNotiStatus(true);
+      if (payload.notification?.body) {
+        const { title, body } = payload.notification;
+        let status: string;
+        let accountId: number;
+        console.log("Got in 1");
+        if (payload.data) {
+          status = payload.data.type;
+          accountId = parseInt(payload.data.accountId);
+          console.log("accountId: " + accountId);
+          console.log("userId: " + userId);
+          if (accountId == userId) {
+            toast.custom(
+              (t) => (
+                <div
+                  className={`${
+                    t.visible ? "animate-enter" : "animate-leave"
+                  } max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+                >
+                  <div className="flex-1 w-0 p-4">
+                    <div className="flex items-center justify-center">
+                      <div className="flex-shrink-0 pt-0.5">
+                        <img
+                          className="h-10 w-10"
+                          src="https://res.cloudinary.com/dfdwupiah/image/upload/v1718272841/PRN231_GroupProject/glq77u926kxvcxggb9k9.png"
+                          alt=""
+                        />
+                      </div>
+                      <div className="ml-3 flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          {title}
+                        </p>
+                        <p className="mt-1 text-sm text-gray-500">{body}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ),
+              {
+                duration: 1000,
+              }
+            );
+          }
+        }
+      }
+    });
+  }, []);
+
   return (
     <div className="App">
       <Router>
