@@ -107,7 +107,7 @@ const OwnerChangeProfile : React.FC = () => {
                             style={{
                                 maxWidth: 900,
                             }}
-                            initialValues={profileData} // Initial values set here
+                            initialValues={profileData}
                             onFinish={updateInformation}
                             onFinishFailed={onFinishFailed}
                             autoComplete="off"

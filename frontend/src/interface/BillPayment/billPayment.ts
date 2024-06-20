@@ -1,3 +1,7 @@
+interface BillPaymentList {
+  billPaymentDtos: BillPayment[];
+}
+
 interface BillPayment {
   billPaymentID: number;
   contractId: number;
@@ -13,6 +17,9 @@ interface BillPayment {
   billPaymentDetails: BillPaymentDetail[];
   roomName: string;
   renterName: string;
+  roomId: number;
+  startDate: string;
+  endDate: string;
 }
 
 interface BillPaymentDetail {

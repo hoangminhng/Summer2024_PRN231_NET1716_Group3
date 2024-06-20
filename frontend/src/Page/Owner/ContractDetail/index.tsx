@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { Button } from "antd";
+import {ApiOutlined} from "@ant-design/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,12 +9,14 @@ import { getContractDetail } from "../../../api/Owner/ownerContract";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { Document, Packer, Paragraph, TextRun} from "docx";
 import { saveAs } from "file-saver";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 const OwnerContractDetail = () => {
     const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const { contractID } = useParams<{ contractID: string }>();
     const [idnumber, setID] = useState<number>();
     const navigate = useNavigate();
+    const [activePackage, setActivePackage] = useState<RegisterPackage>();
     const { token } = useContext(UserContext);
 
     const formatDate = (date : Date) => {
@@ -21,6 +24,17 @@ const OwnerContractDetail = () => {
         const parsedDate = new Date(date);
         return parsedDate;
     };
+
+    const fetchStatusPackage = async () => {
+        try {
+          if (token != undefined) {
+            let data = await getOwnerCurrentActiveMembership(token);
+            setActivePackage(data)
+            }
+          } catch (error) {
+          console.error("Error fetching status package:", error);
+        }
+      };
 
     const splitHtmlIntoParagraphs = (html : any) => {
         const div = document.createElement("div");
@@ -61,6 +75,7 @@ const OwnerContractDetail = () => {
 
     useEffect(() => {
         fetchContractDetail();
+        fetchStatusPackage();
     }, [idnumber, token]);
 
     const handleBackToList = () => {
@@ -163,13 +178,21 @@ const OwnerContractDetail = () => {
                             )}`,
                             break: 3,
                         }),
+                        new TextRun({
+                            text : `- Số nước hiện tại khi bắt đầu thuê phòng : ${contactDetailData?.initWaterNumber || 0} m³`,
+                            break: 3,
+                        }),
+                        new TextRun({
+                            text : `- Số điện hiện tại khi bắt đầu thuê phòng : ${contactDetailData?.initElectricityNumber || 0} kWh`,
+                            break: 3,
+                        }),
                     ],
                 }),
-                ...((contactDetailData?.service || []).map((service) =>
+                ...((contactDetailData?.roomServiceDetails || []).map((service) =>
                     new Paragraph({
                         children: [
                             new TextRun({
-                                text: `${service.typeName} : ${NumberFormat(service.price)} (${service.unit})`,
+                                text: `- ${service.typeServiceName} : ${NumberFormat(service.servicePrice)} (${service.serviceName})`,
                                 break: 2,
                             }),
                         ],
@@ -275,6 +298,7 @@ const OwnerContractDetail = () => {
 
     return (
         <>
+    {activePackage ? (
             <div style={{ textAlign: "left" }}>
                 <div
                     style={{
@@ -384,17 +408,26 @@ const OwnerContractDetail = () => {
                         {NumberFormat(contactDetailData?.roomFee || 0)}
                     </p>
                     <p>
-                        -Bên B phải đặt cọc cho Bên A với số tiền là :{" "}
+                        - Bên B phải đặt cọc cho Bên A với số tiền là :{" "}
                         {NumberFormat(contactDetailData?.depositFee || 0)}
                     </p>
 
+                    <p>
+                        - Số nước hiện tại khi bắt đầu thuê phòng :{" "}
+                        {contactDetailData?.initWaterNumber || 0} {" "} m³
+                    </p>
+                    <p>
+                        - Số điện hiện tại khi bắt đầu thuê phòng :{" "}
+                        {contactDetailData?.initElectricityNumber || 0}{" "} kWh
+                    </p>
+
                     <div>
-                        {...(contactDetailData?.service || []).map((service) => (
+                        {...(contactDetailData?.roomServiceDetails || []).map((service) => (
                             <div key={service.roomServiceId}>
                                 <p style={{ fontWeight: "bold" }}>
-                                    {service.typeName} :{" "}
-                                    {NumberFormat(service.price)} (
-                                    {service.unit})
+                                    - {service.typeServiceName} :{" "}
+                                    {NumberFormat(service.servicePrice)} (
+                                    {service.serviceName})
                                 </p>
                             </div>
                         ))}
@@ -467,7 +500,13 @@ const OwnerContractDetail = () => {
                     </div>
                 </div>
             </div>
-        </>
+        ) : (
+            <div className="w-full text-center items-center justify-between">
+              <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+              <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+            </div>
+          )}
+          </>
     );
 };
 

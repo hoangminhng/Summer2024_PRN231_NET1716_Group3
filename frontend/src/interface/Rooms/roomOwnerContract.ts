@@ -1,4 +1,4 @@
 interface RoomOwnerContract{
     roomID : number,
-    roomName : string
+    roomName : string,
 }

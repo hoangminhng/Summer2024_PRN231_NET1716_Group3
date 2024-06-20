@@ -10,7 +10,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined, ApiOutlined } from "@ant-design/icons";
 import HostelForm from "../../../Component/Owner/HostelForm";
 import { getOwnerHostels } from "../../../api/Owner/ownerHostel";
 import { UserContext } from "../../../context/userContext";
@@ -20,6 +20,7 @@ import {
   getColorByStatus,
   getStatusText,
 } from "../../../Utils/hostelStatusColor";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 const { Text, Title } = Typography;
 
 const Hostel: React.FC = () => {
@@ -31,6 +32,7 @@ const Hostel: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const pageSize = 2;
   const { userId, token } = useContext(UserContext);
+  const [activePackage, setActivePackage] = useState<RegisterPackage>()
   const navigate = useNavigate();
 
   const fetchOwnerHostels = async () => {
@@ -48,8 +50,20 @@ const Hostel: React.FC = () => {
     }
   };
 
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
+    }
+  };
+
   useEffect(() => {
     fetchOwnerHostels();
+    fetchStatusPackage();
   }, [userId]);
 
   const handleOpenHostelForm = () => {
@@ -70,6 +84,8 @@ const Hostel: React.FC = () => {
   };
 
   return (
+    <>
+    {activePackage ? (
     <Layout>
       <Space
         size={20}
@@ -181,6 +197,13 @@ const Hostel: React.FC = () => {
         />
       </Space>
     </Layout>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

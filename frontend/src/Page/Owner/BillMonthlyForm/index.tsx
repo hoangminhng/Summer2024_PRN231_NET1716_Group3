@@ -1,10 +1,12 @@
 import { Col, Row } from "antd";
+import {ApiOutlined} from "@ant-design/icons"
 import BillDetail from "../../../Component/Owner/BillDetail/indext";
 import BillForm from "../../../Component/Owner/BillForm";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/userContext";
 import { getLastMonthBillPayment } from "../../../api/Owner/ownerBillPayment";
 import { useLocation } from "react-router-dom";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 interface LocationState {
   contractId: string;
@@ -13,6 +15,7 @@ interface LocationState {
 const BillMonthlyForm: React.FC = () => {
   const [billPayment, setBillPayment] = useState<BillPayment | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activePackage, setActivePackage] = useState<RegisterPackage>();
   const { token } = useContext(UserContext);
 
   const location = useLocation();
@@ -38,11 +41,25 @@ const BillMonthlyForm: React.FC = () => {
     }
   };
 
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
+    }
+  };
+
   useEffect(() => {
     fetchLastMonthBillPayment();
+    fetchStatusPackage();
   }, []);
 
   return (
+    <>
+    {activePackage ? (
     <div style={{ margin: 16 }}>
       <Row gutter={16}>
         <Col span={12}>
@@ -53,6 +70,13 @@ const BillMonthlyForm: React.FC = () => {
         </Col>
       </Row>
     </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

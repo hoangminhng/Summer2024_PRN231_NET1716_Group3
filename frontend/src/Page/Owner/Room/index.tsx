@@ -10,7 +10,7 @@ import {
   Typography,
 } from "antd";
 import Title from "antd/es/typography/Title";
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined , ApiOutlined} from "@ant-design/icons";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
@@ -22,6 +22,7 @@ import {
   getStatusText,
 } from "../../../Utils/roomStatusColor";
 import { NumberFormat } from "../../../Utils/numberFormat";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 const { Text } = Typography;
 
 const Room: React.FC = () => {
@@ -30,6 +31,7 @@ const Room: React.FC = () => {
   const [current, setCurrent] = useState(1);
   const [modalFormOpen, setModalFormOpen] = useState(false);
   const { hostelId } = useParams<{ hostelId: string }>();
+  const [activePackage, setActivePackage] = useState<RegisterPackage>();
   const { token } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -51,8 +53,20 @@ const Room: React.FC = () => {
     }
   };
 
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
+    }
+  };
+
   useEffect(() => {
     fetchRoomListOfHostel();
+    fetchStatusPackage();
   }, [hostelId]);
 
   const handleBackClick = () => {
@@ -64,6 +78,8 @@ const Room: React.FC = () => {
   };
 
   return (
+    <>
+    {activePackage ? (
     <Layout>
       <Space
         size={20}
@@ -158,6 +174,13 @@ const Room: React.FC = () => {
         />
       </Space>
     </Layout>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

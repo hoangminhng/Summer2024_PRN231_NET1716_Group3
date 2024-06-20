@@ -41,6 +41,7 @@ const OwnerLayout: React.FC = () => {
   } = theme.useToken();
 
   const navigate = useNavigate();
+  const userId = localStorage.getItem('userId');
 
   const items: MenuItem[] = [
     getItem("Profile", "1", <UserOutlined />),
@@ -49,11 +50,17 @@ const OwnerLayout: React.FC = () => {
       getItem("Contract", "3"),
       getItem("Create Contract", "4"),
     ]),
-    getItem("Bill", "5", <DollarOutlined />),
-    getItem("Package", "6", <ShoppingOutlined />),
-    getItem("Appointment", "7", <CalendarFilled />),
-    getItem("View Home", "8", <DesktopOutlined />),
-    getItem("Logout", "9", <LogoutOutlined />),
+    getItem("Bill", "sub2", <DollarOutlined />, [
+      getItem("Bill", "5"),
+      getItem("Create Bill", "6"),
+    ]),
+    getItem("Package", "sub3", <ShoppingOutlined />, [
+      getItem("Package", "7"),
+      getItem("Register History", "11"),
+    ]),
+    getItem("Appointment", "8", <CalendarFilled />),
+    getItem("View Home", "9", <DesktopOutlined />),
+    getItem("Logout", "10", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
 
   const handleMenuClick = (key: React.Key) => {
@@ -74,17 +81,23 @@ const OwnerLayout: React.FC = () => {
         navigate("/owner/bill-payment");
         break;
       case "6":
-        navigate("/owner/package");
+        navigate("/owner/bill-payment/create");
         break;
       case "7":
-        navigate("/owner/appointments");
+        navigate("/owner/package");
         break;
       case "8":
-        navigate("/");
+        navigate("/owner/appointments");
         break;
       case "9":
+        navigate("/");
+        break;
+      case "10":
         logout();
         navigate("/");
+        break;
+      case "11":
+        navigate("/owner/package/history");
         break;
       default:
         break;

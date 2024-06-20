@@ -43,7 +43,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ closeModal }) => {
             closeModal();
           }
           if (user.roleId === 2) {
-            navigate("/owner");
+            navigate("/owner/hostels");
           }
           if (user.roleId === 1) {
             navigate("/admin");

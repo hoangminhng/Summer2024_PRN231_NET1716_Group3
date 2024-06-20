@@ -7,25 +7,27 @@ import {
   Flex,
   Image,
   Layout,
+  Popconfirm,
   Row,
+  Select,
   Space,
   Spin,
   Table,
   Tag,
   Typography,
 } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined, ApiOutlined } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getOwnerRoomDetail } from "../../../api/Owner/ownerRoom";
+import {
+  getOwnerRoomDetail,
+  updateRoomStatus,
+} from "../../../api/Owner/ownerRoom";
 import Column from "antd/es/table/Column";
 import { NumberFormat } from "../../../Utils/numberFormat";
-import {
-  getColorByStatus,
-  getStatusText,
-} from "../../../Utils/roomStatusColor";
 import { UserContext } from "../../../context/userContext";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 const { Text } = Typography;
 
 const getStatusTag = (status: number) => {
@@ -43,7 +45,13 @@ const RoomDetail: React.FC = () => {
   const [roomDetailData, setRoomDetailData] = useState<OwnerRoomDetail>();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [statusToChange, setStatusToChange] = useState<number | null>(null);
+  const [currentStatus, setCurrentStatus] = useState<number | undefined>(
+    undefined
+  );
+  const [popConfirmOpen, setPopConfirmOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
+  const [ activePackage, setActivePackage] = useState<RegisterPackage>();
   const { token } = useContext(UserContext);
 
   const fetchRoomDetail = async () => {
@@ -53,7 +61,7 @@ const RoomDetail: React.FC = () => {
         if (token !== undefined) {
           const response = await getOwnerRoomDetail(parseInt(roomId), token);
           setRoomDetailData(response);
-          // setCurrentStatus(response?.status);
+          setCurrentStatus(response?.status);
         }
       } catch (error) {
         console.log(error);
@@ -63,8 +71,20 @@ const RoomDetail: React.FC = () => {
     }
   };
 
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
+    }
+  };
+
   useEffect(() => {
     fetchRoomDetail();
+    fetchStatusPackage();
   }, [roomId]);
 
   const showDrawer = () => {
@@ -75,7 +95,39 @@ const RoomDetail: React.FC = () => {
     setOpen(false);
   };
 
+  //
+  const handleConfirmStatusChange = async () => {
+    if (token && roomId && statusToChange !== null) {
+      setLoading(true);
+      try {
+        await updateRoomStatus(token, parseInt(roomId), statusToChange);
+        setPopConfirmOpen(false);
+        setStatusToChange(null);
+        fetchRoomDetail();
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleStatusChange = (value: number) => {
+    setStatusToChange(value);
+  };
+
+  const handleCancelStatusChange = () => {
+    setPopConfirmOpen(false);
+    setStatusToChange(null);
+  };
+
+  const showPopconfirm = () => {
+    setPopConfirmOpen(true);
+  };
+
   return (
+    <>
+    {activePackage ? (
     <Layout>
       <Space
         size={20}
@@ -136,12 +188,42 @@ const RoomDetail: React.FC = () => {
                   <Title level={2} style={{ marginBottom: 0 }}>
                     {roomDetailData?.roomName}
                   </Title>
-                  <Tag
-                    style={{ padding: 5 }}
-                    color={getColorByStatus(roomDetailData?.status ?? 0)}
-                  >
-                    {getStatusText(roomDetailData?.status ?? 0)}
-                  </Tag>
+                  <Select
+                    value={
+                      statusToChange !== null ? statusToChange : currentStatus
+                    }
+                    onChange={handleStatusChange}
+                    style={{ width: 120 }}
+                    options={[
+                      { value: 0, label: "Available" },
+                      { value: 1, label: "Viewing" },
+                      { value: 2, label: "Hiring" },
+                      { value: 3, label: "Fixed" },
+                    ]}
+                  ></Select>
+                  {statusToChange !== null && (
+                    <Popconfirm
+                      open={popConfirmOpen}
+                      title="Are you sure you want to change the room status?"
+                      onConfirm={() => {
+                        handleConfirmStatusChange();
+                        setOpen(false);
+                      }}
+                      onCancel={() => {
+                        handleCancelStatusChange();
+                        setOpen(false);
+                      }}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <Button
+                        onClick={showPopconfirm}
+                        style={{ marginLeft: 20 }}
+                      >
+                        Update Status
+                      </Button>
+                    </Popconfirm>
+                  )}
                 </Flex>
                 <Text>{roomDetailData?.description}</Text>
 
@@ -190,6 +272,13 @@ const RoomDetail: React.FC = () => {
         )}
       </Space>
     </Layout>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

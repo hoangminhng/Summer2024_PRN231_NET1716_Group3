@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Col, Row, Spin } from 'antd';
+import {ApiOutlined} from "@ant-design/icons"
+import { Table, Spin, Image } from 'antd';
 import { getHiringRooms } from '../../../api/Owner/ownerRoom';
-import { UserContext } from "../../..//context/userContext";
+import { UserContext } from "../../../context/userContext";
+import { getOwnerCurrentActiveMembership } from '../../../api/Owner/ownerPackage';
 
 const BillPayment: React.FC = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token, userId } = useContext(UserContext);
+  const [activePackage, setActivePackage] = useState<RegisterPackage>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,39 +25,88 @@ const BillPayment: React.FC = () => {
       }
     };
 
+    const fetchStatusPackage = async () => {
+      try {
+        if (token != undefined) {
+          let data = await getOwnerCurrentActiveMembership(token);
+          setActivePackage(data)
+          }
+        } catch (error) {
+        console.error("Error fetching status package:", error);
+      }
+    };
+
     fetchRooms();
+    fetchStatusPackage();
   }, [userId, token]);
 
-  const handleCardClick = (contractId) => {
-    navigate(`/owner/bill-payment/bills/${contractId}`); 
-    console.log(contractId);
+  const handleRowClick = (record) => {
+    navigate(`/owner/bill-payment/bills/${record.contractId}`);
+    console.log(record.contractId);
   };
 
+  const columns = [
+    {
+      title: 'Image',
+      dataIndex: 'roomThumbnail',
+      key: 'roomThumbnail',
+      render: (text, record) => (
+        <Image
+          width={50}
+          height={50}
+          src={record.roomThumbnail}
+          alt={record.roomName}
+          style={{ objectFit: 'cover' }}
+        />
+      ),
+    },
+    {
+      title: 'Room Name',
+      dataIndex: 'roomName',
+      key: 'roomName',
+    },
+    {
+      title: 'Hostel',
+      dataIndex: 'hostelName',
+      key: 'hostelName',
+    },
+    {
+      title: 'Student',
+      dataIndex: 'studentName',
+      key: 'studentName',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: status => (status === 2 ? 'Hiring' : 'Available'),
+    },
+  ];
+
   return (
+    <>
+    {activePackage ? (
     <div style={{ padding: '24px' }}>
-      <Row gutter={[16, 16]}>
-        {rooms.map(room => (
-          <Col key={room.roomID} span={8}>
-            <Card
-              hoverable
-              cover={<img alt={room.roomName} src={room.roomThumbnail} style={{ width: '100%', height: '290px', objectFit: 'cover' }} />}
-              onClick={() => handleCardClick(room.contractId)}
-            >
-              <Card.Meta
-                title={room.roomName}
-                description={
-                  <>
-                    <p>Hostel: {room.hostelName}</p>
-                    <p>Student: {room.studentName}</p>
-                    <p>Status: {room.status === 2 ? 'Hiring' : 'Available'}</p>
-                  </>
-                }
-              />
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={rooms}
+          rowKey="roomID"
+          onRow={(record) => ({
+            onClick: () => handleRowClick(record),
+          })}
+        />
+      )}
     </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 

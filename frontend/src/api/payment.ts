@@ -43,30 +43,6 @@ export const payMonthlyBill = async (billPaymentId: number, token: string) => {
   }
 };
 
-export const registerMembership = async (
-  accountId: number,
-  membershipId: number,
-  token: string
-) => {
-  var returnUrl = feAddress + '/paymentsucess';
-  try {
-    const param = { accountId, membershipId, returnUrl };
-    const response = await axios.post(
-      `${baseUrl}/api/memberships/register`,
-      param,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    return response;
-  } catch (error: any) {
-    toast.error(error.response.data.message, { duration: 2000 });
-  }
-};
-
 export const confirmPayment = async (
   url: string,
   tnxRef: string,

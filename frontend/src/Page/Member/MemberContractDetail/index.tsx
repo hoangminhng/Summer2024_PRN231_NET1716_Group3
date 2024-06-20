@@ -163,13 +163,21 @@ const MemberContractDetail = () => {
                             )}`,
                             break: 3,
                         }),
+                        new TextRun({
+                            text : `- Số nước hiện tại khi bắt đầu thuê phòng : ${contactDetailData?.initWaterNumber || 0} m³`,
+                            break: 3,
+                        }),
+                        new TextRun({
+                            text : `- Số điện hiện tại khi bắt đầu thuê phòng : ${contactDetailData?.initElectricityNumber || 0} kWh`,
+                            break: 3,
+                        }),
                     ],
                 }),
-                ...((contactDetailData?.service || []).map((service) =>
+                ...((contactDetailData?.roomServiceDetails || []).map((service) =>
                     new Paragraph({
                         children: [
                             new TextRun({
-                                text: `${service.typeName} : ${NumberFormat(service.price)} (${service.unit})`,
+                                text: `- ${service.typeServiceName} : ${NumberFormat(service.servicePrice)} (${service.serviceName})`,
                                 break: 2,
                             }),
                         ],
@@ -387,14 +395,22 @@ const MemberContractDetail = () => {
                         -Bên B phải đặt cọc cho Bên A với số tiền là :{" "}
                         {NumberFormat(contactDetailData?.depositFee || 0)}
                     </p>
+                    <p>
+                        - Số nước hiện tại khi bắt đầu thuê phòng :{" "}
+                        {contactDetailData?.initWaterNumber || 0} {" "} m³
+                    </p>
+                    <p>
+                        - Số điện hiện tại khi bắt đầu thuê phòng :{" "}
+                        {contactDetailData?.initElectricityNumber || 0}{" "} kWh
+                    </p>
 
                     <div>
-                        {...(contactDetailData?.service || []).map((service) => (
+                        {...(contactDetailData?.roomServiceDetails || []).map((service) => (
                             <div key={service.roomServiceId}>
                                 <p style={{ fontWeight: "bold" }}>
-                                    {service.typeName} :{" "}
-                                    {NumberFormat(service.price)} (
-                                    {service.unit})
+                                   - {service.typeServiceName} :{" "}
+                                    {NumberFormat(service.servicePrice)} (
+                                    {service.serviceName})
                                 </p>
                             </div>
                         ))}

@@ -1,4 +1,5 @@
 import {Card, Button, Col, Row, Pagination, Tag} from "antd";
+import {ApiOutlined} from "@ant-design/icons"
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
@@ -7,6 +8,7 @@ import { getOwnerContract , getContractDetail} from "../../../api/Owner/ownerCon
 import { Document, Packer, Paragraph, TextRun} from "docx";
 import { saveAs } from "file-saver";
 import { NumberFormat } from "../../../Utils/numberFormat";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 const OwnerViewContract : React.FC = () =>{
 
@@ -15,6 +17,7 @@ const OwnerViewContract : React.FC = () =>{
     const [contractData, setContractData] = useState<ViewContract[]>([]);
     const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [activePackage, setActivePackage] = useState<RegisterPackage>()
     const itemsPerPage = 3;
     const formatDate = (date : Date) => {
         if (!date) return null;
@@ -68,8 +71,20 @@ const OwnerViewContract : React.FC = () =>{
         }
     };
 
+    const fetchStatusPackage = async () => {
+        try {
+          if (token != undefined) {
+            let data = await getOwnerCurrentActiveMembership(token);
+            setActivePackage(data)
+            }
+          } catch (error) {
+          console.error("Error fetching status package:", error);
+        }
+      };
+
     useEffect(() => {
-        fetchContractList()
+        fetchContractList();
+        fetchStatusPackage();
     }, []);
 
     const statusStringMap: { [key: number]: string } = {
@@ -188,13 +203,21 @@ const OwnerViewContract : React.FC = () =>{
                                 )}`,
                                 break: 3,
                             }),
+                            new TextRun({
+                                text : `- Số nước hiện tại khi bắt đầu thuê phòng : ${contactDetailData?.initWaterNumber || 0} m³`,
+                                break: 3,
+                            }),
+                            new TextRun({
+                                text : `- Số điện hiện tại khi bắt đầu thuê phòng : ${contactDetailData?.initElectricityNumber || 0} kWh`,
+                                break: 3,
+                            }),
                         ],
                     }),
-                    ...((contactDetailData?.service || []).map((service) =>
+                    ...((contactDetailData?.roomServiceDetails || []).map((service) =>
                         new Paragraph({
                             children: [
                                 new TextRun({
-                                    text: `${service.typeName} : ${NumberFormat(service.price)} (${service.unit})`,
+                                    text: `- ${service.typeServiceName} : ${NumberFormat(service.servicePrice)} (${service.serviceName})`,
                                     break: 2,
                                 }),
                             ],
@@ -299,6 +322,8 @@ const OwnerViewContract : React.FC = () =>{
         };
 
     return (
+        <>
+        {activePackage ? (
             <div>
                 <div style={{width: "100%", textAlign: "center", fontSize: "20", fontWeight:"bold", backgroundColor:"aliceblue", padding:"20px", marginBottom: "20px"}}>
                 <h2>CONTRACT LIST</h2>
@@ -350,6 +375,13 @@ const OwnerViewContract : React.FC = () =>{
                     style={{ textAlign: "center", marginTop: "20px" }}
                 />
         </div>
+        ) : (
+            <div className="w-full text-center items-center justify-between">
+              <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+              <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+            </div>
+          )}
+          </>
     );
 }
 export default OwnerViewContract;

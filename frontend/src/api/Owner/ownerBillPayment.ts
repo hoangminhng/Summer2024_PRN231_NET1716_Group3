@@ -70,17 +70,65 @@ export const getBillPaymentDetail = async (
   }
 };
 
-export const getBillListByContractId = async (contractId: number, token: string) => {
+export const getBillListByContractId = async (
+  contractId: number,
+  token: string
+) => {
   try {
-    const fetchData = await axios.get(`${baseUrl}/api/bill-payment/contract/${contractId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const fetchData = await axios.get(
+      `${baseUrl}/api/bill-payment/contract/${contractId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return fetchData.data;
   } catch (error) {
     console.log("Error: " + error);
     throw error;
+  }
+};
+
+export const getLastMonthBills = async (ownerId: number, token: string) => {
+  try {
+    const response = await axios.get<BillPaymentList>(
+      `${baseUrl}/api/bill-payment/last-month-bills/${ownerId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.log("Error:", error);
+    toast.error(error.response.data.message, { duration: 2000 });
+    throw error;
+  }
+};
+
+export const postMonthlyBillPayment = async (
+  token: string | undefined,
+  data: PostData
+): Promise<BaseApiResponse> => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/api/bill-payment/monthly`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    // Handle the error appropriately
+    console.error("API Error:", error);
+    throw new Error("Failed to post monthly bill payment");
   }
 };

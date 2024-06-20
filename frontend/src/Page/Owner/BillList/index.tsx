@@ -1,14 +1,17 @@
 import { Button, Flex, Table } from 'antd';
 import { useNavigate, useParams, Link } from "react-router-dom";
+import {ApiOutlined} from "@ant-design/icons"
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from "../../..//context/userContext";
 import { getBillListByContractId } from '../../../api/Owner/ownerBillPayment';
 import { NumberFormat } from '../../../Utils/numberFormat'; 
+import { getOwnerCurrentActiveMembership } from '../../../api/Owner/ownerPackage';
 
 const BillList: React.FC = () => {
   const navigate = useNavigate();
   const { contractId } = useParams();
   const [bills, setBills] = useState([]);
+  const [activePackage, setActivePackage] = useState<RegisterPackage>()
   const { token } = useContext(UserContext);
 
   useEffect(() => {
@@ -22,13 +25,28 @@ const BillList: React.FC = () => {
       }
     };
 
+    const fetchStatusPackage = async () => {
+      try {
+        if (token != undefined) {
+          let data = await getOwnerCurrentActiveMembership(token);
+          setActivePackage(data)
+          }
+        } catch (error) {
+        console.error("Error fetching status package:", error);
+      }
+    };
+
     fetchBills();
+    fetchStatusPackage();
   }, [contractId, token]);
 
   const handleOpenBillPaymentForm = () => {
     navigate("/owner/bill-payment/bills/form", { state: { contractId } });
   };
 
+  const handleViewContract = () => {
+    navigate(`/owner/contracts/detail/${contractId}`);
+  }
   const columns = [
     {
       title: 'Bill ID',
@@ -85,14 +103,24 @@ const BillList: React.FC = () => {
   ];
 
   return (
+    <>
+    {activePackage ? (
     <div>
-      <Flex justify="flex-end" style={{ margin: 20 }}>
-        <Button onClick={() => handleOpenBillPaymentForm()}>Create monthly bill</Button>
+      <Flex justify="flex-end" align="center" style={{ margin: 20 }}>
+        <Button onClick={handleOpenBillPaymentForm} style={{ marginRight: 8 }}>Create monthly bill</Button>
+        <Button onClick={handleViewContract}>View contract</Button>
       </Flex>
       <div style={{ padding: '24px' }}>
       <Table dataSource={bills} columns={columns} rowKey="billPaymentID" />
       </div>
     </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
+    </>
   );
 };
 
