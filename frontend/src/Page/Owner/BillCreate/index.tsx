@@ -3,13 +3,15 @@ import { Card, Spin, List, Row, Col, Collapse, Input, Button } from 'antd';
 import { getLastMonthBills, postMonthlyBillPayment } from '../../../api/Owner/ownerBillPayment';
 import {ApiOutlined} from "@ant-design/icons"
 import { UserContext } from '../../../context/userContext';
+import { getOwnerCurrentActiveMembership } from '../../../api/Owner/ownerPackage';
 
 const { Panel } = Collapse;
 
 const BillCreate: React.FC = () => {
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token, userId, userPackageStatus } = useContext(UserContext);
+  const [activePackage, setActivePackage] = useState<RegisterPackage>();
+  const { token, userId } = useContext(UserContext);
 
   useEffect(() => {
     const fetchBills = async () => {
@@ -23,7 +25,19 @@ const BillCreate: React.FC = () => {
       }
     };
 
+    const fetchStatusPackage = async () => {
+      try {
+        if (token != undefined) {
+          let data = await getOwnerCurrentActiveMembership(token);
+          setActivePackage(data)
+          }
+        } catch (error) {
+        console.error("Error fetching status package:", error);
+      }
+    };
+
     fetchBills();
+    fetchStatusPackage();
   }, [userId, token]);
 
   const NumberFormat = (value: number): string => {
@@ -70,7 +84,7 @@ const BillCreate: React.FC = () => {
 
   return (
     <>
-    {userPackageStatus == 0 ? (
+    {activePackage ? (
     <div style={{ padding: '24px' }}>
       {loading ? (
         <Spin size="large" />

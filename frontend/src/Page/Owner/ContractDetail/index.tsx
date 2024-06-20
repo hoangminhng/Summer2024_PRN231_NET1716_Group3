@@ -9,19 +9,32 @@ import { getContractDetail } from "../../../api/Owner/ownerContract";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { Document, Packer, Paragraph, TextRun} from "docx";
 import { saveAs } from "file-saver";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 const OwnerContractDetail = () => {
     const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const { contractID } = useParams<{ contractID: string }>();
     const [idnumber, setID] = useState<number>();
     const navigate = useNavigate();
-    const { token, userPackageStatus } = useContext(UserContext);
+    const [activePackage, setActivePackage] = useState<RegisterPackage>();
+    const { token } = useContext(UserContext);
 
     const formatDate = (date : Date) => {
         if (!date) return null;
         const parsedDate = new Date(date);
         return parsedDate;
     };
+
+    const fetchStatusPackage = async () => {
+        try {
+          if (token != undefined) {
+            let data = await getOwnerCurrentActiveMembership(token);
+            setActivePackage(data)
+            }
+          } catch (error) {
+          console.error("Error fetching status package:", error);
+        }
+      };
 
     const splitHtmlIntoParagraphs = (html : any) => {
         const div = document.createElement("div");
@@ -62,6 +75,7 @@ const OwnerContractDetail = () => {
 
     useEffect(() => {
         fetchContractDetail();
+        fetchStatusPackage();
     }, [idnumber, token]);
 
     const handleBackToList = () => {
@@ -284,7 +298,7 @@ const OwnerContractDetail = () => {
 
     return (
         <>
-    {userPackageStatus == 0 ? (
+    {activePackage ? (
             <div style={{ textAlign: "left" }}>
                 <div
                     style={{

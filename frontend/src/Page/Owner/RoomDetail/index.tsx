@@ -27,6 +27,7 @@ import {
 import Column from "antd/es/table/Column";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { UserContext } from "../../../context/userContext";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 const { Text } = Typography;
 
 const getStatusTag = (status: number) => {
@@ -50,7 +51,8 @@ const RoomDetail: React.FC = () => {
   );
   const [popConfirmOpen, setPopConfirmOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
-  const { token, userPackageStatus } = useContext(UserContext);
+  const [ activePackage, setActivePackage] = useState<RegisterPackage>();
+  const { token } = useContext(UserContext);
 
   const fetchRoomDetail = async () => {
     if (roomId !== undefined) {
@@ -69,8 +71,20 @@ const RoomDetail: React.FC = () => {
     }
   };
 
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
+    }
+  };
+
   useEffect(() => {
     fetchRoomDetail();
+    fetchStatusPackage();
   }, [roomId]);
 
   const showDrawer = () => {
@@ -113,7 +127,7 @@ const RoomDetail: React.FC = () => {
 
   return (
     <>
-    {userPackageStatus == 0 ? (
+    {activePackage ? (
     <Layout>
       <Space
         size={20}

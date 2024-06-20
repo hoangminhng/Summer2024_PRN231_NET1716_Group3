@@ -16,6 +16,7 @@
     import { LoadingOutlined } from "@ant-design/icons";
     import ReactQuill from 'react-quill';
     import 'react-quill/dist/quill.snow.css'; 
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
     const OwnerContractCreate : React.FC = () => {
         const [updatedContent, setUpdatedContent] = useState<string>("");
@@ -41,7 +42,8 @@
         const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
         const [startDate, setStartDate] = useState<Date | null>();
         const [endDate, setEndDate] = useState<Date | null>();
-        const { token , userId, userPackageStatus} = useContext(UserContext); 
+        const [activePackage, setActivePackage] = useState<RegisterPackage>();
+        const { token , userId} = useContext(UserContext); 
         const [form] = Form.useForm();
 
         const onChangeDate = (dates : any) => {
@@ -62,6 +64,16 @@
                 console.error("Eror: " + error);
             }
         }
+        const fetchStatusPackage = async () => {
+            try {
+              if (token != undefined) {
+                let data = await getOwnerCurrentActiveMembership(token);
+                setActivePackage(data)
+                }
+              } catch (error) {
+              console.error("Error fetching status package:", error);
+            }
+          };
 
         const getRoomContract = async (hostelID : number) =>{
             try{
@@ -121,6 +133,7 @@
         useEffect(() => {
             const fetchData = async () => {
             await getHostelContract();
+            fetchStatusPackage();
             await getRoomContract(hostelIDData || 0);
             await getServiceRoomContract(roomIDData || 0);
             await getUserAppointmentContract(roomIDData || 0);
@@ -357,7 +370,7 @@
 
     return (
         <>
-        {userPackageStatus == 0 ? (
+        {activePackage ? (
         <div>
             <div style={{width: "100%", textAlign: "center", fontSize: "20", fontWeight:"bold", backgroundColor:"aliceblue", padding:"20px"}}>
                 <h2>CREATE NEW CONTRACT</h2>
