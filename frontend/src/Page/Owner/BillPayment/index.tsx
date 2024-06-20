@@ -4,11 +4,13 @@ import {ApiOutlined} from "@ant-design/icons"
 import { Table, Spin, Image } from 'antd';
 import { getHiringRooms } from '../../../api/Owner/ownerRoom';
 import { UserContext } from "../../../context/userContext";
+import { getOwnerCurrentActiveMembership } from '../../../api/Owner/ownerPackage';
 
 const BillPayment: React.FC = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token, userId , userPackageStatus } = useContext(UserContext);
+  const { token, userId } = useContext(UserContext);
+  const [activePackage, setActivePackage] = useState<RegisterPackage>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +25,19 @@ const BillPayment: React.FC = () => {
       }
     };
 
+    const fetchStatusPackage = async () => {
+      try {
+        if (token != undefined) {
+          let data = await getOwnerCurrentActiveMembership(token);
+          setActivePackage(data)
+          }
+        } catch (error) {
+        console.error("Error fetching status package:", error);
+      }
+    };
+
     fetchRooms();
+    fetchStatusPackage();
   }, [userId, token]);
 
   const handleRowClick = (record) => {
@@ -71,7 +85,7 @@ const BillPayment: React.FC = () => {
 
   return (
     <>
-    {userPackageStatus == 0 ? (
+    {activePackage ? (
     <div style={{ padding: '24px' }}>
       {loading ? (
         <Spin size="large" />

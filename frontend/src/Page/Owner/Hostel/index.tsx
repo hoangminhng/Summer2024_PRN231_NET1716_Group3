@@ -20,6 +20,7 @@ import {
   getColorByStatus,
   getStatusText,
 } from "../../../Utils/hostelStatusColor";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 const { Text, Title } = Typography;
 
 const Hostel: React.FC = () => {
@@ -30,7 +31,8 @@ const Hostel: React.FC = () => {
   const [selectedHostelId, setSelectedHostelId] = useState(0);
   const [loading, setLoading] = useState(false);
   const pageSize = 2;
-  const { userId, token, userPackageStatus } = useContext(UserContext);
+  const { userId, token } = useContext(UserContext);
+  const [activePackage, setActivePackage] = useState<RegisterPackage>()
   const navigate = useNavigate();
 
   const fetchOwnerHostels = async () => {
@@ -48,8 +50,20 @@ const Hostel: React.FC = () => {
     }
   };
 
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
+    }
+  };
+
   useEffect(() => {
     fetchOwnerHostels();
+    fetchStatusPackage();
   }, [userId]);
 
   const handleOpenHostelForm = () => {
@@ -71,7 +85,7 @@ const Hostel: React.FC = () => {
 
   return (
     <>
-    {userPackageStatus == 0 ? (
+    {activePackage ? (
     <Layout>
       <Space
         size={20}

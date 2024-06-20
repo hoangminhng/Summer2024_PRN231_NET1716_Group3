@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/userContext";
 import { getLastMonthBillPayment } from "../../../api/Owner/ownerBillPayment";
 import { useLocation } from "react-router-dom";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 interface LocationState {
   contractId: string;
@@ -14,7 +15,8 @@ interface LocationState {
 const BillMonthlyForm: React.FC = () => {
   const [billPayment, setBillPayment] = useState<BillPayment | null>(null);
   const [loading, setLoading] = useState(true);
-  const { token , userPackageStatus } = useContext(UserContext);
+  const [activePackage, setActivePackage] = useState<RegisterPackage>();
+  const { token } = useContext(UserContext);
 
   const location = useLocation();
   const { contractId } = location.state as LocationState;
@@ -39,13 +41,25 @@ const BillMonthlyForm: React.FC = () => {
     }
   };
 
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data)
+        }
+      } catch (error) {
+      console.error("Error fetching status package:", error);
+    }
+  };
+
   useEffect(() => {
     fetchLastMonthBillPayment();
+    fetchStatusPackage();
   }, []);
 
   return (
     <>
-    {userPackageStatus == 0 ? (
+    {activePackage ? (
     <div style={{ margin: 16 }}>
       <Row gutter={16}>
         <Col span={12}>
