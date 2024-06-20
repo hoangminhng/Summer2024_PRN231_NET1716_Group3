@@ -47,7 +47,6 @@ const UpdatePackageModal: React.FC<number> = (roomId) => {
                             <span className="text-gray-700 dark:text-gray-400 font-medium">Fee: </span>
                             {/* <span className="text-black dark:text-white font-bold">{NumberFormat(fee)}</span> */}
                         </div>
-
                     </div>
                     <div className="update-modal-actions flex justify-center py-5">
                         <button
