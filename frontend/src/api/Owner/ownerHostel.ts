@@ -65,9 +65,9 @@ export const updateHostelStatus = async (
 export const createHostel = async (
   token: string | undefined,
   hostelPayload: CreateHostelRequest
-): Promise<CreateHostelResponse> => {
+): Promise<CreateHostelResponse | BaseApiResponse> => {
   try {
-    const fetchData = await axios.post<CreateHostelResponse>(
+    const fetchData = await axios.post<CreateHostelResponse | BaseApiResponse>(
       `${baseUrl}/api/hostels`,
       hostelPayload,
       {
@@ -79,8 +79,9 @@ export const createHostel = async (
     );
     const response = fetchData.data;
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.log("Error:", error);
+    toast.error(error.response.data.message, { duration: 2000 });
     throw error;
   }
 };

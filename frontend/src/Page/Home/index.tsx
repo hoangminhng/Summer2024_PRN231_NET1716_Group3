@@ -10,11 +10,19 @@ const Home: React.FC = () => {
   const [hostelList, setHostelList] = useState<Hostel[] | undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<number[]>([]);
+  const [loading, setLoading] = useState(false);
   const hostelsPerPage = 10;
 
   const fetchHostels = async () => {
-    let respone = await GetHostelCard();
-    setHostelList(respone?.data);
+    try {
+      setLoading(true);
+      let respone = await GetHostelCard();
+      setHostelList(respone?.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -179,7 +187,7 @@ const Home: React.FC = () => {
             </ul>
           </div>
         </div>
-        {currentHostels?.length == 0 ? (
+        {loading == true ? (
           <Spin
             fullscreen={true}
             size="large"
@@ -187,8 +195,8 @@ const Home: React.FC = () => {
           />
         ) : (
           <div className="flex flex-col mx-4 w-4/5">
-            {currentHostels?.map((hostel, key) => (
-              <CardHorizontal hostel={hostel} key={key} />
+            {currentHostels?.map((hostel, index) => (
+              <CardHorizontal hostel={hostel} key={index} />
             ))}
 
             <div className="flex justify-center mt-4">

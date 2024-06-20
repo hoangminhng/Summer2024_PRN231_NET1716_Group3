@@ -5,10 +5,9 @@ import { truncateText } from "../../../Utils/truncateText";
 
 interface CardHorizontalProps {
   hostel: Hostel;
-  key: number;
 }
 
-const CardHorizontal: React.FC<CardHorizontalProps> = ({ hostel, key }) => {
+const CardHorizontal: React.FC<CardHorizontalProps> = ({ hostel }) => {
   const navigate = useNavigate();
 
   const handleCardClick = (hostelID: string) => {
@@ -17,7 +16,7 @@ const CardHorizontal: React.FC<CardHorizontalProps> = ({ hostel, key }) => {
   return (
     <>
       <div
-        key={key}
+        key={hostel.hostelID}
         className="flex flex-col items-start bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 mb-4"
         onClick={() => handleCardClick(hostel.hostelID.toString())}
       >

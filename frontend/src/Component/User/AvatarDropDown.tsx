@@ -81,6 +81,7 @@ export function AvatarDropdown() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           />
+
           <ChevronDownIcon
             strokeWidth={2.5}
             className={`h-3 w-3 transition-transform ${
@@ -90,7 +91,7 @@ export function AvatarDropdown() {
         </Button>
       </MenuHandler>
       <MenuList
-        className="p-2"
+        className="py-2 pr-5 pl-0"
         placeholder=""
         onPointerEnterCapture={() => {}}
         onPointerLeaveCapture={() => {}}
@@ -101,7 +102,7 @@ export function AvatarDropdown() {
             <button
               key={label}
               onClick={() => handleClick(path)}
-              className={`flex items-center gap-2 rounded py-3 text-sm text-gray-700 dark:text-gray-400${
+              className={`flex items-center gap-2 rounded py-3 text-sm text-gray-700 dark:text-gray-400 w-full mx-3 ${
                 isLastItem
                   ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
                   : "hover:bg-slate-500/10 focus:bg-slate-500/10 active:bg-slate-500/10"
