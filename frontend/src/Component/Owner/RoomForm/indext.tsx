@@ -259,7 +259,7 @@ const RoomForm: React.FC<RoomFormProps> = ({
               label="Capacity"
               rules={[{ required: true, message: "Please input capacity!" }]}
             >
-              <InputNumber min={1} max={5} />
+              <InputNumber min={1} max={10} />
             </Form.Item>
 
             <Form.Item
