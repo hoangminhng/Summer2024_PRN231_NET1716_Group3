@@ -225,7 +225,7 @@ const RoomDetail: React.FC = () => {
                     </Popconfirm>
                   )}
                 </Flex>
-                <Text>{roomDetailData?.description}</Text>
+                <div dangerouslySetInnerHTML={{ __html: roomDetailData?.description || "......" }} />
 
                 <Table
                   dataSource={roomDetailData?.roomServices}
