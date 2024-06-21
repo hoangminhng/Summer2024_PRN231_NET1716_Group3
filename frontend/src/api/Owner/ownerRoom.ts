@@ -151,3 +151,27 @@ export const updateRoomStatus = async (
     throw error;
   }
 };
+
+export const updateServicePrices = async (roomId, servicesToUpdate, token) => {
+  const url = `${baseUrl}/api/rooms/UpdateServicePrice`;
+
+  try {
+    const response = await axios.post(
+      url,
+      {
+        roomId: roomId,
+        services: servicesToUpdate,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating room service prices:", error);
+    throw error; 
+  }
+};
