@@ -27,7 +27,7 @@ const ConfirmOtpModal: React.FC<ConfirmOtpModalProps> = ({ email }) => {
         confirmOtp();
     }
 
-    const onResend = (event) => {
+    const onResend = (event: any) => {
         event.preventDefault();
         const resendOtp = async () => {
             await resendRegisterOtp(email);

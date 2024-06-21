@@ -9,7 +9,8 @@ import {
   ShoppingOutlined,
   CalendarFilled,
   UserOutlined,
-  DesktopOutlined
+  DesktopOutlined,
+  ExceptionOutlined
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -59,6 +60,7 @@ const OwnerLayout: React.FC = () => {
       getItem("Register History", "11"),
     ]),
     getItem("Appointment", "8", <CalendarFilled />),
+    getItem("Complains", "12", <ExceptionOutlined />),
     getItem("View Home", "9", <DesktopOutlined />),
     getItem("Logout", "10", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
@@ -98,6 +100,9 @@ const OwnerLayout: React.FC = () => {
         break;
       case "11":
         navigate("/owner/package/history");
+        break;
+      case "12":
+        navigate("/owner/complains")
         break;
       default:
         break;

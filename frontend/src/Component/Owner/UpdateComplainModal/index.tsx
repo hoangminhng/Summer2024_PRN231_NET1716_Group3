@@ -1,46 +1,51 @@
 import { useContext, useState } from "react";
 import { UserContext } from "../../../context/userContext";
-import moment from 'moment'
-import { NumberFormat } from "../../../Utils/numberFormat";
-import { extendMembership, registerMembership, updateMembership } from "../../../api/Owner/ownerPackage";
 import toast from "react-hot-toast";
 import { createMemberComplain } from "../../../api/Member/memberComplain";
-import { redirect, useNavigate } from "react-router-dom";
+import { Navigate, redirect, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
-import { MemberRoomRented } from "../../../interface/Rooms/MemberRoomRented";
+import { Complain } from "../../../interface/Complains/Complain";
+import { reponseComplain } from "../../../api/Owner/ownerComplain";
 
-const CreateComplainModal: React.FC<{ room: MemberRoomRented | undefined }> = ({ room }) => {
+const UpdateComplainModal: React.FC<{ complain: Complain | undefined }> = ({ complain }) => {
     const navigate = useNavigate();
     const { token, userId } = useContext(UserContext);
-    const [complain, setComplain] = useState("");
+    const [complainResponse, setComplainResponse] = useState("");
 
-    const handleCreate = (complain: string) => {
-        if (room === undefined) {
+    const handleUpdate = () => {
+        if (complain === undefined) {
             return
         }
-        const createComplain = async () => {
+        const updateComplain = async () => {
+            if (complainResponse === null || complainResponse === "") {
+                toast.error("You have to response", {
+                    duration: 2000,
+                });
+                return;
+            }
             if (userId && token) {
-                const response = await createMemberComplain(
+                const response = await reponseComplain(
                     token,
-                    userId,
-                    room.roomID,
-                    complain
+                    complain.ComplainID,
+                    complainResponse
                 )
                 if (response) {
-                    toast.success("Your complain has been recorded", {
+                    toast.success("Your reponse has been recorded", {
                         duration: 2000,
                     });
-                    navigate("/complains")
+                    // navigate("/owner/complains", { replace: true });
+                    // window.location.reload();
+                    navigate("/owner/complains", { replace: true });
+                    window.dispatchEvent(new Event('modalClosed'));
                 }
             }
         };
-        createComplain();
-        // navigate("/complains")
+        updateComplain();
 
     };
 
     const handleChange = (content: any) => {
-        setComplain(content);
+        setComplainResponse(content);
     };
 
     return (
@@ -51,7 +56,7 @@ const CreateComplainModal: React.FC<{ room: MemberRoomRented | undefined }> = ({
                 <div className="update-modal-content relative bg-white rounded-lg shadow dark:bg-gray-700">
                     <div className="update-modal-header flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                         <h3 className="update-modal-title text-center text-xl font-semibold text-gray-900 dark:text-white">
-                            Create complain for room: {room?.roomName}
+                            Repsonse the complain for room: {complain?.RoomName}
                         </h3>
                     </div>
                     <div className="update-modal-details flex flex-col gap-2 p-4 md:p-5">
@@ -78,9 +83,9 @@ const CreateComplainModal: React.FC<{ room: MemberRoomRented | undefined }> = ({
                         <button
                             type="button"
                             className="update-modal-confirm-btn w-fit text-white bg-slate-950 hover:bg-slate-600 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                            onClick={() => handleCreate(complain)}
+                            onClick={() => handleUpdate()}
                         >
-                            Create
+                            Response
                         </button>
                     </div>
                 </div>
@@ -93,4 +98,4 @@ const CreateComplainModal: React.FC<{ room: MemberRoomRented | undefined }> = ({
     );
 };
 
-export default CreateComplainModal;
+export default UpdateComplainModal;

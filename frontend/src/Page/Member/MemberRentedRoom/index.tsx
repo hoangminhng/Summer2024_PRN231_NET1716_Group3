@@ -6,19 +6,16 @@ import { NumberFormat } from "../../../Utils/numberFormat";
 import { MemberRoomRented } from "../../../interface/Rooms/MemberRoomRented";
 import { getMemberRentedRoom } from "../../../api/Member/memberRooms";
 import moment from 'moment'
+import CreateComplainModal from "../../../Component/User/CreateComplainModal";
 
 const MemberRentedRoom: React.FC = () => {
-    const navigate = useNavigate();
     const { token, userId } = useContext(UserContext);
     const [rentedRoomsData, setRentedRoomsData] = useState<MemberRoomRented[]>([]);
-    const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedRoom, setSelectedRoom] = useState<MemberRoomRented | undefined>(undefined);
+
     const itemsPerPage = 3;
-    const formatDate = (date: Date) => {
-        if (!date) return null;
-        const parsedDate = new Date(date);
-        return parsedDate;
-    };
 
     const fetchRoomList = async () => {
         try {
@@ -31,18 +28,6 @@ const MemberRentedRoom: React.FC = () => {
             console.error("Error fetching contract list:", error);
         }
     };
-    // const fetchContractDetail = async (contractID: number) => {
-    //     try {
-    //         if (token) {
-    //             const data = await getContractDetail(contractID, token);
-    //             if (data) {
-    //                 setContractDetailData(data);
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error("Error fetching contract detail:", error);
-    //     }
-    // };
 
     useEffect(() => {
         fetchRoomList();
@@ -69,7 +54,21 @@ const MemberRentedRoom: React.FC = () => {
         setCurrentPage(page);
     };
 
+    const openModal = (room: MemberRoomRented) => {
+        setSelectedRoom(room);
+        setIsModalOpen(!isModalOpen);
+    };
 
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
+    const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+            // If the click occurs on the overlay (not on the modal content), close the modal
+            toggleModal();
+        }
+    };
 
 
 
@@ -98,14 +97,21 @@ const MemberRentedRoom: React.FC = () => {
                                     <Button
                                         className="mx-2"
                                         type="primary"
-                                    // onClick={() =>
-                                    //     navigate(
-                                    //         `/member/contracts/detail/${roomItem.contractId}`
-                                    //     )
-                                    // }
+                                        onClick={() => openModal(roomItem)}
                                     >
                                         Create Complain
                                     </Button>
+                                    {isModalOpen && (
+                                        <div
+                                            tabIndex={-1}
+                                            aria-hidden="true"
+                                            onMouseDown={handleOverlayClick}
+                                            className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50  "
+                                        // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+                                        >
+                                            <CreateComplainModal room={selectedRoom} />
+                                        </div>
+                                    )}
                                     <Button
                                         className="mx-2"
                                         type="primary"
@@ -182,7 +188,9 @@ const MemberRentedRoom: React.FC = () => {
                 onChange={handlePageChange}
                 style={{ textAlign: "center", marginTop: "20px" }}
             />
-        </div>
+
+        </div >
+
     );
 };
 export default MemberRentedRoom;

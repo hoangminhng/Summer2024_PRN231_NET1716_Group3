@@ -5,12 +5,15 @@ import { Table, TableProps, Tag } from "antd";
 import { NumberFormat } from "../../../../Utils/numberFormat";
 import { DateFormat } from "../../../../Utils/dateFormat";
 import { months } from "moment";
+import { register } from "module";
+import { Underline } from "docx";
 
 const PackageRegisterHistory: React.FC = () => {
     const [membershipDetailData, setMembershipDetailData] = useState<RegisterPackage[]>();
     // const [infoData, setInfoData] = useState<MemberShipInformation>();
     // const [idnumber, setID] = useState<number>();
     const { userId, token } = useContext(UserContext);
+
 
     const statusStringMap: { [key: number]: string } = {
         1: "CURRENT",
@@ -33,10 +36,24 @@ const PackageRegisterHistory: React.FC = () => {
                 let data: RegisterPackage[] | undefined;
                 data = await getOwnerMembershipHistory(token);
                 setMembershipDetailData(data);
+                if (data?.length === undefined) {
+                    return;
+                }
             }
         } catch (error) {
             console.error("Error fetching package register history:", error);
         }
+    };
+
+
+    // Helper function to slice data based on pagination
+    const getPagedData = (data: RegisterPackage[] | undefined, current: number, pageSize: number): RegisterPackage[] => {
+        if (data === undefined) {
+            return [];
+        }
+        const startIndex = (current - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, data.length);
+        return data.slice(startIndex, endIndex);
     };
 
     useEffect(() => {
@@ -132,7 +149,11 @@ const PackageRegisterHistory: React.FC = () => {
     return (
         <>
             <div style={{ padding: '24px' }}>
-                <Table columns={memberpackageHistory} dataSource={membershipDetailData} bordered />
+                <Table columns={memberpackageHistory}
+                    dataSource={membershipDetailData}
+                    bordered
+                    pagination={{ pageSize: 8 }}
+                />
             </div>
         </>
     );

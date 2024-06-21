@@ -14,7 +14,8 @@ import {
   CreditCardIcon,
   PowerIcon,
   UserCircleIcon,
-  HomeIcon
+  HomeIcon,
+  BookOpenIcon
 } from "@heroicons/react/24/solid";
 
 const profileMenuItems = [
@@ -37,6 +38,11 @@ const profileMenuItems = [
     label: "Rented Room",
     path: "rentedRooms",
     icon: HomeIcon,
+  },
+  {
+    label: "Complains History",
+    path: "complains",
+    icon: BookOpenIcon,
   },
   {
     label: "Sign Out",
@@ -66,6 +72,9 @@ export function AvatarDropdown() {
       navigate("payment");
     } else if (path === "rentedRooms") {
       navigate("rentedRooms")
+    }
+    else if (path === "complains") {
+      navigate("complains")
     }
     closeMenu();
   };
@@ -111,8 +120,8 @@ export function AvatarDropdown() {
               key={label}
               onClick={() => handleClick(path)}
               className={`flex items-center gap-2 rounded py-3 text-sm text-gray-700 dark:text-gray-400 w-full mx-3 ${isLastItem
-                  ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : "hover:bg-slate-500/10 focus:bg-slate-500/10 active:bg-slate-500/10"
+                ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                : "hover:bg-slate-500/10 focus:bg-slate-500/10 active:bg-slate-500/10"
                 }`}
             >
               {React.createElement(icon, {
