@@ -16,8 +16,8 @@ import {
 } from "../../../api/Owner/ownerBillPayment";
 import { UserContext } from "../../../context/userContext";
 import { NumberFormat } from "../../../Utils/numberFormat";
-import {ApiOutlined} from "@ant-design/icons"
-import { getOwnerCurrentActiveMembership } from '../../../api/Owner/ownerPackage';
+import { ApiOutlined } from "@ant-design/icons";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 const { Panel } = Collapse;
 
@@ -45,9 +45,9 @@ const BillCreate: React.FC = () => {
       try {
         if (token != undefined) {
           let data = await getOwnerCurrentActiveMembership(token);
-          setActivePackage(data)
-          }
-        } catch (error) {
+          setActivePackage(data);
+        }
+      } catch (error) {
         console.error("Error fetching status package:", error);
       }
     };
@@ -222,13 +222,15 @@ const BillCreate: React.FC = () => {
                   </List.Item>
                 )}
               />
-              <Button
-                type="primary"
-                onClick={handleSubmit}
-                style={{ marginTop: "16px" }}
-              >
-                Submit Bill Payments
-              </Button>
+              {bills.length > 0 && (
+                <Button
+                  type="primary"
+                  onClick={handleSubmit}
+                  style={{ marginTop: "16px" }}
+                >
+                  Submit Bill Payments
+                </Button>
+              )}
             </>
           )}
         </div>

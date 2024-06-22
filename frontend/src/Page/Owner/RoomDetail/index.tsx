@@ -67,7 +67,7 @@ const RoomDetail: React.FC = () => {
   const fetchRoomDetail = async () => {
     setLoading(true);
     try {
-      if (token) {
+      if (token && roomId) {
         const response = await getOwnerRoomDetail(parseInt(roomId), token);
         setRoomDetailData(response);
         setRoomServices(response?.roomServices || []);
@@ -95,7 +95,7 @@ const RoomDetail: React.FC = () => {
     fetchRoomDetail();
     fetchStatusPackage();
   }, [roomId]);
-  
+
   const showDrawer = () => {
     setOpen(true);
   };
@@ -109,12 +109,18 @@ const RoomDetail: React.FC = () => {
       setLoading(true);
       try {
         await updateRoomStatus(token, parseInt(roomId), statusToChange);
-        setPopConfirmOpen(false);
-        setStatusToChange(null);
         fetchRoomDetail();
+
+        notification.success({
+          message: "Success",
+          description: "Change room status successfully",
+          duration: 1,
+        });
       } catch (error) {
         console.error("Error updating room status:", error);
       } finally {
+        setStatusToChange(null);
+        setPopConfirmOpen(false);
         setLoading(false);
       }
     }
@@ -220,7 +226,7 @@ const RoomDetail: React.FC = () => {
 
                     <Descriptions bordered>
                       <Descriptions.Item label="Length" span={1}>
-                        {roomDetailData?.length} {lengthUnit}
+                        {roomDetailData?.lenght} {lengthUnit}
                       </Descriptions.Item>
                       <Descriptions.Item label="Width" span={2}>
                         {roomDetailData?.width} {widthUnit}
