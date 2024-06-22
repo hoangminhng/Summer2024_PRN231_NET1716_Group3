@@ -56,6 +56,7 @@ import PackageRegisterHistory from "./Page/Owner/MembershipPackage/PackageRegist
 import MemberRentedRoom from "./Page/Member/MemberRentedRoom";
 import ComplainHistory from "./Page/Member/ComplainHistory";
 import OwnerComplains from "./Page/Owner/Complains";
+import Appointment from "./Page/Member/Appointment";
 
 const roles = {
   Admin: 1,
@@ -231,6 +232,7 @@ function App() {
                 element={<MemberContractDetail />}
               />
               <Route path="payment" element={<PaymentHistory />} />
+              <Route path="appointments" element={<Appointment />} />
               <Route path="profile" element={<MemberProfile />} />
               <Route path="rentedRooms" element={<MemberRentedRoom />} />
               <Route path="complains" element={<ComplainHistory />} />

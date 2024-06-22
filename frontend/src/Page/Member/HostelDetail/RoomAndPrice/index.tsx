@@ -78,35 +78,35 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
 
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" className="px-6 py-3"></th>
-              <th scope="col" className="px-6 py-3">
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 flex items-center">
+              <th scope="col" className="px-6 py-3 w-1/5"></th>
+              <th scope="col" className="px-6 py-3 w-1/6">
                 Room name
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 w-1/7">
                 Capacity
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 w-1/7">
                 Status
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 w-1/6">
                 Room Fee
               </th>
-              <th scope="col" className="px-6 py-3"></th>
+              <th scope="col" className="px-6 py-3 w-1/6"></th>
             </tr>
           </thead>
           <tbody>
             {roomList?.map((room) => (
               <tr
-                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 flex items-center"
                 key={room.roomID}
               >
                 <td className="px-6 py-4 w-1/5">
                   <img src={room.roomThumbnail} />
                 </td>
                 <td className="px-6 py-4 w-1/6">{room.roomName}</td>
-                <td className="px-6 py-4 w-1/6">{room.capacity}</td>
-                <td className="px-6 py-4 w-1/6">
+                <td className="px-6 py-4 w-1/7">{room.capacity}</td>
+                <td className="px-6 py-4 w-1/7">
                   {room.status == 0 ? (
                     <span className="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
                       Availble
@@ -122,7 +122,7 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
                 <td className="px-6 py-4 w-1/6">
                   {NumberFormat(room.roomFee)} /month
                 </td>
-                <td className="px-6 py-4 w-1/6">
+                <td className="px-6 py-4 w-1/6 flex items-center">
                   <button
                     type="button"
                     className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
@@ -130,15 +130,20 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
                   >
                     View detail
                   </button>
-                  {room.status == 0 ? (
-                    <button
-                      onClick={() => handleVisitHouseClick(room)}
-                      type="button"
-                      className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                    >
-                      Visit house
-                    </button>
-                  ) : null}
+                  <button
+                    onClick={() => handleVisitHouseClick(room)}
+                    type="button"
+                    className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  >
+                    Visit house
+                  </button>
+                  <button
+                    onClick={() => handleVisitHouseClick(room)}
+                    type="button"
+                    className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  >
+                    Rent house
+                  </button>
                 </td>
               </tr>
             ))}
