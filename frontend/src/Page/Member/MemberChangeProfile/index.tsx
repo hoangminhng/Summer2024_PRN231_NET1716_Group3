@@ -6,7 +6,7 @@ import { UserContext } from "../../../context/userContext";
 import { useNavigate } from "react-router-dom";
 import { getMemberProfle, updateMemberProfile } from "../../../api/Owner/ownerProfile";
 
-const MemberChangeProfile : React.FC = () => {
+const MemberChangeProfile: React.FC = () => {
     const [profileData, setProfileData] = useState<AccountDetail>();
     const { token, userId } = useContext(UserContext);
     const [errorContent, setErrorContent] = useState<any>("");
@@ -60,12 +60,12 @@ const MemberChangeProfile : React.FC = () => {
             name: value.name,
             phone: value.phone.toString()
         };
-        try{
+        try {
             const response = await fetchUpdateInformation(account);
             if (response != undefined && !errorContent) {
                 openNotificationWithIcon("success", "Update information successfully!");
             }
-        }catch(error : any){
+        } catch (error: any) {
             openNotificationWithIcon("error", error.message || "Have some error when execute!");
             setErrorContent("");
         }
@@ -89,7 +89,7 @@ const MemberChangeProfile : React.FC = () => {
                         </Button>
                     </div>
                 </div>
-                <p style={{textAlign:"center", fontSize:"24px", fontWeight:"bold"}}>CHANGE  PROFILE</p>
+                <p style={{ textAlign: "center", fontSize: "24px", fontWeight: "bold" }}>CHANGE  PROFILE</p>
                 <br />
                 <br />
                 <br />
@@ -148,7 +148,7 @@ const MemberChangeProfile : React.FC = () => {
                                     },
                                 ]}
                             >
-                                <InputNumber style={{width:"100%"}} />
+                                <InputNumber style={{ width: "100%" }} />
                             </Form.Item>
 
                             <Form.Item
@@ -167,7 +167,7 @@ const MemberChangeProfile : React.FC = () => {
                                     },
                                 ]}
                             >
-                                <InputNumber style={{width:"100%"}} />
+                                <InputNumber style={{ width: "100%" }} />
                             </Form.Item>
 
                             <Form.Item

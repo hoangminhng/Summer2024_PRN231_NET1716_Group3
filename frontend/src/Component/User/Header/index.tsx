@@ -65,9 +65,8 @@ const Header: React.FC = () => {
           </svg>
         </button>
         <div
-          className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${
-            isMenuOpen ? "block" : "hidden"
-          }`}
+          className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${isMenuOpen ? "block" : "hidden"
+            }`}
           id="navbar-sticky"
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
@@ -173,7 +172,7 @@ const Header: React.FC = () => {
             aria-hidden="true"
             onMouseDown={handleOverlayClick}
             className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50  "
-            // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+          // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
           >
             <LoginModal closeModal={toggleModal} />
           </div>

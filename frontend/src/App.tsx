@@ -53,6 +53,9 @@ import { NotificationContext } from "./context/notificationContext";
 import { UserContext } from "./context/userContext";
 import toast from "react-hot-toast";
 import PackageRegisterHistory from "./Page/Owner/MembershipPackage/PackageRegisterHistory";
+import MemberRentedRoom from "./Page/Member/MemberRentedRoom";
+import ComplainHistory from "./Page/Member/ComplainHistory";
+import OwnerComplains from "./Page/Owner/Complains";
 
 const roles = {
   Admin: 1,
@@ -83,9 +86,8 @@ function App() {
             toast.custom(
               (t) => (
                 <div
-                  className={`${
-                    t.visible ? "animate-enter" : "animate-leave"
-                  } max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+                  className={`${t.visible ? "animate-enter" : "animate-leave"
+                    } max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
                 >
                   <div className="flex-1 w-0 p-4">
                     <div className="flex items-center justify-center">
@@ -217,6 +219,7 @@ function App() {
                 path="appointments/detail/:hostelID"
                 element={<OwnerAppointmentDetail />}
               />
+              <Route path="complains" element={<OwnerComplains />} />
             </Route>
           </Route>
 
@@ -229,6 +232,8 @@ function App() {
               />
               <Route path="payment" element={<PaymentHistory />} />
               <Route path="profile" element={<MemberProfile />} />
+              <Route path="rentedRooms" element={<MemberRentedRoom />} />
+              <Route path="complains" element={<ComplainHistory />} />
               <Route path="profile/change-information" element={<MemberChangeProfile />} />
               <Route path="profile/change-password" element={<MemberChangePassword />} />
             </Route>

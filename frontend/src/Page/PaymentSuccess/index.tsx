@@ -44,7 +44,7 @@ const PaymentSucess = () => {
             if (response?.data?.paymentType == 2) {
               //package_register
               updatePackageStatus(0); //set status of register package to active
-              homeTimeout = setTimeout(() => navigate("/owner"), 2000);
+              homeTimeout = setTimeout(() => navigate("/owner/package/history"), 2000);
             }
           }
         };

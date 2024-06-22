@@ -109,9 +109,10 @@ const HostelForm: React.FC<HostelFormProps> = ({
 
       try {
         const response = await createHostel(token, hostelPayload);
-        console.log("Hostel created successfully:", response);
 
-        if (response) {
+        if ("statusCode" in response && "message" in response) {
+          console.log(response);
+        } else {
           const newHostelId = response.hostelID;
           if (fileList.length > 0) {
             const uploadResponse = await uploadImage(
@@ -130,12 +131,9 @@ const HostelForm: React.FC<HostelFormProps> = ({
               fetchOwnerHostels();
             }
           }
-        } else {
-          openNotificationWithIcon("error", "Create new hostel failed");
         }
       } catch (error) {
         console.error("Failed to create hostel:", error);
-        openNotificationWithIcon("error", "Create new hostel failed");
       } finally {
         setLoading(false);
       }
@@ -208,7 +206,7 @@ const HostelForm: React.FC<HostelFormProps> = ({
             { required: true, message: "Please input hostel description!" },
           ]}
         >
-          <Input.TextArea showCount maxLength={100} />
+          <Input.TextArea showCount maxLength={200} />
         </Form.Item>
 
         <Form.Item
