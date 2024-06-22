@@ -33,6 +33,7 @@ const BillCreate: React.FC = () => {
         if (token && userId) {
           const data = await getLastMonthBills(userId, token);
           setBills(data.billPaymentDtos);
+          console.log(data.billPaymentDtos);
           setLoading(false);
         }
       } catch (error) {
@@ -91,14 +92,23 @@ const BillCreate: React.FC = () => {
 
   const handleSubmit = async () => {
     const requestData = collectDataForAPI();
-    //alert(`Request Data: ${JSON.stringify(requestData, null, 2)}`);
+    //console.log(`Request Data: ${JSON.stringify(requestData, null, 2)}`);
     try {
       const response = await postMonthlyBillPayment(token, requestData);
+
+      const isFirstBill = bills.some(bill => bill.isFirstBill)
       console.log("API Response:", response);
-      notification.success({
-        message: "Success",
-        description: "Bill payments submitted successfully!",
-      });
+      if (isFirstBill) {
+        notification.success({
+          message: "Success",
+          description: "Bill created successfully !",
+        });
+      } else {
+        notification.warning({
+          message: "Notice",
+          description: "There already is a record of the bill for this month.",
+        });
+      }
     } catch (error) {
       console.error("API Error:", error);
       notification.error({
