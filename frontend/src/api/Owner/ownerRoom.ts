@@ -152,6 +152,31 @@ export const updateRoomStatus = async (
   }
 };
 
+export const updateRoom = async (
+  token: string | undefined,
+  roomId: number | undefined,
+  roomPayload: UpdateRoomRequest
+): Promise<BaseApiResponse> => {
+  try {
+    const fetchData = await axios.put<BaseApiResponse>(
+      `${baseUrl}/api/rooms/${roomId}`,
+      roomPayload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error: any) {
+    console.log("Error:", error);
+    toast.error(error.response.data.message, { duration: 2000 });
+    throw error;
+  }
+};
+
 export const updateServicePrices = async (roomId, servicesToUpdate, token) => {
   const url = `${baseUrl}/api/rooms/UpdateServicePrice`;
 
@@ -172,6 +197,6 @@ export const updateServicePrices = async (roomId, servicesToUpdate, token) => {
     return response.data;
   } catch (error) {
     console.error("Error updating room service prices:", error);
-    throw error; 
+    throw error;
   }
 };
