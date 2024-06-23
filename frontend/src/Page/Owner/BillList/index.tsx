@@ -122,7 +122,7 @@ const BillList: React.FC = () => {
       ) : activePackage ? (
     <div>
       <Flex justify="flex-end" align="center" style={{ margin: 20 }}>
-        <Button onClick={handleOpenBillPaymentForm} style={{ marginRight: 8 }}>Create monthly bill</Button>
+        {/* <Button onClick={handleOpenBillPaymentForm} style={{ marginRight: 8 }}>Create monthly bill</Button> */}
         <Button onClick={handleViewContract}>View contract</Button>
       </Flex>
       <div style={{ padding: '24px' }}>

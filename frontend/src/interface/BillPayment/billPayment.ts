@@ -20,7 +20,7 @@ interface BillPayment {
   roomId: number;
   startDate: string;
   endDate: string;
-  isFirstBill: string;
+  isFirstBill: boolean;
 }
 
 interface BillPaymentDetail {

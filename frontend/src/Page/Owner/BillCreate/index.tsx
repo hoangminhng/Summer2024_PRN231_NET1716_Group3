@@ -16,8 +16,8 @@ import {
 } from "../../../api/Owner/ownerBillPayment";
 import { UserContext } from "../../../context/userContext";
 import { NumberFormat } from "../../../Utils/numberFormat";
-import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
-import { getOwnerCurrentActiveMembership } from '../../../api/Owner/ownerPackage';
+import { ApiOutlined, LoadingOutlined } from "@ant-design/icons";
+import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
 const { Panel } = Collapse;
 
@@ -28,37 +28,36 @@ const BillCreate: React.FC = () => {
   const { token, userId } = useContext(UserContext);
   const [packageLoading, setPackageLoading] = useState(true);
 
-    const fetchBills = async () => {
-      try {
-        if (token && userId) {
-          const data = await getLastMonthBills(userId, token);
-          setBills(data.billPaymentDtos);
-          console.log(data.billPaymentDtos);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("There was an error fetching the bill data!", error);
+  const fetchBills = async () => {
+    try {
+      if (token && userId) {
+        const data = await getLastMonthBills(userId, token);
+        setBills(data.billPaymentDtos);
+        console.log(data.billPaymentDtos);
         setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("There was an error fetching the bill data!", error);
+      setLoading(false);
+    }
+  };
 
-    const fetchStatusPackage = async () => {
-      try {
-        if (token != undefined) {
-          let data = await getOwnerCurrentActiveMembership(token);
-          setActivePackage(data);
-        }
-      } catch (error) {
-        console.error("Error fetching status package:", error);
-      } finally {
-        setPackageLoading(false);
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchStatusPackage();
   }, [token]);
-
 
   useEffect(() => {
     if (!packageLoading) {
@@ -105,7 +104,7 @@ const BillCreate: React.FC = () => {
     try {
       const response = await postMonthlyBillPayment(token, requestData);
 
-      const isFirstBill = bills.some(bill => bill.isFirstBill)
+      const isFirstBill = bills.some((bill) => bill.isFirstBill);
       console.log("API Response:", response);
       if (isFirstBill) {
         notification.success({
@@ -181,6 +180,10 @@ const BillCreate: React.FC = () => {
                             <strong>Status:</strong>{" "}
                             {bill.billPaymentStatus === 0 ? "Unpaid" : "Paid"}
                           </p>
+                          <p>
+                            <strong>Is first Bill: </strong>{" "}
+                            {bill.isFirstBill.toString()}
+                          </p>
                         </Col>
                         <Col span={12}>
                           <h4>Services:</h4>
@@ -219,23 +222,28 @@ const BillCreate: React.FC = () => {
                                     <strong>Service Total Amount:</strong>{" "}
                                     {NumberFormat(service.serviceTotalAmount)}
                                   </p>
-                                  {service.serviceUnit !== "Month" && (
-                                    <p>
-                                      <strong>New Number Service:</strong>
-                                      <Input
-                                        key={`${bill.roomId}-${service.roomServiceID}`}
-                                        type="number"
-                                        value={service.newNumberService}
-                                        onChange={(e) =>
-                                          handleInputChange(
-                                            bill.roomId,
-                                            service.roomServiceID,
-                                            parseInt(e.target.value)
-                                          )
-                                        }
-                                      />
-                                    </p>
-                                  )}
+
+                                  {service.serviceUnit !== "Month" &&
+                                    !bill.isFirstBill && (
+                                      <p>
+                                        <strong>New Number Service:</strong>
+                                        <Input
+                                          key={`${bill.roomId}-${service.roomServiceID}`}
+                                          type="number"
+                                          value={service.newNumberService}
+                                          onChange={(e) =>
+                                            handleInputChange(
+                                              bill.roomId,
+                                              service.roomServiceID,
+                                              parseInt(e.target.value)
+                                            )
+                                          }
+                                          style={{
+                                            borderRadius: '7px'
+                                          }}
+                                        />
+                                      </p>
+                                    )}
                                 </Panel>
                               </Collapse>
                             ))}
