@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {ApiOutlined} from "@ant-design/icons"
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
 import { Table, Spin, Image } from 'antd';
 import { getHiringRooms } from '../../../api/Owner/ownerRoom';
 import { UserContext } from "../../../context/userContext";
@@ -11,9 +11,9 @@ const BillPayment: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { token, userId } = useContext(UserContext);
   const [activePackage, setActivePackage] = useState<RegisterPackage>();
+  const [packageLoading, setPackageLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
     const fetchRooms = async () => {
       try {
         const data = await getHiringRooms(userId, token);
@@ -29,16 +29,26 @@ const BillPayment: React.FC = () => {
       try {
         if (token != undefined) {
           let data = await getOwnerCurrentActiveMembership(token);
-          setActivePackage(data)
-          }
-        } catch (error) {
+          setActivePackage(data);
+        }
+      } catch (error) {
         console.error("Error fetching status package:", error);
+      } finally {
+        setPackageLoading(false);
       }
     };
 
-    fetchRooms();
+
+  useEffect(() => {
     fetchStatusPackage();
-  }, [userId, token]);
+  }, [token]);
+
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchRooms();
+    }
+  }, [packageLoading, userId, token]);
 
   const handleRowClick = (record) => {
     navigate(`/owner/bill-payment/bills/${record.contractId}`);
@@ -85,7 +95,12 @@ const BillPayment: React.FC = () => {
 
   return (
     <>
-    {activePackage ? (
+    {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
     <div style={{ padding: '24px' }}>
       {loading ? (
         <Spin size="large" />

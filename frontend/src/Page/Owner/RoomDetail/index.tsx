@@ -32,6 +32,7 @@ import Column from "antd/es/table/Column";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { UserContext } from "../../../context/userContext";
 import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
+
 const { Text } = Typography;
 
 const getStatusTag = (status: number) => {
@@ -50,12 +51,11 @@ const RoomDetail: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [statusToChange, setStatusToChange] = useState<number | null>(null);
-  const [currentStatus, setCurrentStatus] = useState<number | undefined>(
-    undefined
-  );
+  const [currentStatus, setCurrentStatus] = useState<number | undefined>(undefined);
   const [popConfirmOpen, setPopConfirmOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
   const [activePackage, setActivePackage] = useState<RegisterPackage>();
+  const [packageLoading, setPackageLoading] = useState(true);
   const { token } = useContext(UserContext);
   const [updatedPrices, setUpdatedPrices] = useState<{ [key: string]: number }>(
     {}
@@ -92,19 +92,26 @@ const RoomDetail: React.FC = () => {
 
   const fetchStatusPackage = async () => {
     try {
-      if (token) {
-        const data = await getOwnerCurrentActiveMembership(token);
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
         setActivePackage(data);
       }
     } catch (error) {
       console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchRoomDetail();
     fetchStatusPackage();
-  }, [roomId]);
+  }, [token]);
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchRoomDetail();
+    }
+  }, [packageLoading, roomId]);
 
   const showDrawer = () => {
     setOpen(true);
@@ -273,7 +280,12 @@ const RoomDetail: React.FC = () => {
 
   return (
     <>
-      {activePackage ? (
+      {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
         <Layout>
           <Space
             size={20}

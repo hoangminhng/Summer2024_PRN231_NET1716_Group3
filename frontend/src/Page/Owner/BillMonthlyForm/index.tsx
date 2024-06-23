@@ -16,6 +16,7 @@ const BillMonthlyForm: React.FC = () => {
   const [billPayment, setBillPayment] = useState<BillPayment | null>(null);
   const [loading, setLoading] = useState(true);
   const [activePackage, setActivePackage] = useState<RegisterPackage>();
+  const [packageLoading, setPackageLoading] = useState(true);
   const { token } = useContext(UserContext);
 
   const location = useLocation();
@@ -45,17 +46,26 @@ const BillMonthlyForm: React.FC = () => {
     try {
       if (token != undefined) {
         let data = await getOwnerCurrentActiveMembership(token);
-        setActivePackage(data)
-        }
-      } catch (error) {
+        setActivePackage(data);
+      }
+    } catch (error) {
       console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
     }
   };
 
+
   useEffect(() => {
-    fetchLastMonthBillPayment();
     fetchStatusPackage();
-  }, []);
+  }, [token]);
+
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchLastMonthBillPayment();
+    }
+  }, [packageLoading]);
 
   return (
     <>

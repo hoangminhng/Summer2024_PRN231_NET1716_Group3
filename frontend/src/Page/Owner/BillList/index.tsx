@@ -1,7 +1,7 @@
-import { Button, Flex, Table } from "antd";
+import { Button, Flex, Table, Spin } from 'antd';
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { ApiOutlined } from "@ant-design/icons";
-import React, { useState, useEffect, useContext } from "react";
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
+import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from "../../..//context/userContext";
 import { getBillListByContractId } from "../../../api/Owner/ownerBillPayment";
 import { NumberFormat } from "../../../Utils/numberFormat";
@@ -13,8 +13,8 @@ const BillList: React.FC = () => {
   const [bills, setBills] = useState([]);
   const [activePackage, setActivePackage] = useState<RegisterPackage>();
   const { token } = useContext(UserContext);
+  const [packageLoading, setPackageLoading] = useState(true);
 
-  useEffect(() => {
     console.log(contractId);
     const fetchBills = async () => {
       try {
@@ -38,12 +38,21 @@ const BillList: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching status package:", error);
+      } finally {
+        setPackageLoading(false);
       }
     };
 
-    fetchBills();
+  useEffect(() => {
     fetchStatusPackage();
-  }, [contractId, token]);
+  }, [token]);
+
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchBills();
+    }
+  }, [packageLoading, contractId, token]);
 
   const handleViewContract = () => {
     navigate(`/owner/contracts/detail/${contractId}`);
@@ -105,29 +114,27 @@ const BillList: React.FC = () => {
 
   return (
     <>
-      {activePackage ? (
-        <div>
-          <Flex justify="flex-end" align="center" style={{ margin: 20 }}>
-            <Button onClick={handleViewContract}>View contract</Button>
-          </Flex>
-          <div style={{ padding: "24px" }}>
-            <Table
-              dataSource={bills}
-              columns={columns}
-              rowKey="billPaymentID"
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="w-full text-center items-center justify-between">
-          <ApiOutlined style={{ fontSize: "100px", marginTop: "50px" }} />
-          <p style={{ fontWeight: "bold" }}>
-            Your current account has not registered for the package, so you
-            cannot access this page. Please register for a membership package to
-            use.
-          </p>
-        </div>
-      )}
+    {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
+    <div>
+      <Flex justify="flex-end" align="center" style={{ margin: 20 }}>
+        <Button onClick={handleOpenBillPaymentForm} style={{ marginRight: 8 }}>Create monthly bill</Button>
+        <Button onClick={handleViewContract}>View contract</Button>
+      </Flex>
+      <div style={{ padding: '24px' }}>
+      <Table dataSource={bills} columns={columns} rowKey="billPaymentID" />
+      </div>
+    </div>
+    ) : (
+      <div className="w-full text-center items-center justify-between">
+        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
+        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
+      </div>
+    )}
     </>
   );
 };

@@ -32,7 +32,8 @@ const Hostel: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const pageSize = 2;
   const { userId, token } = useContext(UserContext);
-  const [activePackage, setActivePackage] = useState<RegisterPackage>()
+  const [activePackage, setActivePackage] = useState<RegisterPackage>();
+  const [packageLoading, setPackageLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchOwnerHostels = async () => {
@@ -54,17 +55,25 @@ const Hostel: React.FC = () => {
     try {
       if (token != undefined) {
         let data = await getOwnerCurrentActiveMembership(token);
-        setActivePackage(data)
-        }
-      } catch (error) {
+        setActivePackage(data);
+      }
+    } catch (error) {
       console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchOwnerHostels();
     fetchStatusPackage();
-  }, [userId]);
+  }, [token]);
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchOwnerHostels();
+    }
+  }, [packageLoading, userId]);
+
 
   const handleOpenHostelForm = () => {
     setModalFormOpen(true);
@@ -85,7 +94,12 @@ const Hostel: React.FC = () => {
 
   return (
     <>
-    {activePackage ? (
+    {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
     <Layout>
       <Space
         size={20}
