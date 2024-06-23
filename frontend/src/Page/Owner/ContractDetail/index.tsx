@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import { Button } from "antd";
-import {ApiOutlined} from "@ant-design/icons"
+import { Button, Spin } from "antd";
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -18,6 +18,7 @@ const OwnerContractDetail = () => {
     const navigate = useNavigate();
     const [activePackage, setActivePackage] = useState<RegisterPackage>();
     const { token } = useContext(UserContext);
+    const [packageLoading, setPackageLoading] = useState(true);
 
     const formatDate = (date : Date) => {
         if (!date) return null;
@@ -29,10 +30,12 @@ const OwnerContractDetail = () => {
         try {
           if (token != undefined) {
             let data = await getOwnerCurrentActiveMembership(token);
-            setActivePackage(data)
-            }
-          } catch (error) {
+            setActivePackage(data);
+          }
+        } catch (error) {
           console.error("Error fetching status package:", error);
+        } finally {
+          setPackageLoading(false);
         }
       };
 
@@ -74,9 +77,15 @@ const OwnerContractDetail = () => {
     };
 
     useEffect(() => {
-        fetchContractDetail();
         fetchStatusPackage();
-    }, [idnumber, token]);
+      }, [token]);
+
+
+      useEffect(() => {
+        if (!packageLoading) {
+            fetchContractDetail();
+        }
+      }, [packageLoading, idnumber, token]);
 
     const handleBackToList = () => {
         navigate("/owner/contracts");
@@ -298,7 +307,12 @@ const OwnerContractDetail = () => {
 
     return (
         <>
-    {activePackage ? (
+    {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
             <div style={{ textAlign: "left" }}>
                 <div
                     style={{

@@ -11,7 +11,7 @@
     import { getHostelOwnerContract } from "../../../api/Owner/ownerHostel";
     import { getRoomOwnerContract } from "../../../api/Owner/ownerRoom";
     import { getServiceRoomOwnerContract } from "../../../api/Owner/ownerService";
-    import { createContract, getUserAppointmentOwnerContract } from "../../../api/Owner/ownerContract";
+    import { createContract, getOldElectricAndWaterNumberOwnerContract, getUserAppointmentOwnerContract } from "../../../api/Owner/ownerContract";
     import { NumberFormat } from "../../../Utils/numberFormat";
     import { LoadingOutlined } from "@ant-design/icons";
     import ReactQuill from 'react-quill';
@@ -21,6 +21,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
     const OwnerContractCreate : React.FC = () => {
         const [updatedContent, setUpdatedContent] = useState<string>("");
         const [loading, setLoading] = useState(false);
+        const [packageLoading, setPackageLoading] = useState(true);
         const [errorContent, setErrorContent] = useState<any>("");
         const [roomDeposit, setRoomDeposit] = useState<number>(0);
         const [initWater, setInitWater] = useState<number>(0);
@@ -64,14 +65,17 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                 console.error("Eror: " + error);
             }
         }
+        
         const fetchStatusPackage = async () => {
             try {
               if (token != undefined) {
                 let data = await getOwnerCurrentActiveMembership(token);
-                setActivePackage(data)
-                }
-              } catch (error) {
+                setActivePackage(data);
+              }
+            } catch (error) {
               console.error("Error fetching status package:", error);
+            } finally {
+              setPackageLoading(false);
             }
           };
 
@@ -116,6 +120,18 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
             }
         }
 
+        const getOldServiceNumberContract = async (roomID : number) =>{
+            try{
+                if(token != undefined && roomID != 0){
+                    let data = await getOldElectricAndWaterNumberOwnerContract(roomID, token)
+                    if(data != undefined)
+                    return data;
+                }
+            }catch(error : any){
+                setErrorContent(error.message);
+            }
+        }
+
         const fetchCreateContract = async (contract: CreateContract) => {
             setLoading(true);
             try {
@@ -134,12 +150,31 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
             const fetchData = async () => {
             await getHostelContract();
             fetchStatusPackage();
+            await getOldServiceNumberContract(roomIDData || 0);
             await getRoomContract(hostelIDData || 0);
             await getServiceRoomContract(roomIDData || 0);
             await getUserAppointmentContract(roomIDData || 0);
             }
             fetchData();
         }, [token]);
+
+        useEffect(() => {
+            fetchStatusPackage();
+          }, [token]);
+    
+    
+          useEffect(() => {
+            if (!packageLoading) {
+                const fetchData = async () => {
+                    await getHostelContract();
+                    await getOldServiceNumberContract(roomIDData || 0);
+                    await getRoomContract(hostelIDData || 0);
+                    await getServiceRoomContract(roomIDData || 0);
+                    await getUserAppointmentContract(roomIDData || 0);
+                    }
+                    fetchData();
+            }
+          }, [packageLoading, token]);
 
         const handleHostelChange = async (value: number) => {
             getRoomContract(value);
@@ -152,12 +187,15 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
 
         const handleRoomChange = async (value: number) => {
             const response = await getUserAppointmentContract(value);
-        if (response != undefined && !errorContent) {
+            const responeOldNUmber = await getOldServiceNumberContract(value);
+        if (response != undefined && !errorContent && responeOldNUmber != undefined) {
             await getServiceRoomContract(value);  
             setRoomIDData(value);
             setUserContract(response);
+            setInitElec(responeOldNUmber.electricNumber);
+            setInitWater(responeOldNUmber.waterNumber);
             setCapacity(response.capacity)
-            form.setFieldsValue({ roomFee : response.roomFee, depositFee : response.roomFee }); 
+            form.setFieldsValue({ roomFee : response.roomFee, depositFee : response.roomFee, elecNumber : responeOldNUmber.electricNumber, waterNumber : responeOldNUmber.waterNumber  }); 
             setRoomDeposit(response.roomFee);
             setRoomFee(response.roomFee);
         } else {
@@ -191,12 +229,12 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
         };
 
         const handleChangeWaterNumber = async (value: number | null) => {
-            setInitWater(value ? value : 0);
+            setInitWater(value ? value : initWater);
 
         };
 
         const handleChangeElecNumber = async (value: number | null) => {
-            setInitElec(value ? value : 0);
+            setInitElec(value ? value : initElec);
 
         };
 
@@ -370,7 +408,12 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
 
     return (
         <>
-        {activePackage ? (
+        {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
         <div>
             <div style={{width: "100%", textAlign: "center", fontSize: "20", fontWeight:"bold", backgroundColor:"aliceblue", padding:"20px"}}>
                 <h2>CREATE NEW CONTRACT</h2>
@@ -380,7 +423,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                 form={form}
                 variant="filled"
                 initialValues={{roomFee: "",
-                    depositFee: ""}}
+                    depositFee: "", waterNumber:"", elecNumber: ""}}
                 style={{
                 maxWidth: "100%",
                 }}  

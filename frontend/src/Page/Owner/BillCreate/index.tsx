@@ -16,7 +16,7 @@ import {
 } from "../../../api/Owner/ownerBillPayment";
 import { UserContext } from "../../../context/userContext";
 import { NumberFormat } from "../../../Utils/numberFormat";
-import {ApiOutlined} from "@ant-design/icons"
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
 import { getOwnerCurrentActiveMembership } from '../../../api/Owner/ownerPackage';
 
 const { Panel } = Collapse;
@@ -26,8 +26,8 @@ const BillCreate: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activePackage, setActivePackage] = useState<RegisterPackage>();
   const { token, userId } = useContext(UserContext);
+  const [packageLoading, setPackageLoading] = useState(true);
 
-  useEffect(() => {
     const fetchBills = async () => {
       try {
         if (token && userId) {
@@ -45,16 +45,25 @@ const BillCreate: React.FC = () => {
       try {
         if (token != undefined) {
           let data = await getOwnerCurrentActiveMembership(token);
-          setActivePackage(data)
-          }
-        } catch (error) {
+          setActivePackage(data);
+        }
+      } catch (error) {
         console.error("Error fetching status package:", error);
+      } finally {
+        setPackageLoading(false);
       }
     };
 
-    fetchBills();
+  useEffect(() => {
     fetchStatusPackage();
-  }, [userId, token]);
+  }, [token]);
+
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchBills();
+    }
+  }, [packageLoading, userId, token]);
 
   const handleInputChange = (
     roomId: number,
@@ -110,7 +119,12 @@ const BillCreate: React.FC = () => {
 
   return (
     <>
-      {activePackage ? (
+      {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
         <div style={{ padding: "24px" }}>
           {loading ? (
             <Spin size="large" />

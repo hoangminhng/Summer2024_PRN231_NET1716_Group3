@@ -1,6 +1,6 @@
-import { Button, Flex, Table } from 'antd';
+import { Button, Flex, Table, Spin } from 'antd';
 import { useNavigate, useParams, Link } from "react-router-dom";
-import {ApiOutlined} from "@ant-design/icons"
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from "../../..//context/userContext";
 import { getBillListByContractId } from '../../../api/Owner/ownerBillPayment';
@@ -11,10 +11,10 @@ const BillList: React.FC = () => {
   const navigate = useNavigate();
   const { contractId } = useParams();
   const [bills, setBills] = useState([]);
-  const [activePackage, setActivePackage] = useState<RegisterPackage>()
+  const [activePackage, setActivePackage] = useState<RegisterPackage>();
   const { token } = useContext(UserContext);
+  const [packageLoading, setPackageLoading] = useState(true);
 
-  useEffect(() => {
     console.log(contractId);
     const fetchBills = async () => {
       try {
@@ -29,16 +29,25 @@ const BillList: React.FC = () => {
       try {
         if (token != undefined) {
           let data = await getOwnerCurrentActiveMembership(token);
-          setActivePackage(data)
-          }
-        } catch (error) {
+          setActivePackage(data);
+        }
+      } catch (error) {
         console.error("Error fetching status package:", error);
+      } finally {
+        setPackageLoading(false);
       }
     };
 
-    fetchBills();
+  useEffect(() => {
     fetchStatusPackage();
-  }, [contractId, token]);
+  }, [token]);
+
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchBills();
+    }
+  }, [packageLoading, contractId, token]);
 
   const handleOpenBillPaymentForm = () => {
     navigate("/owner/bill-payment/bills/form", { state: { contractId } });
@@ -104,7 +113,12 @@ const BillList: React.FC = () => {
 
   return (
     <>
-    {activePackage ? (
+    {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
     <div>
       <Flex justify="flex-end" align="center" style={{ margin: 20 }}>
         <Button onClick={handleOpenBillPaymentForm} style={{ marginRight: 8 }}>Create monthly bill</Button>

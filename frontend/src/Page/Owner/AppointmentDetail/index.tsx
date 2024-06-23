@@ -7,9 +7,10 @@ import {
   Tag, 
   Button,
   Modal,
-  notification
+  notification,
+  Spin
 } from "antd";
-import {ApiOutlined} from "@ant-design/icons"
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
 import { useState, useEffect } from "react";
 import { useContext } from "react";
 import { UserContext } from "../../..//context/userContext";
@@ -28,6 +29,7 @@ const OwnerAppointmentDetail: React.FC = () => {
   const { hostelID } = useParams<{ hostelID: string }>();
   const [idnumber, setID] = useState<number>();
   const [errorContent, setErrorContent] = useState<any>("");
+  const [packageLoading, setPackageLoading] = useState(true);
   const navigate = useNavigate();
   const { token } = useContext(UserContext);
 
@@ -49,10 +51,12 @@ const OwnerAppointmentDetail: React.FC = () => {
     try {
       if (token != undefined) {
         let data = await getOwnerCurrentActiveMembership(token);
-        setActivePackage(data)
-        }
-      } catch (error) {
+        setActivePackage(data);
+      }
+    } catch (error) {
       console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
     }
   };
 
@@ -68,9 +72,15 @@ const OwnerAppointmentDetail: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchAppointmentDetailList();
     fetchStatusPackage();
-  }, [idnumber, token]);
+  }, [token]);
+
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchAppointmentDetailList();
+    }
+  }, [packageLoading, idnumber, token]);
 
   useEffect(() => {
     if (appointmenttData) {
@@ -207,7 +217,12 @@ const handleBackToList = () => {
 
   return (
     <>
-    {activePackage? (
+    {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
         <div>
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <div style={{display:"flex", justifyContent:"space-between", marginTop: "10px"}}>

@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import {ApiOutlined} from "@ant-design/icons"
+import {Spin} from "antd";
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
 import { getBillPaymentDetail } from "../../../api/Owner/ownerBillPayment";
@@ -9,7 +10,8 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
 const BillPaymentDetail: React.FC = () => {
   const [billPayment, setBillPayment] = useState<BillPayment | null>(null);
   const [loading, setLoading] = useState(true);
-  const { token, userPackageStatus } = useContext(UserContext);
+  const { token } = useContext(UserContext);
+  const [packageLoading, setPackageLoading] = useState(true);
   const { billPaymentId } = useParams<{ billPaymentId: string }>();
   const [activePackage, setActivePackage] = useState<RegisterPackage>()
   const navigate = useNavigate();
@@ -41,21 +43,36 @@ const BillPaymentDetail: React.FC = () => {
     try {
       if (token != undefined) {
         let data = await getOwnerCurrentActiveMembership(token);
-        setActivePackage(data)
-        }
-      } catch (error) {
+        setActivePackage(data);
+      }
+    } catch (error) {
       console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchBillPaymentDetail();
     fetchStatusPackage();
-  }, []);
+  }, [token]);
+
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchBillPaymentDetail();
+    }
+  }, [packageLoading]);
+
+  
 
   return (
     <>
-    {activePackage ? (
+    {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
     <div style={{ margin: 16 }}>
       <BillDetail billPayment={billPayment} loading={loading} />
     </div>

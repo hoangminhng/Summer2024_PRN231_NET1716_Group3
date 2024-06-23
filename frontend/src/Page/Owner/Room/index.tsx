@@ -32,6 +32,7 @@ const Room: React.FC = () => {
   const [modalFormOpen, setModalFormOpen] = useState(false);
   const { hostelId } = useParams<{ hostelId: string }>();
   const [activePackage, setActivePackage] = useState<RegisterPackage>();
+  const [packageLoading, setPackageLoading] = useState(true);
   const { token } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -61,13 +62,20 @@ const Room: React.FC = () => {
       }
     } catch (error) {
       console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchRoomListOfHostel();
     fetchStatusPackage();
-  }, [hostelId]);
+  }, [token]);
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchRoomListOfHostel();
+    }
+  }, [packageLoading, hostelId]);
 
   const handleBackClick = () => {
     navigate("/owner/hostels");
@@ -79,7 +87,12 @@ const Room: React.FC = () => {
 
   return (
     <>
-      {activePackage ? (
+      {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
         <Layout>
           <Space
             size={20}

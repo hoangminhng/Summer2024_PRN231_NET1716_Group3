@@ -1,5 +1,5 @@
-import {Card, Button, Col, Row, Pagination, Tag} from "antd";
-import {ApiOutlined} from "@ant-design/icons"
+import {Card, Button, Col, Row, Pagination, Tag, Spin} from "antd";
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
@@ -18,6 +18,7 @@ const OwnerViewContract : React.FC = () =>{
     const [contactDetailData, setContractDetailData] = useState<ContractDetail>();
     const [currentPage, setCurrentPage] = useState(1);
     const [activePackage, setActivePackage] = useState<RegisterPackage>()
+    const [packageLoading, setPackageLoading] = useState(true);
     const itemsPerPage = 3;
     const formatDate = (date : Date) => {
         if (!date) return null;
@@ -42,6 +43,7 @@ const OwnerViewContract : React.FC = () =>{
             ],
         })
     );
+    
 
     const createdDate = formatDate(contactDetailData?.createdDate || new Date);
     const dateStart = formatDate(contactDetailData?.dateStart|| new Date);
@@ -75,17 +77,26 @@ const OwnerViewContract : React.FC = () =>{
         try {
           if (token != undefined) {
             let data = await getOwnerCurrentActiveMembership(token);
-            setActivePackage(data)
-            }
-          } catch (error) {
+            setActivePackage(data);
+          }
+        } catch (error) {
           console.error("Error fetching status package:", error);
+        } finally {
+          setPackageLoading(false);
         }
       };
 
-    useEffect(() => {
-        fetchContractList();
+
+      useEffect(() => {
         fetchStatusPackage();
-    }, []);
+      }, [token]);
+
+
+      useEffect(() => {
+        if (!packageLoading) {
+            fetchContractList();
+        }
+      }, [packageLoading]);
 
     const statusStringMap: { [key: number]: string } = {
         1 : "SIGNED",
@@ -323,7 +334,12 @@ const OwnerViewContract : React.FC = () =>{
 
     return (
         <>
-        {activePackage ? (
+        {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
             <div>
                 <div style={{width: "100%", textAlign: "center", fontSize: "20", fontWeight:"bold", backgroundColor:"aliceblue", padding:"20px", marginBottom: "20px"}}>
                 <h2>CONTRACT LIST</h2>
