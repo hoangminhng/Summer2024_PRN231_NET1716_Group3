@@ -188,11 +188,12 @@ const Home: React.FC = () => {
           </div>
         </div>
         {loading == true ? (
-          <Spin
-            fullscreen={true}
-            size="large"
-            indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
-          />
+          <div className="flex justify-center items-center w-full">
+            <Spin
+              size="large"
+              indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+            />
+          </div>
         ) : (
           <div className="flex flex-col mx-4 w-4/5">
             {currentHostels?.map((hostel, index) => (

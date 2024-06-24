@@ -37,7 +37,7 @@ export const payMonthlyBill = async (billPaymentId: number, token: string) => {
         },
       }
     );
-    return response;
+    return response.data;
   } catch (error: any) {
     toast.error(error.response.data.message, { duration: 2000 });
   }

@@ -127,6 +127,7 @@ const Appointment: React.FC = () => {
         Appointment list
       </div>
       <Table
+        loading={memberViewAppointment.length === 0}
         columns={columns}
         dataSource={memberViewAppointment}
         pagination={{ position: ["bottomCenter"], pageSize: 5 }}
