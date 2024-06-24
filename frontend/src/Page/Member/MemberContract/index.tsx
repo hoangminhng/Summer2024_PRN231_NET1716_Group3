@@ -396,7 +396,7 @@ const MemberViewContract: React.FC = () => {
                     type="primary"
                     onClick={() =>
                       navigate(
-                        `/member/contracts/detail/${contractItem.contractID}`
+                        `/contracts/detail/${contractItem.contractID}`
                       )
                     }
                   >

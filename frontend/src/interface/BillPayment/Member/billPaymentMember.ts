@@ -1,7 +1,6 @@
 interface BillPaymentMember {
-  billPaymentID: number;
-  month: number;
-  year: number;
+  billPaymentId: number;
+  createDate: Date;
   paidDate: Date;
   billPaymentStatus: number;
   billType: number;

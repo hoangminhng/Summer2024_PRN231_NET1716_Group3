@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GetRoomListByHostelId } from "../../../../api/Room";
 import { NumberFormat } from "../../../../Utils/numberFormat";
 import { useNavigate } from "react-router-dom";
 import VisitHouseModal from "./VisitHouseModal";
 import LoginModal from "../../../../Component/LoginModal";
+import { UserContext } from "../../../../context/userContext";
+import { getMemberViewAppointment } from "../../../../api/Member/memberRoomAppointment";
 
 interface RoomAndPriceProps {
   hostelId: number;
@@ -50,6 +52,22 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
     }
   };
 
+  const handleViewAppointmentClick = () => {
+    navigate("/appointments");
+  };
+
+  const [memberViewAppointment, setMemberViewAppointment] = useState<
+    MemberViewAppointment[]
+  >([]);
+  const { token, userId } = useContext(UserContext);
+  const fetchMemberAppointmnet = async () => {
+    if (token != undefined && userId != undefined) {
+      let data: MemberViewAppointment[] | undefined;
+      data = await getMemberViewAppointment(userId, token);
+      setMemberViewAppointment(data || []);
+    }
+  };
+
   const fetchRooms = async () => {
     try {
       const response = await GetRoomListByHostelId(hostelId.toString());
@@ -61,11 +79,18 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
 
   useEffect(() => {
     fetchRooms();
-  }, [hostelId]);
+    fetchMemberAppointmnet();
+  }, [hostelId, userId]);
 
   const navigate = useNavigate();
   const handleButtonClick = (roomID: string) => {
     navigate(`/room/detail/${roomID}`);
+  };
+
+  const hasAppointment = (roomId: number) => {
+    return memberViewAppointment?.some(
+      (appointment) => appointment.roomId === roomId
+    );
   };
   return (
     <>
@@ -130,13 +155,23 @@ const RoomAndPrice: React.FC<RoomAndPriceProps> = ({ hostelId }) => {
                   >
                     View detail
                   </button>
-                  <button
-                    onClick={() => handleVisitHouseClick(room)}
-                    type="button"
-                    className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                  >
-                    Visit house
-                  </button>
+                  {hasAppointment(room.roomID) ? (
+                    <button
+                      onClick={() => handleViewAppointmentClick()}
+                      type="button"
+                      className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                    >
+                      View appointment
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleVisitHouseClick(room)}
+                      type="button"
+                      className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                    >
+                      Visit house
+                    </button>
+                  )}
                   <button
                     onClick={() => handleVisitHouseClick(room)}
                     type="button"
