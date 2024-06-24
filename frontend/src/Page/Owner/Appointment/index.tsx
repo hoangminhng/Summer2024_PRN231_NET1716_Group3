@@ -1,9 +1,9 @@
 import { Input } from "@material-tailwind/react";
 import {
   Table,
-  TableProps
+  TableProps, Spin
 } from "antd";
-import {ApiOutlined} from "@ant-design/icons"
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
 import { useState, useEffect } from "react";
 import { useContext } from "react";
 import { UserContext } from "../../..//context/userContext";
@@ -17,6 +17,7 @@ const OwnerAppointment: React.FC = () => {
   const [filteredData, setFilteredData] = useState<AppointmentView[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const [activePackage, getActivePackage] = useState<RegisterPackage>();
+  const [packageLoading, setPackageLoading] = useState(true);
   const navigate = useNavigate();
   const { token, userId } = useContext(UserContext);
 
@@ -35,19 +36,28 @@ const OwnerAppointment: React.FC = () => {
 
   const fetchStatusPackage = async () => {
     try {
-      if (token != undefined && userId) {
+      if (token != undefined) {
         let data = await getOwnerCurrentActiveMembership(token);
-        getActivePackage(data)
-        }
-      } catch (error) {
+        getActivePackage(data);
+      }
+    } catch (error) {
       console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAppointmentList();
     fetchStatusPackage();
-  }, [userId, token]);
+  }, [token]);
+
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchAppointmentList();
+    }
+  }, [packageLoading, userId, token]);
+
 
   useEffect(() => {
     if (appointmenttData) {
@@ -90,7 +100,12 @@ const OwnerAppointment: React.FC = () => {
 
   return (
     <>
-    {activePackage ? (
+    {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
       <div>
       {/* Bảng danh sách */}
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">

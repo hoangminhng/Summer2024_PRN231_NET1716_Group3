@@ -24,6 +24,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   getOwnerRoomDetail,
+  updateRoom,
   updateRoomStatus,
   updateServicePrices,
 } from "../../../api/Owner/ownerRoom";
@@ -31,6 +32,7 @@ import Column from "antd/es/table/Column";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { UserContext } from "../../../context/userContext";
 import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
+
 const { Text } = Typography;
 
 const getStatusTag = (status: number) => {
@@ -49,12 +51,11 @@ const RoomDetail: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [statusToChange, setStatusToChange] = useState<number | null>(null);
-  const [currentStatus, setCurrentStatus] = useState<number | undefined>(
-    undefined
-  );
+  const [currentStatus, setCurrentStatus] = useState<number | undefined>(undefined);
   const [popConfirmOpen, setPopConfirmOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
   const [activePackage, setActivePackage] = useState<RegisterPackage>();
+  const [packageLoading, setPackageLoading] = useState(true);
   const { token } = useContext(UserContext);
   const [updatedPrices, setUpdatedPrices] = useState<{ [key: string]: number }>(
     {}
@@ -63,11 +64,20 @@ const RoomDetail: React.FC = () => {
   const [allPrices, setAllPrices] = useState<
     { typeServiceId: number; price: number }[]
   >([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValues, setEditValues] = useState({
+    length: "",
+    width: "",
+    capacity: "",
+    roomFee: "",
+    roomName: "",
+    description: "",
+  });
 
   const fetchRoomDetail = async () => {
     setLoading(true);
     try {
-      if (token) {
+      if (token && roomId) {
         const response = await getOwnerRoomDetail(parseInt(roomId), token);
         setRoomDetailData(response);
         setRoomServices(response?.roomServices || []);
@@ -82,20 +92,27 @@ const RoomDetail: React.FC = () => {
 
   const fetchStatusPackage = async () => {
     try {
-      if (token) {
-        const data = await getOwnerCurrentActiveMembership(token);
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
         setActivePackage(data);
       }
     } catch (error) {
       console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchRoomDetail();
     fetchStatusPackage();
-  }, [roomId]);
-  
+  }, [token]);
+
+  useEffect(() => {
+    if (!packageLoading) {
+      fetchRoomDetail();
+    }
+  }, [packageLoading, roomId]);
+
   const showDrawer = () => {
     setOpen(true);
   };
@@ -109,12 +126,18 @@ const RoomDetail: React.FC = () => {
       setLoading(true);
       try {
         await updateRoomStatus(token, parseInt(roomId), statusToChange);
-        setPopConfirmOpen(false);
-        setStatusToChange(null);
         fetchRoomDetail();
+
+        notification.success({
+          message: "Success",
+          description: "Change room status successfully",
+          duration: 1,
+        });
       } catch (error) {
         console.error("Error updating room status:", error);
       } finally {
+        setStatusToChange(null);
+        setPopConfirmOpen(false);
         setLoading(false);
       }
     }
@@ -185,9 +208,84 @@ const RoomDetail: React.FC = () => {
       setAllPrices(initialPrices);
     }
   }, [roomServices]);
+
+  const toggleEditMode = () => {
+    if (!isEditing) {
+      setEditValues({
+        length: roomDetailData?.lenght.toString() || "",
+        width: roomDetailData?.width.toString() || "",
+        capacity: roomDetailData?.capacity.toString() || "",
+        roomFee: roomDetailData?.roomFee.toString() || "",
+        roomName: roomDetailData?.roomName || "",
+        description: roomDetailData?.description || "",
+      });
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setEditValues({
+      ...editValues,
+      [field]: value,
+    });
+  };
+
+  const handleUpdateRoomDetails = async () => {
+    if (!token || !roomId) return;
+    setLoading(true);
+    try {
+      const updatedDetails: UpdateRoomRequest = {
+        roomName: editValues.roomName,
+        length: parseFloat(editValues.length),
+        width: parseFloat(editValues.width),
+        capacity: parseInt(editValues.capacity),
+        roomFee: parseFloat(editValues.roomFee),
+        description: editValues.description,
+        hostelID: roomDetailData?.hostelID ?? 0,
+      };
+
+      const response = await updateRoom(
+        token,
+        parseInt(roomId),
+        updatedDetails
+      );
+
+      if (response.statusCode === 200) {
+        notification.success({
+          message: "Success",
+          description: response.message,
+        });
+
+        fetchRoomDetail();
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error("Error updating room details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelUpdate = () => {
+    setIsEditing(false);
+    setEditValues({
+      length: "",
+      width: "",
+      capacity: "",
+      roomFee: "",
+      roomName: "",
+      description: "",
+    });
+  };
+
   return (
     <>
-      {activePackage ? (
+      {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
         <Layout>
           <Space
             size={20}
@@ -218,18 +316,77 @@ const RoomDetail: React.FC = () => {
                       ))}
                     </Carousel>
 
+                    {isEditing && (
+                      <Input
+                        value={editValues.roomName}
+                        onChange={(e) =>
+                          handleInputChange("roomName", e.target.value)
+                        }
+                        placeholder="Room Name"
+                        style={{ marginBottom: 16 }}
+                      />
+                    )}
+
+                    {isEditing && (
+                      <Input.TextArea
+                        value={editValues.description}
+                        onChange={(e) =>
+                          handleInputChange("description", e.target.value)
+                        }
+                        placeholder="Room Description"
+                        rows={4}
+                        style={{ marginBottom: 16 }}
+                      />
+                    )}
+
                     <Descriptions bordered>
                       <Descriptions.Item label="Length" span={1}>
-                        {roomDetailData?.length} {lengthUnit}
+                        {isEditing ? (
+                          <Input
+                            value={editValues.length}
+                            onChange={(e) =>
+                              handleInputChange("length", e.target.value)
+                            }
+                          />
+                        ) : (
+                          `${roomDetailData?.lenght} ${lengthUnit}`
+                        )}
                       </Descriptions.Item>
                       <Descriptions.Item label="Width" span={2}>
-                        {roomDetailData?.width} {widthUnit}
+                        {isEditing ? (
+                          <Input
+                            value={editValues.width}
+                            onChange={(e) =>
+                              handleInputChange("width", e.target.value)
+                            }
+                          />
+                        ) : (
+                          `${roomDetailData?.width} ${widthUnit}`
+                        )}
                       </Descriptions.Item>
                       <Descriptions.Item label="Capacity" span={1}>
-                        {roomDetailData?.capacity} people
+                        {isEditing ? (
+                          <Input
+                            value={editValues.capacity}
+                            onChange={(e) =>
+                              handleInputChange("capacity", e.target.value)
+                            }
+                          />
+                        ) : (
+                          `${roomDetailData?.capacity} people`
+                        )}
                       </Descriptions.Item>
                       <Descriptions.Item label="Fee" span={2}>
-                        {NumberFormat(roomDetailData?.roomFee ?? 0)}
+                        {isEditing ? (
+                          <Input
+                            value={editValues.roomFee}
+                            onChange={(e) =>
+                              handleInputChange("roomFee", e.target.value)
+                            }
+                          />
+                        ) : (
+                          NumberFormat(roomDetailData?.roomFee ?? 0)
+                        )}
                       </Descriptions.Item>
                       {roomDetailData?.renterName && (
                         <Descriptions.Item label="Renter" span={3}>
@@ -240,6 +397,18 @@ const RoomDetail: React.FC = () => {
                         </Descriptions.Item>
                       )}
                     </Descriptions>
+                    <Flex gap="small">
+                      <Button
+                        onClick={
+                          isEditing ? handleUpdateRoomDetails : toggleEditMode
+                        }
+                      >
+                        {isEditing ? "Update" : "Edit"}
+                      </Button>
+                      {isEditing && (
+                        <Button onClick={handleCancelUpdate}>Cancel</Button>
+                      )}
+                    </Flex>
                   </Flex>
                 </Col>
                 <Col className="gutter-row" span={12}>
@@ -309,14 +478,6 @@ const RoomDetail: React.FC = () => {
                         render={(servicePrice: number) =>
                           NumberFormat(servicePrice)
                         }
-                        // render={(servicePrice: number, record: RoomService) => (
-                        //   <Input
-                        //     type="number"
-                        //     defaultValue={servicePrice.toString()}
-                        //     onChange={(e) => handlePriceChange(record.typeServiceID, parseFloat(e.target.value))}
-                        //     style={{ width: "100%" }}
-                        //   />
-                        // )}
                       />
                       <Column
                         title="Status"
