@@ -55,7 +55,12 @@ const MemberRoomDetails: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-800">
               {roomDetail?.roomName}
             </h1>
-            <div className="text-lg text-gray-600 text-left" dangerouslySetInnerHTML={{ __html: roomDetail?.description || "......" }} />
+            <div
+              className="text-lg text-gray-600 text-left"
+              dangerouslySetInnerHTML={{
+                __html: roomDetail?.description || "......",
+              }}
+            />
             <table className="min-w-full divide-y divide-gray-200">
               <tbody className="bg-white divide-y divide-gray-200">
                 <tr>
@@ -110,10 +115,10 @@ const MemberRoomDetails: React.FC = () => {
                     </p>
                     <p
                       className={`text-sm ${
-                        service.status ? "text-green-600" : "text-red-600"
+                        service.status ? "text-red-600" : "text-green-600"
                       }`}
                     >
-                      {service.status ? "Available" : "Unavailable"}
+                      {service.status ? "Unavailable" : "Available"}
                     </p>
                   </div>
                 ))}

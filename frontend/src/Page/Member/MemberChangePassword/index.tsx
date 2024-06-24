@@ -60,7 +60,7 @@ const MemberChangePassword : React.FC = () => {
     };
 
     const handleBackToList = () => {
-        navigate("/member/profile");
+        navigate(-1);
     };
 
     const updatePassword = async (value: any) => {
