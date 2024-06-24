@@ -29,11 +29,11 @@ const MemberProfile : React.FC = () => {
     }, [userId, token]);
 
     const handleChangeInformation = () => {
-        navigate("/member/profile/change-information");
+        navigate("/profile/change-information");
     };
 
     const handleChangePassword = () => {
-        navigate("/member/profile/change-password");
+        navigate("/profile/change-password");
     };
 
     return (

@@ -5,6 +5,8 @@ import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/userContext";
 import { getBillPaymentMember } from "../../../api/Member/memberPaymentHistory";
+import BillPaymentMonthly from "./BillPaymentMonthly";
+import { getBillPaymentMonthlyMember } from "../../../api/Member/memberMonthlyPayment";
 
 const columns: TableColumnsType<BillPaymentMember> = [
   {
@@ -109,8 +111,22 @@ const PaymentHistory: React.FC = () => {
     }
   };
 
+  const [billMonthlyPaymentMember, setBillMonthlyPaymentMember] = useState<
+    BillPaymentMonthlyMember[]
+  >([]);
+  const fetchBillMonthlyPaymentMember = async () => {
+    if (token != undefined && userId != undefined) {
+      let data: BillPaymentMonthlyMember[] | undefined;
+      data = await getBillPaymentMonthlyMember(token);
+      setBillMonthlyPaymentMember(data || []);
+    }
+  };
+
+  useEffect(() => {}, []);
+
   useEffect(() => {
     fetchBillPaymentMember();
+    fetchBillMonthlyPaymentMember();
   }, []);
   return (
     <>
@@ -118,11 +134,15 @@ const PaymentHistory: React.FC = () => {
         Payment history
       </div>
       <Table
+        loading={billPaymentMember.length === 0}
         columns={columns}
         dataSource={billPaymentMember}
-        pagination={{ position: ["bottomCenter"] }}
+        pagination={{ position: ["bottomCenter"], pageSize: 5 }}
         showSorterTooltip={{ target: "sorter-icon" }}
       />
+      {billMonthlyPaymentMember.length > 0 ? (
+        <BillPaymentMonthly data={billMonthlyPaymentMember} />
+      ) : null}
     </>
   );
 };

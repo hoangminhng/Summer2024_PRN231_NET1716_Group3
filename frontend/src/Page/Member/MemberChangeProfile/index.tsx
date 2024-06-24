@@ -48,7 +48,7 @@ const MemberChangeProfile: React.FC = () => {
     };
 
     const handleBackToList = () => {
-        navigate("/member/profile");
+        navigate(-1);
     };
 
     const updateInformation = async (value: any) => {
