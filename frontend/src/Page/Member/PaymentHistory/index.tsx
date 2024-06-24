@@ -2,11 +2,14 @@ import { Table, TableColumnsType } from "antd";
 import dayjs from "dayjs";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../../context/userContext";
+import { getBillPaymentMember } from "../../../api/Member/memberPaymentHistory";
 
 const columns: TableColumnsType<BillPaymentMember> = [
   {
     title: "Bill No.",
-    dataIndex: "billPaymentID",
+    dataIndex: "billPaymentId",
     sortDirections: ["descend"],
     width: 10,
   },
@@ -14,14 +17,9 @@ const columns: TableColumnsType<BillPaymentMember> = [
     title: "Datetime",
     dataIndex: "monthYear",
     defaultSortOrder: "descend",
-    render: (_, record) =>
-      `${String(record.month).padStart(2, "0")}/${record.year}`,
-    sorter: (a, b) => {
-      if (a.year === b.year) {
-        return a.month - b.month;
-      }
-      return a.year - b.year;
-    },
+    render: (_, record) => `${dayjs(record.createDate).format("DD/MM/YYYY")}`,
+    sorter: (a, b) =>
+      new Date(a.createDate).getTime() - new Date(b.createDate).getTime(),
     sortIcon: () => <ChevronUpDownIcon className="w-5 h-5" />,
     width: 15,
   },
@@ -98,37 +96,34 @@ const columns: TableColumnsType<BillPaymentMember> = [
   },
 ];
 
-const data: BillPaymentMember[] = [
-  {
-    billPaymentID: 1,
-    month: 1,
-    year: 2024,
-    paidDate: new Date("2024-01-10"),
-    billPaymentStatus: 1,
-    billType: 1,
-    billAmount: 1000000,
-    totalAmount: 1500000,
-  },
-  {
-    billPaymentID: 2,
-    month: 12,
-    year: 2023,
-    paidDate: new Date("2023-12-10"),
-    billPaymentStatus: 1,
-    billType: 2,
-    billAmount: 2000000,
-    totalAmount: 2500000,
-  },
-];
-
 const PaymentHistory: React.FC = () => {
+  const [billPaymentMember, setBillPaymentMember] = useState<
+    BillPaymentMember[]
+  >([]);
+  const { token, userId } = useContext(UserContext);
+  const fetchBillPaymentMember = async () => {
+    if (token != undefined && userId != undefined) {
+      let data: BillPaymentMember[] | undefined;
+      data = await getBillPaymentMember(token);
+      setBillPaymentMember(data || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchBillPaymentMember();
+  }, []);
   return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      pagination={{ position: ["bottomCenter"] }}
-      showSorterTooltip={{ target: "sorter-icon" }}
-    />
+    <>
+      <div className="w-full text-center font-bold bg-[#f0f8ff] p-5 mb-5 uppercase">
+        Payment history
+      </div>
+      <Table
+        columns={columns}
+        dataSource={billPaymentMember}
+        pagination={{ position: ["bottomCenter"] }}
+        showSorterTooltip={{ target: "sorter-icon" }}
+      />
+    </>
   );
 };
 
