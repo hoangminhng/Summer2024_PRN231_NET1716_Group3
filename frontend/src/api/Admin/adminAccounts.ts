@@ -41,6 +41,28 @@ export const changeStatusBlockAccounts = async (token: string, accountID : numbe
   }
 };
 
+export const DeleteAccount = async (token: string, accountID : number) => {
+  try {
+    const fetchData = await axios.delete(
+      `${baseUrl}/api/admin/accounts/detail/delete/${accountID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData;
+    return response;
+  } catch (error : any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Unknown error occurred");
+    } else {
+      throw new Error(error.message || "Unknown error occurred");
+    }
+  }
+};
+
 export const changeStatusActiveAccounts = async (token: string, accountId : number | undefined) => {
   try {
     const param = {

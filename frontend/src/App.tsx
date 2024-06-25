@@ -228,7 +228,7 @@ function App() {
             <Route path="/" element={<MemberLayout />}>
               <Route path="contracts" element={<MemberViewContract />} />
               <Route
-                path="contracts/detail/:contractID"
+                path="member/contracts/detail/:contractID"
                 element={<MemberContractDetail />}
               />
               <Route path="payment" element={<PaymentHistory />} />

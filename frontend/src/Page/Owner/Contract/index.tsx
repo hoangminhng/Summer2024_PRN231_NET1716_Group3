@@ -347,7 +347,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
           };
 
         const handleCreateContract = async () => {
-            if(updatedContent){
+            if(!updatedContent){
                 openNotificationWithIcon("error", "Please fill rule contract!");
                 setErrorContent("");
             }
@@ -694,7 +694,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     <Form.Item
                     label="Email :"
                     >
-                    <Input placeholder={selectedMemberAccount?.viewerEmail} style={{width: "200px", borderRadius:"10px", height:"30px"}} disabled value={selectedMemberAccount?.viewerEmail} required/>
+                    <Input placeholder={selectedMemberAccount?.viewerEmail} style={{width: "250px", borderRadius:"10px", height:"30px"}} disabled value={selectedMemberAccount?.viewerEmail} required/>
                     </Form.Item>
                     </div>
                     </Card>
