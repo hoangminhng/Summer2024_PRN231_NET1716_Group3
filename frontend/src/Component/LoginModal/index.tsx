@@ -5,6 +5,7 @@ import { loginByEmailPassword } from "../../api/login";
 import toast from "react-hot-toast";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import { generateToken } from "../../Config/firebase_config";
 
 interface LoginModalProps {
   closeModal: () => void;
@@ -25,32 +26,36 @@ const LoginModal: React.FC<LoginModalProps> = ({ closeModal }) => {
       } else {
         setLoading(true);
         try {
-          const response = await loginByEmailPassword(email, password);
-          const responseData = response?.data;
-          const user: LoginedUser = {
-            accountId: responseData?.accountId,
-            email: responseData?.email,
-            isLoginWithGmail: responseData?.isLoginWithGmail,
-            packageStatus: responseData?.packageStatus,
-            name: responseData?.name,
-            roleId: responseData?.roleId,
-            status: responseData?.status,
-            token: responseData?.token,
-            username: responseData?.username,
-          };
-          if (responseData?.token) {
-            login(user, responseData?.token);
-            closeModal();
+          const firebaseRegisterToken = await generateToken();
+          if (firebaseRegisterToken || firebaseRegisterToken === "") {
+            const response = await loginByEmailPassword(
+              email,
+              password,
+              firebaseRegisterToken
+            );
+            const responseData = response?.data;
+            const user: LoginedUser = {
+              accountId: responseData?.accountId,
+              email: responseData?.email,
+              isLoginWithGmail: responseData?.isLoginWithGmail,
+              packageStatus: responseData?.packageStatus,
+              name: responseData?.name,
+              roleId: responseData?.roleId,
+              status: responseData?.status,
+              token: responseData?.token,
+              username: responseData?.username,
+            };
+            if (responseData?.token) {
+              login(user, responseData?.token);
+              closeModal();
+            }
+            if (user.roleId === 2) {
+              navigate("/owner/hostels");
+            }
+            if (user.roleId === 1) {
+              navigate("/admin");
+            }
           }
-          if (user.roleId === 2) {
-            navigate("/owner/hostels");
-          }
-          if (user.roleId === 1) {
-            navigate("/admin");
-          }
-          // else if (user.roleId === 3) {
-          //   navigate("/member");
-          // }
         } catch (error: any) {
           if (error.message.includes("401")) {
             toast.error("Invalid username or password", { duration: 2000 });

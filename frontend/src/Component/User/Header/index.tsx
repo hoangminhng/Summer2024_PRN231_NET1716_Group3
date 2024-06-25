@@ -4,7 +4,7 @@ import LoginModal from "../../LoginModal";
 import { UserContext } from "../../../context/userContext";
 import { AvatarDropdown } from "../AvatarDropDown";
 import { AvatarDropdownOwner } from "../../Owner/AvatarDropDownOwner";
-import { BellIcon } from "@heroicons/react/24/solid";
+import { NotificationDropdown } from "../NotificationDropDown";
 // import Logo from "../../../assets/logo.png";
 
 const Header: React.FC = () => {
@@ -65,8 +65,9 @@ const Header: React.FC = () => {
           </svg>
         </button>
         <div
-          className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${isMenuOpen ? "block" : "hidden"
-            }`}
+          className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${
+            isMenuOpen ? "block" : "hidden"
+          }`}
           id="navbar-sticky"
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
@@ -90,16 +91,7 @@ const Header: React.FC = () => {
             {isAuth() ? (
               userRole == 3 ? (
                 <div className="md:hidden md:flex md:flex-col items-center md:order-2">
-                  <button
-                    type="button"
-                    className="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-slate-950 hover:bg-slate-600 rounded-3xl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  >
-                    <BellIcon className="w-6 h-6" />
-                    <span className="sr-only">Notifications</span>
-                    <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
-                      20
-                    </div>
-                  </button>
+                  <NotificationDropdown />
 
                   <AvatarDropdown />
                 </div>
@@ -135,16 +127,7 @@ const Header: React.FC = () => {
         {isAuth() ? (
           userRole == 3 ? (
             <div className="hidden md:flex md:order-2">
-              <button
-                type="button"
-                className="mr-1 relative inline-flex items-center p-2 text-sm font-medium text-center text-slate-950 bg-[#e4e6eb] rounded-3xl"
-              >
-                <BellIcon className="w-6 h-6" />
-                <span className="sr-only">Notifications</span>
-                <div className="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-1 -end-1 dark:border-gray-900">
-                  1
-                </div>
-              </button>
+              <NotificationDropdown />
 
               <AvatarDropdown />
             </div>
@@ -172,7 +155,7 @@ const Header: React.FC = () => {
             aria-hidden="true"
             onMouseDown={handleOverlayClick}
             className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50  "
-          // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+            // className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
           >
             <LoginModal closeModal={toggleModal} />
           </div>
