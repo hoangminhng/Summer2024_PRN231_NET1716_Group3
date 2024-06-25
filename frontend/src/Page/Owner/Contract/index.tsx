@@ -15,6 +15,7 @@
     import { NumberFormat } from "../../../Utils/numberFormat";
     import { LoadingOutlined } from "@ant-design/icons";
     import ReactQuill from 'react-quill';
+    import '../Contract/cardTitle.css';
     import 'react-quill/dist/quill.snow.css'; 
 import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
@@ -346,7 +347,11 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
           };
 
         const handleCreateContract = async () => {
-            if(startDate && endDate && userId && selectedMemberAccount?.viewerId && roomIDData && roomDeposit && updatedContent && userContract){
+            if(updatedContent){
+                openNotificationWithIcon("error", "Please fill rule contract!");
+                setErrorContent("");
+            }
+            else if(startDate && endDate && userId && selectedMemberAccount?.viewerId && roomIDData && roomDeposit && userContract){
                 let data: CreateContract = {
                     ownerAccountID: userId, 
                     studentAccountID: selectedMemberAccount?.viewerId,
@@ -366,7 +371,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     openNotificationWithIcon("success", "Create successfully");
                     setTimeout(() => {
                         window.location.reload();
-                    }, 1500);
+                    }, 500);
                 } else {
                 openNotificationWithIcon("error", errorContent || "Appointment not found!");
                 setErrorContent("");
@@ -429,7 +434,15 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                 }}  
                 autoComplete="off"
             >
+
                 <div style={{display: "flex", justifyContent:"start", marginBottom: "20px"}}>
+                    <Card
+                    title={<p style={{fontWeight:"bold", textTransform:"uppercase"}}>Date Contract (Rental start date and end date)</p>}
+                    className="custom-card"
+                    style={{
+                        width: "100%",
+                    }}
+                    >
                     <Form.Item
                     label="Date Start --> Date End :"
                     rules={[
@@ -441,8 +454,18 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     >
                             <RangePicker style={{width: "600px"}} onChange = {onChangeDate} required/>
                     </Form.Item>
+                    </Card>
                 </div>
-                <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
+
+                <div style={{display: "flex", justifyContent:"start", marginBottom: "20px"}}>
+                <Card
+                    title={<p style={{fontWeight:"bold", textTransform:"uppercase"}}>Hostel and Room</p>}
+                    className="custom-card"
+                    style={{
+                        width: "100%",
+                    }}
+                    >
+                    <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
                     label="Hostel :"
                     name = "hostel"
@@ -500,14 +523,20 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     </Form.Item>
                 </div>
 
-                <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
+                <div style={{display:"flex", justifyContent: "space-between", marginBottom: "10px"}}>
                     <Form.Item
                     label="Room Amount :"
                     name="roomFee"
+                    labelCol={{
+                        span: 24,
+                      }}
+                      wrapperCol={{
+                        span: 24,
+                      }}
                     rules={[
                         {
                         required: true,
-                        message: 'Please input your fee room (This is the room amount for the contract)!',
+                        message: 'Please input your fee room!',
                         },
                         {
                             validator: (_, value) =>
@@ -519,7 +548,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     >
                    <InputNumber
                         formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                        style={{width: "200px", borderRadius:"10px"}}
+                        style={{width: "250px", borderRadius:"10px"}}
                         onChange={handleChangeFee}
                         />
                     </Form.Item>
@@ -527,6 +556,12 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     <Form.Item
                     label="Deposit Room : "
                     name="depositFee"
+                    labelCol={{
+                        span: 24,
+                      }}
+                      wrapperCol={{
+                        span: 24,
+                      }}
                     rules={[
                         {
                         required: true,
@@ -542,16 +577,19 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     >
                     <InputNumber
                         formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                        style={{width: "200px", borderRadius:"10px"}}
+                        style={{width: "250px", borderRadius:"10px"}}
                         onChange={handleChangeDeposit}
                         />
                     </Form.Item>
-                </div>
-
-                <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
                     label="Init Water Number :"
                     name="waterNumber"
+                    labelCol={{
+                        span: 24,
+                      }}
+                      wrapperCol={{
+                        span: 24,
+                      }}
                     rules={[
                         {
                         required: true,
@@ -559,7 +597,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                         },
                         {
                             validator: (_, value) =>
-                                value && value >= 0
+                                value && value > 0
                                     ? Promise.resolve()
                                     : Promise.reject(new Error('Please input positive number!')),
                         },
@@ -567,7 +605,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     >
                    <InputNumber
                         formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                        style={{width: "200px", borderRadius:"10px"}}
+                        style={{width: "250px", borderRadius:"10px"}}
                         onChange={handleChangeWaterNumber}
                         />
                     </Form.Item>
@@ -575,6 +613,12 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     <Form.Item
                     label="Init Electric Number : "
                     name="elecNumber"
+                    labelCol={{
+                        span: 24,
+                      }}
+                      wrapperCol={{
+                        span: 24,
+                      }}
                     rules={[
                         {
                         required: true,
@@ -582,7 +626,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                         },
                         {
                             validator: (_, value) =>
-                                value && value >= 0
+                                value && value > 0
                                     ? Promise.resolve()
                                     : Promise.reject(new Error('Please input positive number!')),
                         },
@@ -590,13 +634,23 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     >
                     <InputNumber
                         formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                        style={{width: "200px", borderRadius:"10px"}}
+                        style={{width: "250px", borderRadius:"10px"}}
                         onChange={handleChangeElecNumber}
                         />
                     </Form.Item>
                 </div>
 
-                <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
+                    </Card>
+                    </div>
+
+                <div style={{display: "flex", justifyContent:"start", marginBottom: "20px"}}>
+                <Card
+                    title={<p style={{fontWeight:"bold", textTransform:"uppercase"}}>Information of user</p>}
+                    className="custom-card"
+                    style={{
+                        width: "100%",
+                    }}
+                    >
                     <Form.Item
                     name="name"
                     label="Name :"
@@ -625,26 +679,27 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                         />
                     </Form.Item>
 
+                <div style={{display:"flex", justifyContent: "space-between", marginBottom: "5px"}}>
                     <Form.Item
                     label="Phone :"
                     >
-                    <Input placeholder={selectedMemberAccount?.viewerPhone} style={{width: "200px", borderRadius:"10px"}} disabled value={selectedMemberAccount?.viewerPhone} required/>
+                    <Input placeholder={selectedMemberAccount?.viewerPhone} style={{width: "200px", borderRadius:"10px", height:"30px"}} disabled value={selectedMemberAccount?.viewerPhone} required/>
                     </Form.Item>
-                </div>
-
-                <div style={{display:"flex", justifyContent: "space-between", marginBottom: "20px"}}>
                     <Form.Item
                     label="Citizen Card :"
                     >
-                    <Input placeholder={selectedMemberAccount?.viewerCitizenCard} style={{width: "200px", borderRadius:"10px"}} disabled value={selectedMemberAccount?.viewerCitizenCard} />
+                    <Input placeholder={selectedMemberAccount?.viewerCitizenCard} style={{width: "200px", borderRadius:"10px", height:"30px"}} disabled value={selectedMemberAccount?.viewerCitizenCard} />
                     </Form.Item>
 
                     <Form.Item
                     label="Email :"
                     >
-                    <Input placeholder={selectedMemberAccount?.viewerEmail} style={{width: "200px", borderRadius:"10px"}} disabled value={selectedMemberAccount?.viewerEmail} required/>
+                    <Input placeholder={selectedMemberAccount?.viewerEmail} style={{width: "200px", borderRadius:"10px", height:"30px"}} disabled value={selectedMemberAccount?.viewerEmail} required/>
                     </Form.Item>
-                </div>
+                    </div>
+                    </Card>
+                    </div>
+
                 <div style={{display: "flex", justifyContent:"start", marginBottom: "20px", width: "100%", textAlign: "left"}}>
                     <Collapse items={items} style={{width:"100%"}}/>
                 </div>
@@ -747,13 +802,13 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                 </Modal>
                 <Form.Item
                     name="Rule General"
-                    label="Rule General :"
-                    rules={[
-                        {
-                        required: true,
-                        message: 'Please input!',
-                        },
-                    ]}
+                    label={<p style={{fontWeight:"bold"}}><span style={{color:"red"}}>* </span>Rule General :</p>}
+                    labelCol={{
+                        span: 24,
+                      }}
+                      wrapperCol={{
+                        span: 24,
+                      }}
                     >
                         <div style={{display:"flex", justifyContent: "left", marginBottom: "20px"}}>
                     <ReactQuill 
