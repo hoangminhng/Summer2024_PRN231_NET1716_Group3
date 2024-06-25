@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
+import { checkIsAuth } from "../api/login";
 
 interface UserProviderProps {
   children: ReactNode;
@@ -10,10 +11,11 @@ interface UserContextType {
   token: string | undefined;
   userAccountName: string | undefined;
   userPackageStatus: number | undefined;
+  refreshToken: string | undefined;
   login: (user: LoginedUser, token: string) => void;
   updatePackageStatus(status: number): void;
   logout: () => void;
-  isAuth: () => boolean;
+  isAuth: () => Promise<boolean>;
 }
 
 export const UserContext = createContext<UserContextType>({
@@ -22,6 +24,7 @@ export const UserContext = createContext<UserContextType>({
   token: undefined,
   userAccountName: undefined,
   userPackageStatus: undefined,
+  refreshToken: undefined,
   updatePackageStatus: () => { },
   login: () => { },
   logout: () => { },
@@ -34,6 +37,7 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
   const [userAccountName, setUserAccountName] = useState<string | undefined>();
   const [userId, setUserId] = useState<number | undefined>();
   const [token, setToken] = useState<string | undefined>();
+  const [refreshToken, setRefreshToken] = useState<string | undefined>();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -42,18 +46,21 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
         const storageToken = localStorage.getItem("token");
         const storageUser = localStorage.getItem("user");
         const storageExpiration = localStorage.getItem("expiration");
+        const refreshToken = localStorage.getItem("refreshToken");
+
         if (storageExpiration) {
           const expirationDate = parseInt(storageExpiration);
           const currentDate = new Date().getTime();
           if (expirationDate - currentDate <= 0) {
             logout();
           } else {
-            if (storageToken && storageUser) {
+            if (storageToken && storageUser && refreshToken) {
               const parseStorageUser = JSON.parse(storageUser as string);
               setUserAccountName(parseStorageUser.accountName);
               setUserRole(parseStorageUser.roleId);
               setUserId(parseStorageUser.accountId);
               setToken(storageToken);
+              setRefreshToken(refreshToken);
             }
           }
         }
@@ -75,10 +82,12 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
       currentDate.setHours(currentDate.getHours() + 1).toString()
     );
     localStorage.setItem("userId", user.accountId.toString());
+    localStorage.setItem("refreshToken", user?.refreshToken);
     setUserRole(user?.roleId);
     setUserId(user?.accountId);
     setToken(token);
     setuserPackageStatus(user?.packageStatus);
+    setRefreshToken(user?.refreshToken)
   };
 
   const logout = () => {
@@ -86,11 +95,13 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     setUserRole(undefined);
     setUserId(undefined);
     setuserPackageStatus(undefined);
+    setRefreshToken(undefined);
     setToken(undefined);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("expiration");
     localStorage.removeItem("userId");
+    localStorage.removeItem("refreshToken");
   };
 
   const isAuth = () => {
@@ -100,6 +111,12 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     } else {
       return false;
     }
+
+    // if (storageToken && storageToken !== undefined) {
+    //   return await checkIsAuth(storageToken);
+    // } else {
+    //   return false;
+    // }
   };
 
   const updatePackageStatus = (status: number) => {
@@ -115,6 +132,7 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
         token,
         userAccountName,
         userPackageStatus,
+        refreshToken,
         updatePackageStatus,
         login,
         logout,

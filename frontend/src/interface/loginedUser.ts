@@ -8,4 +8,5 @@ interface LoginedUser {
   status: number;
   token: string;
   username: string;
+  refreshToken: string;
 }

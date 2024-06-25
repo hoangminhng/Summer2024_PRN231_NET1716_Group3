@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Complain } from '../../interface/Complains/Complain';
 import { Odata } from '../../interface/Odata';
+import api from '../api';
 const baseUrl = process.env.REACT_APP_BACK_END_URL;
 
 export const createMemberComplain = async (
@@ -35,7 +36,7 @@ export const getMemberComplains = async (
   accountID: number | undefined
 ) => {
   try {
-    const response = await axios.get<Odata<Complain>>(
+    const response = await api.get<Odata<Complain>>(
       `${baseUrl}/odata/Complains?filter=AccountID eq ${accountID}`,
       {
         headers: {

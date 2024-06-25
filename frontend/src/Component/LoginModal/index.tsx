@@ -44,6 +44,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ closeModal }) => {
               status: responseData?.status,
               token: responseData?.token,
               username: responseData?.username,
+              refreshToken: responseData?.refreshToken
             };
             if (responseData?.token) {
               login(user, responseData?.token);

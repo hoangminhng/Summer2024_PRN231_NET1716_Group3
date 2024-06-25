@@ -3,6 +3,9 @@ import App from "./App.tsx";
 import "./index.css";
 import UserContextProvider from "./context/userContext.tsx"; // Import UserContextProvider using named import syntax
 import { Toaster } from "react-hot-toast";
+import api from "./api/api.ts";
+import axios from "axios";
+import { refreshToken } from "./api/login.ts";
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
@@ -14,6 +17,9 @@ if ("serviceWorker" in navigator) {
       console.log("Service Worker registration failed:", err);
     });
 }
+
+
+
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <UserContextProvider>
