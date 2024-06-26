@@ -15,9 +15,9 @@ export const loginByUsernamePassword = async (
   }
 };
 
-export const loginByEmailPassword = async (email: string, password: string) => {
+export const loginByEmailPassword = async (email: string, password: string, firebaseRegisterToken: string) => {
   try {
-    const param = { email, password };
+    const param = { email, password, firebaseRegisterToken };
     const response = await axios.post(`${baseUrl}/api/login`, param);
     return response;
   } catch (error: any) {

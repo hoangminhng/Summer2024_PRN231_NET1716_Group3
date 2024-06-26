@@ -3,6 +3,7 @@ import App from "./App.tsx";
 import "./index.css";
 import UserContextProvider from "./context/userContext.tsx"; // Import UserContextProvider using named import syntax
 import { Toaster } from "react-hot-toast";
+import { BrowserRouter as Router } from "react-router-dom";
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
@@ -22,7 +23,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       reverseOrder={true}
       containerStyle={{ marginTop: "80px" }}
     />
-    <App />
+    <Router>
+      <App />
+    </Router>
     {/* <LoadingSpinnerComponent /> */}
   </UserContextProvider>
 );
