@@ -9,6 +9,7 @@ import {
   Input,
   Button,
   notification,
+  Table,
 } from "antd";
 import {
   getLastMonthBills,
@@ -100,23 +101,15 @@ const BillCreate: React.FC = () => {
 
   const handleSubmit = async () => {
     const requestData = collectDataForAPI();
-    //console.log(`Request Data: ${JSON.stringify(requestData, null, 2)}`);
+    console.log(`Request Data: ${JSON.stringify(requestData, null, 2)}`);
     try {
       const response = await postMonthlyBillPayment(token, requestData);
 
-      const isFirstBill = bills.some((bill) => bill.isFirstBill);
       console.log("API Response:", response);
-      if (isFirstBill) {
-        notification.success({
-          message: "Success",
-          description: "Bill created successfully !",
-        });
-      } else {
-        notification.warning({
-          message: "Notice",
-          description: "There already is a record of the bill for this month.",
-        });
-      }
+      notification.success({
+        message: "Success",
+        description: "Bill created successfully !",
+      });
     } catch (error) {
       console.error("API Error:", error);
       notification.error({
@@ -149,7 +142,7 @@ const BillCreate: React.FC = () => {
                       bordered={false}
                     >
                       <Row gutter={[16, 16]}>
-                        <Col span={12}>
+                        <Col span={9}>
                           <p>
                             <strong>Room Name:</strong> {bill.roomName}
                           </p>
@@ -180,74 +173,70 @@ const BillCreate: React.FC = () => {
                             <strong>Status:</strong>{" "}
                             {bill.billPaymentStatus === 0 ? "Unpaid" : "Paid"}
                           </p>
-                          <p>
+                          {/* <p>
                             <strong>Is first Bill: </strong>{" "}
                             {bill.isFirstBill.toString()}
-                          </p>
+                          </p> */}
                         </Col>
-                        <Col span={12}>
-                          <h4>Services:</h4>
-                          <div
-                            style={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                              gap: "16px",
-                            }}
-                          >
-                            {bill.billPaymentDetails.map((service) => (
-                              <Collapse
-                                key={service.roomServiceID}
-                                style={{
-                                  flex: "1 1 calc(33.33% - 16px)",
-                                  marginBottom: "16px",
-                                }}
-                              >
-                                <Panel
-                                  header={service.serviceType}
-                                  key={service.roomServiceID}
-                                >
-                                  <p>
-                                    <strong>Service Price:</strong>{" "}
-                                    {NumberFormat(service.servicePrice)}
-                                  </p>
-                                  <p>
-                                    <strong>Service Unit:</strong>{" "}
-                                    {service.serviceUnit}
-                                  </p>
-                                  <p>
-                                    <strong>Quantity:</strong>{" "}
-                                    {service.quantity}
-                                  </p>
-                                  <p>
-                                    <strong>Service Total Amount:</strong>{" "}
-                                    {NumberFormat(service.serviceTotalAmount)}
-                                  </p>
-
-                                  {service.serviceUnit !== "Month" &&
-                                    !bill.isFirstBill && (
-                                      <p>
-                                        <strong>New Number Service:</strong>
-                                        <Input
-                                          key={`${bill.roomId}-${service.roomServiceID}`}
-                                          type="number"
-                                          value={service.newNumberService}
-                                          onChange={(e) =>
-                                            handleInputChange(
-                                              bill.roomId,
-                                              service.roomServiceID,
-                                              parseInt(e.target.value)
-                                            )
-                                          }
-                                          style={{
-                                            borderRadius: '7px'
-                                          }}
-                                        />
-                                      </p>
-                                    )}
-                                </Panel>
-                              </Collapse>
-                            ))}
-                          </div>
+                        <Col span={15}>
+                          <h4><strong>Services:</strong></h4>
+                          <Table
+                            dataSource={bill.billPaymentDetails}
+                            rowKey="roomServiceID"
+                            pagination={false}
+                            columns={[
+                              {
+                                title: "Service Type",
+                                dataIndex: "serviceType",
+                                key: "serviceType",
+                              },
+                              {
+                                title: "Service Price",
+                                dataIndex: "servicePrice",
+                                key: "servicePrice",
+                                render: (text) => NumberFormat(text),
+                              },
+                              {
+                                title: "Service Unit",
+                                dataIndex: "serviceUnit",
+                                key: "serviceUnit",
+                              },
+                              {
+                                title: "Quantity",
+                                dataIndex: "quantity",
+                                key: "quantity",
+                              },
+                              {
+                                title: "Service Total Amount",
+                                dataIndex: "serviceTotalAmount",
+                                key: "serviceTotalAmount",
+                                render: (text) => NumberFormat(text),
+                              },
+                              {
+                                title: "New Number Service",
+                                dataIndex: "newNumberService",
+                                key: "newNumberService",
+                                render: (text, record) =>
+                                  record.serviceUnit !== "Month" &&
+                                  !bill.isFirstBill ? (
+                                    <Input
+                                      type="number"
+                                      value={text}
+                                      onChange={(e) =>
+                                        handleInputChange(
+                                          bill.roomId,
+                                          record.roomServiceID,
+                                          parseInt(e.target.value)
+                                        )
+                                      }
+                                      style={{
+                                        borderRadius: "7px",
+                                      }}
+                                    />
+                                  ) : null,
+                              },
+                            ]}
+                          />
                         </Col>
                       </Row>
                     </Card>
