@@ -153,3 +153,28 @@ export const getHostelOwnerContract = async (
     console.log("Error: " + error);
   }
 };
+
+export const updateHostel = async (
+  token: string | undefined,
+  hostelId: number | undefined,
+  hostelPayload: UpdateHostelRequest
+): Promise<BaseApiResponse> => {
+  try {
+    const fetchData = await axios.put<BaseApiResponse>(
+      `${baseUrl}/api/hostels/${hostelId}`,
+      hostelPayload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error: any) {
+    console.log("Error:", error);
+    toast.error(error.response.data.message, { duration: 2000 });
+    throw error;
+  }
+};
