@@ -134,7 +134,7 @@ const PaymentHistory: React.FC = () => {
         Payment history
       </div>
       <Table
-        loading={billPaymentMember.length === 0}
+        loading={billPaymentMember === undefined}
         columns={columns}
         dataSource={billPaymentMember}
         pagination={{ position: ["bottomCenter"], pageSize: 5 }}
