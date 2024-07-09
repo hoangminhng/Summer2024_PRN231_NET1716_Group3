@@ -61,12 +61,27 @@ const HeaderTest: React.FC = () => {
 
   const notification: notification[] = [
     {
-      notificationId: 1,
-      notificationType: 1,
-      accountReceiveId: 1,
-      title: "Nguyen Van Hoang Minh",
-      body: "Accept your appointment",
-      dateCreated: new Date(10, 5, 2024),
+      notification_id: 1,
+      account_notice_id: 1,
+      receive_account_id: 5,
+      notification_text: "Your contract has been approved",
+      create_date: new Date(),
+      notification_type: 1,
+      title: "Contract approval",
+      forward_to_path: "/contracts",
+      is_read: true,
+    },
+    {
+      notification_id: 2,
+      account_notice_id: 1,
+      receive_account_id: 5,
+      notification_text:
+        "You have a new contract of room Apartment no.02 in Vinhomes Golden River at Vinhomes Golden River Ba Son, Phố Tôn Đức Thắng, Phường Bến Nghé, Quận 1, Hồ Chí Minh. Please move to the contract page for further detail",
+      create_date: new Date(),
+      notification_type: 2,
+      title: "Monthly payment",
+      forward_to_path: "/payment",
+      is_read: false,
     },
   ];
 

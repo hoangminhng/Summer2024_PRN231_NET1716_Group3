@@ -1,8 +1,11 @@
 interface notification {
-    notificationId: number;
-    notificationType: number;
-    accountReceiveId: number;
-    title: string;
-    body: string;
-    dateCreated: Date;
-  }
+  NotificationId: number;
+  AccountNoticeId: number;
+  ReceiveAccountId: number;
+  NotificationText: string;
+  CreateDate: Date;
+  NotificationType: number;
+  Title: string;
+  ForwardToPath: string;
+  IsRead: boolean;
+}

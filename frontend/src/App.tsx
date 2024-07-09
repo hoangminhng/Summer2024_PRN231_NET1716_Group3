@@ -57,6 +57,7 @@ import MemberRentedRoom from "./Page/Member/MemberRentedRoom";
 import ComplainHistory from "./Page/Member/ComplainHistory";
 import OwnerComplains from "./Page/Owner/Complains";
 import Appointment from "./Page/Member/Appointment";
+import NotificationMember from "./Page/Member/Notification";
 
 const roles = {
   Admin: 1,
@@ -255,6 +256,7 @@ function App() {
               path="profile/change-password"
               element={<MemberChangePassword />}
             />
+            <Route path="notification" element={<NotificationMember />} />
           </Route>
         </Route>
 
