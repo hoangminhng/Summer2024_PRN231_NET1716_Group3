@@ -58,6 +58,7 @@ import ComplainHistory from "./Page/Member/ComplainHistory";
 import OwnerComplains from "./Page/Owner/Complains";
 import Appointment from "./Page/Member/Appointment";
 import NotificationMember from "./Page/Member/Notification";
+import NotificationOwner from "./Page/Owner/Notification";
 
 const roles = {
   Admin: 1,
@@ -233,6 +234,7 @@ function App() {
               element={<OwnerAppointmentDetail />}
             />
             <Route path="complains" element={<OwnerComplains />} />
+            <Route path="notifications" element={<NotificationOwner />} />
           </Route>
         </Route>
 
