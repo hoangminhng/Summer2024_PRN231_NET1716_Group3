@@ -73,16 +73,19 @@ const OwnerComplains: React.FC = () => {
             title: "Hostel",
             dataIndex: "HostelName",
             width: "10%",
+            sorter: (a, b) => a.HostelName.localeCompare(b.HostelName),
         },
         {
             title: "Room",
             dataIndex: "RoomName",
             width: "10%",
+            sorter: (a, b) => a.RoomName.localeCompare(b.RoomName),
         },
         {
             title: "Owner Name",
             dataIndex: "OwnerName",
             width: "10%",
+            sorter: (a, b) => a.OwnerName.localeCompare(b.OwnerName),
         },
         {
             title: "Complain",
@@ -91,24 +94,22 @@ const OwnerComplains: React.FC = () => {
             render: (text: string) => (
                 <span dangerouslySetInnerHTML={{ __html: text }} />
             ),
+            sorter: (a, b) => a.ComplainText.localeCompare(b.ComplainText),
         },
         {
             title: "Date Created",
             dataIndex: "DateComplain",
             width: "10%",
-            render: (dateComplain: Date) => {
-                return (
-                    moment(dateComplain).format("DD-MM-YYYY HH:mm:ss")
-                )
-            }
+            render: (dateComplain: Date) => moment(dateComplain).format("DD-MM-YYYY HH:mm:ss"),
+            sorter: (a, b) => new Date(a.DateComplain).getTime() - new Date(b.DateComplain).getTime(),
         },
         {
             title: "Response",
             dataIndex: "ComplainResponse",
             width: "20%",
-            render: (text: string | null, record: Complain) => ( // Allow null type for dataIndex
+            render: (text: string | null, record: Complain) => (
                 text ? (
-                    <span dangerouslySetInnerHTML={{ __html: text }} /> // Use dangerouslySetInnerHTML (with caution)
+                    <span dangerouslySetInnerHTML={{ __html: text }} />
                 ) : (
                     <Button
                         className="mx-2"
@@ -118,9 +119,9 @@ const OwnerComplains: React.FC = () => {
                         Response
                     </Button>
                 )
-            )
+            ),
+            sorter: (a, b) => (a.ComplainResponse || "").localeCompare(b.ComplainResponse || ""),
         },
-
         {
             title: "Date Response",
             dataIndex: "DateUpdate",
@@ -128,13 +129,13 @@ const OwnerComplains: React.FC = () => {
             render: (dateUpdate: Date) => {
                 let display = "";
                 if (dateUpdate === undefined || dateUpdate === null) {
-                    display = "___"
-                } else
-                    display = moment(dateUpdate).format("DD-MM-YYYY: HH:mm:ss")
-                return (
-                    display
-                )
-            }
+                    display = "___";
+                } else {
+                    display = moment(dateUpdate).format("DD-MM-YYYY: HH:mm:ss");
+                }
+                return display;
+            },
+            sorter: (a, b) => new Date(a.DateUpdate).getTime() - new Date(b.DateUpdate).getTime(),
         },
         {
             title: "Status",
@@ -157,8 +158,10 @@ const OwnerComplains: React.FC = () => {
                     return <span>Unknown Status ({status})</span>;
                 }
             },
+            sorter: (a, b) => a.Status - b.Status,
         },
     ];
+
 
     return (
         <>

@@ -1,5 +1,5 @@
-import axios from "axios";
-import toast from "react-hot-toast";
+import axios from 'axios';
+import toast from 'react-hot-toast';
 const baseUrl = process.env.REACT_APP_BACK_END_URL;
 
 export const getLastMonthBillPayment = async (
@@ -12,14 +12,14 @@ export const getLastMonthBillPayment = async (
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
     const response = fetchData.data;
     return response;
   } catch (error) {
-    console.log("Error: " + error);
+    console.log('Error: ' + error);
   }
 };
 
@@ -34,14 +34,14 @@ export const createMonthlyBillPayment = async (
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
     const response = fetchData.data;
     return response;
   } catch (error: any) {
-    console.log("Error:", error);
+    console.log('Error:', error);
     toast.error(error.response.data.message, { duration: 2000 });
     throw error;
   }
@@ -57,14 +57,14 @@ export const getBillPaymentDetail = async (
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
     const response = fetchData.data;
     return response;
   } catch (error: any) {
-    console.log("Error:", error);
+    console.log('Error:', error);
     toast.error(error.response.data.message, { duration: 2000 });
     throw error;
   }
@@ -80,13 +80,13 @@ export const getBillListByContractId = async (
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
     return fetchData.data;
   } catch (error) {
-    console.log("Error: " + error);
+    console.log('Error: ' + error);
     throw error;
   }
 };
@@ -98,13 +98,13 @@ export const getLastMonthBills = async (ownerId: number, token: string) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
     return response.data;
   } catch (error: any) {
-    console.log("Error:", error);
+    console.log('Error:', error);
     toast.error(error.response.data.message, { duration: 2000 });
     throw error;
   }
@@ -121,14 +121,32 @@ export const postMonthlyBillPayment = async (
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
     return response.data;
   } catch (error) {
     // Handle the error appropriately
-    console.error("API Error:", error);
-    throw new Error("Failed to post monthly bill payment");
+    console.error('API Error:', error);
+    throw new Error('Failed to post monthly bill payment');
+  }
+};
+
+export const getBillPaymentMember = async (token: string) => {
+  try {
+    const fetchData = await axios.get<BillPayment[]>(
+      `${baseUrl}/api/owner/bill-payment/payment-history`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    const response = fetchData.data;
+    return response;
+  } catch (error) {
+    console.log('Error: ' + error);
   }
 };

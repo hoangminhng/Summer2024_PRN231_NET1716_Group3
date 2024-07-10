@@ -4,62 +4,40 @@ import { getOwnerMembershipHistory } from "../../../../api/Owner/ownerPackage";
 import { Table, TableProps, Tag } from "antd";
 import { NumberFormat } from "../../../../Utils/numberFormat";
 import { DateFormat } from "../../../../Utils/dateFormat";
-import { months } from "moment";
-import { register } from "module";
-import { Underline } from "docx";
+import moment from "moment";
+
+const statusStringMap: { [key: number]: string } = {
+    1: "CURRENT",
+    2: "EXPIRED",
+    3: "BE UPDATED",
+    4: "BE EXTENDED"
+};
+
+const statusColorMap: { [key: number]: string } = {
+    1: "green",
+    2: "red",
+    3: "grey",
+    4: "orange"
+};
 
 const PackageRegisterHistory: React.FC = () => {
     const [membershipDetailData, setMembershipDetailData] = useState<RegisterPackage[]>();
-    // const [infoData, setInfoData] = useState<MemberShipInformation>();
-    // const [idnumber, setID] = useState<number>();
     const { userId, token } = useContext(UserContext);
-
-
-    const statusStringMap: { [key: number]: string } = {
-        1: "CURRENT",
-        2: "EXPIRED",
-        3: "BE UPDATED",
-        4: "BE EXTENDED"
-    };
-
-
-    const statusColorMap: { [key: number]: string } = {
-        1: "green",
-        2: "red",
-        3: "grey",
-        4: "orange"
-    };
 
     const fetchMembershipHistory = async () => {
         try {
-            if (token != undefined && userId != undefined) {
-                let data: RegisterPackage[] | undefined;
-                data = await getOwnerMembershipHistory(token);
+            if (token && userId) {
+                const data = await getOwnerMembershipHistory(token);
                 setMembershipDetailData(data);
-                if (data?.length === undefined) {
-                    return;
-                }
             }
         } catch (error) {
             console.error("Error fetching package register history:", error);
         }
     };
 
-
-    // Helper function to slice data based on pagination
-    const getPagedData = (data: RegisterPackage[] | undefined, current: number, pageSize: number): RegisterPackage[] => {
-        if (data === undefined) {
-            return [];
-        }
-        const startIndex = (current - 1) * pageSize;
-        const endIndex = Math.min(startIndex + pageSize, data.length);
-        return data.slice(startIndex, endIndex);
-    };
-
     useEffect(() => {
         fetchMembershipHistory();
     }, [token]);
-
 
     const memberpackageHistory: TableProps<RegisterPackage>["columns"] = [
         {
@@ -68,59 +46,44 @@ const PackageRegisterHistory: React.FC = () => {
             render: (_text: any, _record: any, index: number) => index + 1,
         },
         {
-            title: "Package ",
+            title: "Package",
             dataIndex: "membershipName",
             width: "15%",
+            sorter: (a, b) => a.membershipName.localeCompare(b.membershipName),
         },
         {
             title: "Package Capacity",
             dataIndex: "capacityHostel",
             width: "10%",
+            sorter: (a, b) => a.capacityHostel - b.capacityHostel,
         },
         {
             title: "Package Duration",
             dataIndex: "month",
             width: "10%",
-            render: (month: number) => {
-                let unit = "months";
-                if (month === 1) {
-                    unit = "month"
-                }
-                const display = month + " " + unit;
-                return (
-                    display
-                )
-            }
+            render: (month: number) => `${month} ${month === 1 ? "month" : "months"}`,
+            sorter: (a, b) => a.month - b.month,
         },
         {
             title: "You Paid",
             dataIndex: "packageFee",
             width: "15%",
-            render: (packageFee: number) => {
-                return (
-                    NumberFormat(packageFee)
-                )
-            }
+            render: (packageFee: number) => NumberFormat(packageFee),
+            sorter: (a, b) => a.packageFee - b.packageFee,
         },
         {
             title: "Date Register",
             dataIndex: "dateRegister",
             width: "15%",
-            render: (dateRegister: Date) => {
-                return (
-                    DateFormat(dateRegister)
-                )
-            },
+            render: (dateRegister: Date) => DateFormat(dateRegister),
+            sorter: (a, b) => new Date(a.dateRegister).getTime() - new Date(b.dateRegister).getTime(),
         },
         {
             title: "Date Expire",
             dataIndex: "dateExpire",
             width: "15%",
-            render: (dateExpire: Date) => {
-                return (
-                    DateFormat(dateExpire)
-                )
-            },
+            render: (dateExpire: Date) => DateFormat(dateExpire),
+            sorter: (a, b) => new Date(a.dateExpire).getTime() - new Date(b.dateExpire).getTime(),
         },
         {
             title: "Status",
@@ -129,27 +92,37 @@ const PackageRegisterHistory: React.FC = () => {
             render: (status: number) => {
                 const statusString = statusStringMap[status];
                 const statusColor = statusColorMap[status];
-                if (statusString && statusColor) {
-                    return (
-                        <Tag
-                            color={statusColor}
-                            key={statusString}
-                        >
-                            {statusString}
-                        </Tag>
-                    );
-                } else {
-                    // Handle cases where status is not found in maps
-                    return <span>Unknown Status ({status})</span>;
-                }
+                return statusString && statusColor ? (
+                    <Tag color={statusColor} key={statusString}>
+                        {statusString}
+                    </Tag>
+                ) : (
+                    <span>Unknown Status ({status})</span>
+                );
             },
+            sorter: (a, b) => a.status - b.status,
         },
     ];
 
+
     return (
         <>
-            <div style={{ padding: '24px' }}>
-                <Table columns={memberpackageHistory}
+            <div
+                style={{
+                    width: "100%",
+                    textAlign: "center",
+                    fontSize: "20px",
+                    fontWeight: "bold",
+                    backgroundColor: "aliceblue",
+                    padding: "20px",
+                    marginBottom: "20px",
+                }}
+            >
+                <h2>Package Register History</h2>
+            </div>
+            <div style={{ padding: "24px" }}>
+                <Table
+                    columns={memberpackageHistory}
                     dataSource={membershipDetailData}
                     bordered
                     pagination={{ pageSize: 8 }}
@@ -158,6 +131,5 @@ const PackageRegisterHistory: React.FC = () => {
         </>
     );
 };
-
 
 export default PackageRegisterHistory;
