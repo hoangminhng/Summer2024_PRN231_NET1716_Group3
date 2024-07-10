@@ -1,5 +1,5 @@
-import { Col, Row } from "antd";
-import {ApiOutlined} from "@ant-design/icons"
+import { Col, Row, Spin } from "antd";
+import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
 import BillDetail from "../../../Component/Owner/BillDetail/indext";
 import BillForm from "../../../Component/Owner/BillForm";
 import { useContext, useEffect, useState } from "react";
@@ -69,7 +69,12 @@ const BillMonthlyForm: React.FC = () => {
 
   return (
     <>
-    {activePackage ? (
+    {packageLoading ? (
+        <Spin
+          spinning={true}
+          indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+        />
+      ) : activePackage ? (
     <div style={{ margin: 16 }}>
       <Row gutter={16}>
         <Col span={12}>

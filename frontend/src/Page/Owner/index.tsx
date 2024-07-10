@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -10,7 +10,8 @@ import {
   CalendarFilled,
   UserOutlined,
   DesktopOutlined,
-  ExceptionOutlined
+  ExceptionOutlined,
+  BellOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -18,6 +19,8 @@ import { Content } from "antd/es/layout/layout";
 const { Sider, Header, Footer } = Layout;
 import type { MenuProps } from "antd";
 import { UserContext } from "../../context/userContext";
+import { Odata } from "../../interface/Odata";
+import { getMemberNotifications } from "../../api/Member/memberNotification";
 
 type MenuItem = Required<MenuProps>["items"][number];
 function getItem(
@@ -36,13 +39,32 @@ function getItem(
 
 const OwnerLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
   const { logout } = useContext(UserContext);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
   const navigate = useNavigate();
-  const userId = localStorage.getItem('userId');
+  const { token, userId } = useContext(UserContext);
+  const fetchNotificationList = async () => {
+    try {
+      if (token != undefined) {
+        let data: Odata<notification> | undefined;
+        data = await getMemberNotifications(token, userId);
+        const unreadCount =
+          data?.value.filter((notification) => !notification.IsRead).length ||
+          0;
+        setNotificationCount(unreadCount);
+      }
+    } catch (error) {
+      console.error("Error fetching contract list:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotificationList();
+  }, []);
 
   const items: MenuItem[] = [
     getItem("Profile", "1", <UserOutlined />),
@@ -61,6 +83,16 @@ const OwnerLayout: React.FC = () => {
     ]),
     getItem("Appointment", "8", <CalendarFilled />),
     getItem("Complains", "12", <ExceptionOutlined />),
+    getItem(
+      <>
+        Notification{" "}
+        {notificationCount > 0 && (
+          <span style={{ color: "red" }}>({notificationCount})</span>
+        )}
+      </>,
+      "13",
+      <BellOutlined />
+    ),
     getItem("View Home", "9", <DesktopOutlined />),
     getItem("Logout", "10", <LogoutOutlined />),
   ].filter(Boolean) as MenuItem[];
@@ -102,7 +134,10 @@ const OwnerLayout: React.FC = () => {
         navigate("/owner/package/history");
         break;
       case "12":
-        navigate("/owner/complains")
+        navigate("/owner/complains");
+        break;
+      case "13":
+        navigate("/owner/notifications");
         break;
       default:
         break;

@@ -2,12 +2,14 @@ import { Input } from "@material-tailwind/react";
 import {
   Table,
   TableProps,
-  Tag
+  Tag, Button,
+  notification
 } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  getAccounts
+  getAccounts,
+  DeleteAccount
 } from "../../../../api/Admin/adminAccounts";
 import { useContext } from "react";
 import { UserContext } from "../../../../context/userContext";
@@ -32,6 +34,17 @@ const AdminAccounts: React.FC = () => {
       console.error("Error fetching account list:", error);
     }
   };
+  
+  const fetchDeleteAccount = async (accountID : number) => {
+    try{
+      if(token && accountID){
+        let data = await DeleteAccount(token, accountID);
+        return data;
+      }
+    }catch(error : any){
+      throw error;
+    }
+  }
 
   useEffect(() => {
     fetchAccountList();
@@ -47,6 +60,25 @@ const AdminAccounts: React.FC = () => {
       setFilteredData(filtered);
     }
   }, [searchInput, accountData]);
+
+  const DeleteAccountFunction = async (accountID : number) =>{
+    try{
+      const response = await fetchDeleteAccount(accountID);
+      if (response != undefined) {
+        openNotificationWithIcon("success", "Delete account successfully!");
+    }
+    }catch(error : any){
+      openNotificationWithIcon("error", "This account cannot be deleted because it has relationships with many other properties!");
+    }
+    await fetchAccountList()
+  }
+
+  const openNotificationWithIcon = (type: 'success' | 'error', description: string) => {
+    notification[type]({
+        message: "Notification Title",
+        description: description,
+    });
+};
 
 
   const columns: TableProps<Account>["columns"] = [
@@ -84,6 +116,17 @@ const AdminAccounts: React.FC = () => {
       dataIndex: "operation",
       render: (_: any, record: Account) => (
         <a onClick={() => navigate(`/admin/accounts/detail/${record.accountId}`)}>View details</a>
+      ),
+      width: "10%",
+    },
+    
+    {
+      title: "",
+      dataIndex: "operation",
+      render: (_: any, record: Account) => (
+        <Button onClick={() => DeleteAccountFunction(record.accountId)} style={{backgroundColor:"red", fontWeight:"bold"}}>
+            Delete Account
+            </Button>
       ),
       width: "10%",
     },

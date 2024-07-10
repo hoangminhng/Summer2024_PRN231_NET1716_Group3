@@ -14,6 +14,7 @@ const MemberRentedRoom: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState<MemberRoomRented | undefined>(undefined);
+    const navigate = useNavigate();
 
     const itemsPerPage = 3;
 
@@ -70,6 +71,9 @@ const MemberRentedRoom: React.FC = () => {
         }
     };
 
+    const handleDetailClick = (contractID: string) => {
+        navigate(`/rentedRoomsDetail/${contractID}`);
+      };
 
 
     return (
@@ -115,11 +119,7 @@ const MemberRentedRoom: React.FC = () => {
                                     <Button
                                         className="mx-2"
                                         type="primary"
-                                    // onClick={() =>
-                                    //     navigate(
-                                    //         `/member/contracts/detail/${roomItem.contractId}`
-                                    //     )
-                                    // }
+                                        onClick={() => handleDetailClick(roomItem.contractId.toString())}
                                     >
                                         View detail
                                     </Button>

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import RequiredAuth from "./Component/RequireAuth/requiredAuth";
 import AdminLayout from "./Page/Admin/adminLayout";
@@ -57,6 +57,9 @@ import MemberRentedRoom from "./Page/Member/MemberRentedRoom";
 import ComplainHistory from "./Page/Member/ComplainHistory";
 import OwnerComplains from "./Page/Owner/Complains";
 import Appointment from "./Page/Member/Appointment";
+import NotificationMember from "./Page/Member/Notification";
+import NotificationOwner from "./Page/Owner/Notification";
+import MemberRentedRoomDetail from "./Page/Member/MemberRentedRoomDetail";
 
 const roles = {
   Admin: 1,
@@ -67,28 +70,37 @@ const roles = {
 function App() {
   const { updateNotiStatus } = useContext(NotificationContext);
   const { userId } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const handleNotificationToastClicked = (path: string) => {
+    navigate(path);
+  };
 
   useEffect(() => {
     generateToken();
     onMessage(messaging, (payload) => {
-      console.log("Message received. ", payload);
       updateNotiStatus(true);
+      console.log(payload);
       if (payload.notification?.body) {
         const { title, body } = payload.notification;
         let status: string;
         let accountId: number;
+        let forwardToPath: string;
         console.log("Got in 1");
         if (payload.data) {
           status = payload.data.type;
           accountId = parseInt(payload.data.accountId);
+          forwardToPath = payload.data.forwardToPath;
           console.log("accountId: " + accountId);
           console.log("userId: " + userId);
           if (accountId == userId) {
             toast.custom(
               (t) => (
                 <div
-                  className={`${t.visible ? "animate-enter" : "animate-leave"
-                    } max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+                  onClick={() => handleNotificationToastClicked(forwardToPath)}
+                  className={`${
+                    t.visible ? "animate-enter" : "animate-leave"
+                  } max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
                 >
                   <div className="flex-1 w-0 p-4">
                     <div className="flex items-center justify-center">
@@ -110,7 +122,7 @@ function App() {
                 </div>
               ),
               {
-                duration: 1000,
+                duration: 2000,
               }
             );
           }
@@ -121,135 +133,146 @@ function App() {
 
   return (
     <div className="App">
-      <Router>
-        <Routes>
-          <Route path="/permission" element={<PermissionPage />} />
+      <Routes>
+        <Route path="/permission" element={<PermissionPage />} />
 
-          <Route path="/" element={<MemberLayout />}>
-            <Route index element={<Home />} />
-            <Route
-              path="/register"
-              element={
-                <ProtectedRoute>
-                  <Register />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/forget-password"
-              element={
-                <ProtectedRoute>
-                  <ForgetPassword />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="hostel/detail/:hostelID"
-              element={<MemberHostelDetail />}
-            />
-            <Route path="room/detail/:roomID" element={<MemberRoomDetails />} />
-          </Route>
-
-          <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="accounts" element={<Accounts />} />
-              <Route
-                path="accounts/detail/:accountId"
-                element={<AccountDetail />}
-              />
-              <Route path="memberships" element={<MemberShips />} />
-              <Route
-                path="memberships/detail/:accountID"
-                element={<MemberShipDetail />}
-              />
-              <Route path="hostels" element={<Hostels />} />
-
-              <Route
-                path="hostels/detail/:hostelID"
-                element={<HostelDetail />}
-              />
-              <Route path="packages" element={<Packages />} />
-              <Route path="transactions" element={<AdminTransaction />} />
-              <Route path="packages/new" element={<NewPackage />} />
-              <Route
-                path="packages/detail/:packageID"
-                element={<PackageDetail />}
-              />
-            </Route>
-          </Route>
-
-          <Route element={<RequiredAuth allowedRoles={[roles.Owner]} />}>
-            <Route path="/owner" element={<OwnerLayout />}>
-              <Route path="profile" element={<OwnerProfile />} />
-              <Route path="profile/change-information" element={<OwnerChangeProfile />} />
-              <Route path="profile/change-password" element={<OwnerChangePassword />} />
-              <Route path="hostels" element={<Hostel />} />
-              <Route path="hostels/:hostelId" element={<Room />} />
-              <Route
-                path="hostels/:hostelId/rooms/:roomId"
-                element={<RoomDetail />}
-              />
-              <Route path="contract/create" element={<OwnerContractCreate />} />
-              <Route path="contracts" element={<OwnerViewContract />} />
-              <Route
-                path="contracts/detail/:contractID"
-                element={<OwnerContractDetail />}
-              />
-              <Route path="bill-payment" element={<BillPayment />} />
-              <Route
-                path="bill-payment/bills/:contractId"
-                element={<BillList />}
-              />
-              <Route
-                path="bill-payment/bills/details/:billPaymentId"
-                element={<BillPaymentDetail />}
-              />
-              <Route
-                path="bill-payment/bills/form"
-                element={<BillMonthlyForm />}
-              />
-              <Route
-                path="bill-payment/create"
-                element={<BillCreate />}
-              />
-              <Route path="package" element={<OwnerPackage />} />
-              <Route path="package/history" element={<PackageRegisterHistory />} />
-              <Route path="appointments" element={<OwnerAppointment />} />
-              <Route
-                path="appointments/detail/:hostelID"
-                element={<OwnerAppointmentDetail />}
-              />
-              <Route path="complains" element={<OwnerComplains />} />
-            </Route>
-          </Route>
-
-          <Route element={<RequiredAuth allowedRoles={[roles.Member]} />}>
-            <Route path="/" element={<MemberLayout />}>
-              <Route path="contracts" element={<MemberViewContract />} />
-              <Route
-                path="contracts/detail/:contractID"
-                element={<MemberContractDetail />}
-              />
-              <Route path="payment" element={<PaymentHistory />} />
-              <Route path="appointments" element={<Appointment />} />
-              <Route path="profile" element={<MemberProfile />} />
-              <Route path="rentedRooms" element={<MemberRentedRoom />} />
-              <Route path="complains" element={<ComplainHistory />} />
-              <Route path="profile/change-information" element={<MemberChangeProfile />} />
-              <Route path="profile/change-password" element={<MemberChangePassword />} />
-            </Route>
-          </Route>
-
+        <Route path="/" element={<MemberLayout />}>
+          <Route index element={<Home />} />
           <Route
+            path="/register"
             element={
-              <RequiredAuth allowedRoles={[roles.Member, roles.Owner]} />
+              <ProtectedRoute>
+                <Register />
+              </ProtectedRoute>
             }
-          >
-            <Route path="/paymentsucess" element={<PaymentSucess />}></Route>
+          />
+          <Route
+            path="/forget-password"
+            element={
+              <ProtectedRoute>
+                <ForgetPassword />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="hostel/detail/:hostelID"
+            element={<MemberHostelDetail />}
+          />
+          <Route path="room/detail/:roomID" element={<MemberRoomDetails />} />
+        </Route>
+
+        <Route element={<RequiredAuth allowedRoles={[roles.Admin]} />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="accounts" element={<Accounts />} />
+            <Route
+              path="accounts/detail/:accountId"
+              element={<AccountDetail />}
+            />
+            <Route path="memberships" element={<MemberShips />} />
+            <Route
+              path="memberships/detail/:accountID"
+              element={<MemberShipDetail />}
+            />
+            <Route path="hostels" element={<Hostels />} />
+
+            <Route path="hostels/detail/:hostelID" element={<HostelDetail />} />
+            <Route path="packages" element={<Packages />} />
+            <Route path="transactions" element={<AdminTransaction />} />
+            <Route path="packages/new" element={<NewPackage />} />
+            <Route
+              path="packages/detail/:packageID"
+              element={<PackageDetail />}
+            />
           </Route>
-        </Routes>
-      </Router>
+        </Route>
+
+        <Route element={<RequiredAuth allowedRoles={[roles.Owner]} />}>
+          <Route path="/owner" element={<OwnerLayout />}>
+            <Route path="profile" element={<OwnerProfile />} />
+            <Route
+              path="profile/change-information"
+              element={<OwnerChangeProfile />}
+            />
+            <Route
+              path="profile/change-password"
+              element={<OwnerChangePassword />}
+            />
+            <Route path="hostels" element={<Hostel />} />
+            <Route path="hostels/:hostelId" element={<Room />} />
+            <Route
+              path="hostels/:hostelId/rooms/:roomId"
+              element={<RoomDetail />}
+            />
+            <Route path="contract/create" element={<OwnerContractCreate />} />
+            <Route path="contracts" element={<OwnerViewContract />} />
+            <Route
+              path="contracts/detail/:contractID"
+              element={<OwnerContractDetail />}
+            />
+            <Route path="bill-payment" element={<BillPayment />} />
+            <Route
+              path="bill-payment/bills/:contractId"
+              element={<BillList />}
+            />
+            <Route
+              path="bill-payment/bills/details/:billPaymentId"
+              element={<BillPaymentDetail />}
+            />
+            <Route
+              path="bill-payment/bills/form"
+              element={<BillMonthlyForm />}
+            />
+            <Route path="bill-payment/create" element={<BillCreate />} />
+            <Route path="package" element={<OwnerPackage />} />
+            <Route
+              path="package/history"
+              element={<PackageRegisterHistory />}
+            />
+            <Route path="appointments" element={<OwnerAppointment />} />
+            <Route
+              path="appointments/detail/:hostelID"
+              element={<OwnerAppointmentDetail />}
+            />
+            <Route path="complains" element={<OwnerComplains />} />
+            <Route path="notifications" element={<NotificationOwner />} />
+          </Route>
+        </Route>
+
+        <Route element={<RequiredAuth allowedRoles={[roles.Member]} />}>
+          <Route path="/" element={<MemberLayout />}>
+            <Route path="contracts" element={<MemberViewContract />} />
+            <Route
+              path="contracts/detail/:contractID"
+              element={<MemberContractDetail />}
+            />
+            <Route path="payment" element={<PaymentHistory />} />
+            <Route path="appointments" element={<Appointment />} />
+            <Route path="profile" element={<MemberProfile />} />
+            <Route path="rentedRooms" element={<MemberRentedRoom />} />
+            <Route
+              path="rentedRoomsDetail/:contractID"
+              element={<MemberRentedRoomDetail />}
+            />
+            <Route path="complains" element={<ComplainHistory />} />
+            <Route
+              path="profile/change-information"
+              element={<MemberChangeProfile />}
+            />
+            <Route
+              path="profile/change-password"
+              element={<MemberChangePassword />}
+            />
+            <Route path="notification" element={<NotificationMember />} />
+          </Route>
+        </Route>
+
+        <Route
+          element={<RequiredAuth allowedRoles={[roles.Member, roles.Owner]} />}
+        >
+          <Route path="/paymentsucess" element={<PaymentSucess />}></Route>
+        </Route>
+      </Routes>
     </div>
   );
 }

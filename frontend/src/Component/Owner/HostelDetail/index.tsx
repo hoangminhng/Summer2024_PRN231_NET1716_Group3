@@ -4,16 +4,20 @@ import {
   Descriptions,
   Flex,
   Image,
+  Input,
   Modal,
   Popconfirm,
   Select,
   Spin,
+  notification,
 } from "antd";
 import Title from "antd/es/typography/Title";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
 import {
+  getHostelType,
   getOwnerHostelDetail,
+  updateHostel,
   updateHostelStatus,
 } from "../../../api/Owner/ownerHostel";
 import { UserContext } from "../../../context/userContext";
@@ -39,7 +43,15 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
   );
   const [statusToChange, setStatusToChange] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
-  const { token } = useContext(UserContext);
+  const [isEditing, setIsEditing] = useState(false);
+  const [hostelTypes, setHostelTypes] = useState<HostelType[]>([]);
+  const [editValues, setEditValues] = useState({
+    hostelName: "",
+    hostelAddress: "",
+    hostelDescription: "",
+    hostelType: "",
+  });
+  const { token, userId } = useContext(UserContext);
 
   const fetchHostelDetail = async () => {
     if (hostelId !== undefined) {
@@ -57,9 +69,21 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
     }
   };
 
+  const fetchHostelTypes = async () => {
+    try {
+      const response = await getHostelType();
+      if (response) {
+        setHostelTypes(response);
+      }
+    } catch (error) {
+      console.error("Failed to fetch hostel types:", error);
+    }
+  };
+
   useEffect(() => {
     if (modalOpen) {
       fetchHostelDetail();
+      fetchHostelTypes();
     }
   }, [modalOpen, hostelId]);
 
@@ -93,6 +117,76 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
     setOpen(true);
   };
 
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  const handleConfirmEdit = async () => {
+    if (token && hostelId && hostelDetailData && userId) {
+      setLoading(true);
+      try {
+        const selectedType = hostelTypes.find(
+          (type) => type.value === editValues.hostelType
+        );
+
+        if (!selectedType) {
+          console.error("Selected hostel type not found in hostelTypes array.");
+          return;
+        }
+        console.log("Information update: ", editValues);
+        const updateDetails: UpdateHostelRequest = {
+          HostelName: editValues.hostelName,
+          HostelAddress: editValues.hostelAddress,
+          HostelDescription: editValues.hostelDescription,
+          HostelType: selectedType.key,
+          AccountID: userId,
+        };
+
+        const response = await updateHostel(token, hostelId, updateDetails);
+
+        if (response.statusCode === 200) {
+          notification.success({
+            message: "Success",
+            description: response.message,
+          });
+
+          fetchHostelDetail();
+          setIsEditing(false);
+          setModalOpen(false);
+          onClose();
+        }
+      } catch (error) {
+        console.error("Error updating hostel details:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setEditValues({
+      ...editValues,
+      [field]: value,
+    });
+  };
+
+  const handleTypeChange = (value: string) => {
+    setEditValues({
+      ...editValues,
+      hostelType: value,
+    });
+  };
+
+  const handleEdit = () => {
+    setEditValues({
+      hostelName: hostelDetailData?.hostelName || "",
+      hostelAddress: hostelDetailData?.hostelAddress || "",
+      hostelDescription: hostelDetailData?.hostelDescription || "",
+      hostelType: hostelDetailData?.hostelType || "",
+    });
+    setIsEditing(true);
+  };
+
   return (
     <Modal
       centered
@@ -105,11 +199,27 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
       }
       open={modalOpen}
       onCancel={() => setModalOpen(false)}
-      footer={[
-        <Button key="submit" type="primary" onClick={() => setModalOpen(false)}>
-          OK
-        </Button>,
-      ]}
+      footer={
+        isEditing ? (
+          <>
+            <Button key="confirm" type="primary" onClick={handleConfirmEdit}>
+              Confirm
+            </Button>
+            <Button key="cancel" onClick={handleCancelEdit}>
+              Cancel
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button key="edit" type="primary" onClick={handleEdit}>
+              Edit
+            </Button>
+            <Button key="ok" onClick={() => setModalOpen(false)}>
+              OK
+            </Button>
+          </>
+        )
+      }
     >
       {loading ? (
         <div style={{ textAlign: "center" }}>
@@ -133,17 +243,53 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
             ))}
           </Carousel>
           <Descriptions bordered style={{ marginTop: 20 }}>
-            <Descriptions.Item label="Name" span={2}>
-              {hostelDetailData?.hostelName}
+            <Descriptions.Item label="Name" span={1}>
+              {isEditing ? (
+                <Input
+                  value={editValues.hostelName}
+                  onChange={(e) =>
+                    handleInputChange("hostelName", e.target.value)
+                  }
+                />
+              ) : (
+                hostelDetailData?.hostelName
+              )}
             </Descriptions.Item>
-            <Descriptions.Item label="Type" span={1}>
-              {hostelDetailData?.hostelType}
+            <Descriptions.Item label="Type" span={2}>
+              {isEditing ? (
+                <Select
+                  value={editValues?.hostelType}
+                  onChange={handleTypeChange}
+                  style={{ width: 200 }}
+                  options={hostelTypes}
+                />
+              ) : (
+                hostelDetailData?.hostelType
+              )}
             </Descriptions.Item>
-            <Descriptions.Item label="Address" span={2}>
-              {hostelDetailData?.hostelAddress}
+            <Descriptions.Item label="Address" span={3}>
+              {isEditing ? (
+                <Input
+                  value={editValues?.hostelAddress}
+                  onChange={(e) =>
+                    handleInputChange("hostelAddress", e.target.value)
+                  }
+                />
+              ) : (
+                hostelDetailData?.hostelAddress
+              )}
             </Descriptions.Item>
             <Descriptions.Item label="Description" span={3}>
-              {hostelDetailData?.hostelDescription}
+              {isEditing ? (
+                <Input.TextArea
+                  value={editValues?.hostelDescription}
+                  onChange={(e) =>
+                    handleInputChange("hostelDescription", e.target.value)
+                  }
+                />
+              ) : (
+                hostelDetailData?.hostelDescription
+              )}
             </Descriptions.Item>
             <Descriptions.Item label="Status" span={3}>
               <Select
@@ -178,7 +324,7 @@ const HostelDetail: React.FC<HostelDetailProps> = ({
                 </Popconfirm>
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="Available Rooms" span={2}>
+            <Descriptions.Item label="Available Rooms" span={1}>
               {hostelDetailData?.numOfAvailableRoom}
             </Descriptions.Item>
             <Descriptions.Item label="Total Rooms" span={2}>
