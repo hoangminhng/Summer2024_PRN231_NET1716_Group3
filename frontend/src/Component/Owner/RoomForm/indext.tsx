@@ -74,8 +74,13 @@ const RoomForm: React.FC<RoomFormProps> = ({
   const [typeServices, setTypeServices] = useState<TypeService[]>([]);
   const [current, setCurrent] = useState(0);
   const [formData, setFormData] = useState<any>({});
-  const [selectedServices, setSelectedServices] = useState<number[]>([]);
+  const [selectedServices, setSelectedServices] = useState<number[]>([1, 2]);
   const [isCreateButtonEnabled, setIsCreateButtonEnabled] = useState(false);
+
+  const defaultSelectedServices = [
+    { typeService: 1, price: 0 }, // Electricity
+    { typeService: 2, price: 0 }, // Water
+  ];
 
   useEffect(() => {
     setIsCreateButtonEnabled(selectedServices.length > 0);
@@ -209,9 +214,14 @@ const RoomForm: React.FC<RoomFormProps> = ({
   };
 
   const handleClearServices = () => {
-    setSelectedServices([]);
-    setIsCreateButtonEnabled(false);
-    form.setFieldsValue({ services: [] });
+    const filteredServices = selectedServices.filter(
+      (serviceId) => serviceId === 1 || serviceId === 2
+    );
+    setSelectedServices(filteredServices);
+    setIsCreateButtonEnabled(filteredServices.length > 0);
+    form.setFieldsValue({
+      services: filteredServices.map((id) => ({ typeService: id, price: 0 })),
+    });
   };
 
   return (
@@ -325,7 +335,7 @@ const RoomForm: React.FC<RoomFormProps> = ({
             <Title level={3} style={{ marginBottom: 10 }}>
               Room Services
             </Title>
-            <Form.List name="services">
+            <Form.List name="services" initialValue={defaultSelectedServices}>
               {(fields, { add }) => (
                 <>
                   {fields.map(({ key, name, ...restField }) => (
@@ -376,6 +386,16 @@ const RoomForm: React.FC<RoomFormProps> = ({
                             required: true,
                             message: "Please input the price!",
                           },
+                          () => ({
+                            validator(_, value) {
+                              if (value > 0) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                new Error("Price must be greater than 0!")
+                              );
+                            },
+                          }),
                         ]}
                       >
                         <InputNumber
@@ -393,6 +413,7 @@ const RoomForm: React.FC<RoomFormProps> = ({
                       onClick={() => add()}
                       block
                       icon={<PlusOutlined />}
+                      disabled={selectedServices.length >= typeServices.length}
                     >
                       Add
                     </Button>
