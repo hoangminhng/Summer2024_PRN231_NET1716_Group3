@@ -8,6 +8,8 @@ export const getColorByStatus = (status: number) => {
       return "orange";
     case 3:
       return "red";
+    case 4:
+      return "yellow";
     default:
       return "default";
   }
@@ -23,6 +25,8 @@ export const getStatusText = (status: number) => {
       return "Hiring";
     case 3:
       return "Fixed";
+    case 4:
+      return "Hire directly";
     default:
       return "Unknown";
   }
