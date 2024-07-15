@@ -41,7 +41,7 @@ export const getOwnerRoomDetail = async (roomId: number, token: string) => {
 export const getRoomOwnerContract = async (hostelId: number, token: string) => {
   try {
     const fetchData = await axios.get<RoomOwnerContract[]>(
-      `${baseUrl}/api/rooms/${hostelId}/list`,
+      `${baseUrl}/api/rooms/${hostelId}/list-for-contract`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
