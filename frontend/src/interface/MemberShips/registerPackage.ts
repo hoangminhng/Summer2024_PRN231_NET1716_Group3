@@ -1,6 +1,6 @@
 interface RegisterPackage {
   memberShipTransactionID: number;
-  memberShipName: string;
+  membershipName: string;
   memberShipID: number;
   capacityHostel: number;
   month: number;

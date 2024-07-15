@@ -69,31 +69,22 @@ export function AvatarDropdown() {
     if (path === "signout") {
       logout();
       navigate("/");
-    } else if (path === "profile") {
-      navigate("profile");
-    } else if (path === "contracts") {
-      navigate("contracts");
-    } else if (path === "payment") {
-      navigate("payment");
-    } else if (path === "rentedRooms") {
-      navigate("rentedRooms");
-    } else if (path === "complains") {
-      navigate("complains");
-    } else if (path === "appointments") {
-      navigate("appointments");
+    } else {
+      navigate(path);
     }
     closeMenu();
   };
+
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
       <MenuHandler>
         <Button
           variant="text"
           color="blue-gray"
-          className="flex items-center gap-1 py-0.5 pr-2 pl-0.5"
+          className="flex items-center gap-1 py-0.5 pr-2 pl-0.5 custom-dropdown-button"
           placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+          onPointerEnterCapture={() => { }}
+          onPointerLeaveCapture={() => { }}
         >
           <Avatar
             variant="circular"
@@ -102,23 +93,21 @@ export function AvatarDropdown() {
             className="border border-gray-900 p-0.5"
             src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
             placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+            onPointerEnterCapture={() => { }}
+            onPointerLeaveCapture={() => { }}
           />
-
           <ChevronDownIcon
             strokeWidth={2.5}
-            className={`h-3 w-3 transition-transform ${
-              isMenuOpen ? "rotate-180" : ""
-            }`}
+            className={`h-3 w-3 transition-transform ${isMenuOpen ? "rotate-180" : ""
+              }`}
           />
         </Button>
       </MenuHandler>
       <MenuList
-        className="py-2 pr-5 pl-0"
+        className="py-2 pr-5 pl-0 custom-dropdown-menu"
         placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
+        onPointerEnterCapture={() => { }}
+        onPointerLeaveCapture={() => { }}
       >
         {profileMenuItems.map(({ label, icon, path }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
@@ -126,11 +115,10 @@ export function AvatarDropdown() {
             <button
               key={label}
               onClick={() => handleClick(path)}
-              className={`flex items-center gap-2 rounded py-3 text-sm text-gray-700 dark:text-gray-400 w-full mx-3 ${
-                isLastItem
-                  ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : "hover:bg-slate-500/10 focus:bg-slate-500/10 active:bg-slate-500/10"
-              }`}
+              className={`flex items-center gap-2 rounded py-3 text-sm text-gray-700 dark:text-gray-400 w-full mx-3 ${isLastItem
+                ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                : "hover:bg-slate-500/10 focus:bg-slate-500/10 active:bg-slate-500/10"
+                }`}
             >
               {React.createElement(icon, {
                 className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,

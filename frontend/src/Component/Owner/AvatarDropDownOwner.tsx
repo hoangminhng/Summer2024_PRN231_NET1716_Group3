@@ -48,7 +48,7 @@ export function AvatarDropdownOwner() {
         <Button
           variant="text"
           color="blue-gray"
-          className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
+          className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto custom-dropdown-button"
           placeholder=""
           onPointerEnterCapture={() => { }}
           onPointerLeaveCapture={() => { }}
@@ -71,7 +71,7 @@ export function AvatarDropdownOwner() {
         </Button>
       </MenuHandler>
       <MenuList
-        className="p-1"
+        className="p-1 custom-dropdown-menu"
         placeholder=""
         onPointerEnterCapture={() => { }}
         onPointerLeaveCapture={() => { }}
@@ -83,8 +83,8 @@ export function AvatarDropdownOwner() {
               key={label}
               onClick={() => handleClick(path)}
               className={`flex items-center gap-2 rounded p-3 text-sm text-gray-700 dark:text-gray-400${isLastItem
-                  ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : ""
+                ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                : ""
                 }`}
             >
               {React.createElement(icon, {

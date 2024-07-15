@@ -1,12 +1,7 @@
 import { Card, Button, Col, Row, Pagination, Tag, Table, TableProps } from "antd";
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
-import { NumberFormat } from "../../../Utils/numberFormat";
-import { MemberRoomRented } from "../../../interface/Rooms/MemberRoomRented";
-import { getMemberRentedRoom } from "../../../api/Member/memberRooms";
-import moment from 'moment'
-import CreateComplainModal from "../../../Component/User/CreateComplainModal";
+import moment from 'moment';
 import { Complain } from "../../../interface/Complains/Complain";
 import { Odata } from "../../../interface/Odata";
 import { getMemberComplains } from "../../../api/Member/memberComplain";
@@ -43,7 +38,6 @@ const ComplainHistory: React.FC = () => {
         2: "green",
     };
 
-
     const memberComplainHistory: TableProps<Complain>["columns"] = [
         {
             title: "No",
@@ -54,16 +48,19 @@ const ComplainHistory: React.FC = () => {
             title: "Room",
             dataIndex: "RoomName",
             width: "10%",
+            sorter: (a, b) => a.RoomName.localeCompare(b.RoomName), // Add sorter property
         },
         {
             title: "Hostel",
             dataIndex: "HostelName",
             width: "10%",
+            sorter: (a, b) => a.HostelName.localeCompare(b.HostelName), // Add sorter property
         },
         {
             title: "Owner Name",
             dataIndex: "OwnerName",
             width: "10%",
+            sorter: (a, b) => a.OwnerName.localeCompare(b.OwnerName), // Add sorter property
         },
         {
             title: "Complain",
@@ -72,30 +69,26 @@ const ComplainHistory: React.FC = () => {
             render: (text: string) => (
                 <span dangerouslySetInnerHTML={{ __html: text }} />
             ),
+            sorter: (a, b) => a.ComplainText.localeCompare(b.ComplainText), // Add sorter property
         },
         {
             title: "Date Created",
             dataIndex: "DateComplain",
             width: "20%",
-            render: (dateComplain: Date) => {
-                return (
-                    moment(dateComplain).format("DD-MM-YYYY HH:mm:ss")
-                )
-            }
+            render: (dateComplain: Date) => moment(dateComplain).format("DD-MM-YYYY HH:mm:ss"),
+            sorter: (a, b) => new Date(a.DateComplain).getTime() - new Date(b.DateComplain).getTime(), // Add sorter property
         },
         {
             title: "Response",
             dataIndex: "ComplainResponse",
             width: "20%",
-            render: (text: string | null) => ( // Allow null type for dataIndex
-                text ? (
-                    <span dangerouslySetInnerHTML={{ __html: text }} /> // Use dangerouslySetInnerHTML (with caution)
-                ) : (
-                    <span>___</span>
-                )
-            )
+            render: (text: string | null) => text ? (
+                <span dangerouslySetInnerHTML={{ __html: text }} />
+            ) : (
+                <span>___</span>
+            ),
+            sorter: (a, b) => (a.ComplainResponse || "").localeCompare(b.ComplainResponse || ""), // Add sorter property
         },
-
         {
             title: "Date Response",
             dataIndex: "DateUpdate",
@@ -103,13 +96,13 @@ const ComplainHistory: React.FC = () => {
             render: (dateUpdate: Date) => {
                 let display = "";
                 if (dateUpdate === undefined || dateUpdate === null) {
-                    display = "___"
-                } else
-                    display = moment(dateUpdate).format("DD-MM-YYYY: HH:mm:ss")
-                return (
-                    display
-                )
-            }
+                    display = "___";
+                } else {
+                    display = moment(dateUpdate).format("DD-MM-YYYY: HH:mm:ss");
+                }
+                return display;
+            },
+            sorter: (a, b) => new Date(a.DateUpdate).getTime() - new Date(b.DateUpdate).getTime(), // Add sorter property
         },
         {
             title: "Status",
@@ -120,44 +113,44 @@ const ComplainHistory: React.FC = () => {
                 const statusColor = statusColorMap[status];
                 if (statusString && statusColor) {
                     return (
-                        <Tag
-                            color={statusColor}
-                            key={statusString}
-                        >
+                        <Tag color={statusColor} key={statusString}>
                             {statusString}
                         </Tag>
                     );
                 } else {
-                    // Handle cases where status is not found in maps
                     return <span>Unknown Status ({status})</span>;
                 }
             },
+            sorter: (a, b) => a.Status - b.Status, // Add sorter property
         },
     ];
 
     return (
-        <> <div
-            style={{
-                width: "100%",
-                textAlign: "center",
-                fontSize: "20",
-                fontWeight: "bold",
-                backgroundColor: "aliceblue",
-                padding: "20px",
-                marginBottom: "20px",
-            }}
-        >
-            <h2>Complain History</h2>
-        </div>
-            <div style={{ padding: '24px' }}>
-                <Table columns={memberComplainHistory}
+        <>
+            <div
+                style={{
+                    width: "100%",
+                    textAlign: "center",
+                    fontSize: "20",
+                    fontWeight: "bold",
+                    backgroundColor: "aliceblue",
+                    padding: "20px",
+                    marginBottom: "20px",
+                    zIndex: "0",
+                }}
+            >
+                <h2>Complain History</h2>
+            </div>
+            <div style={{ padding: '24px', zIndex: 0 }}>
+                <Table
+                    columns={memberComplainHistory}
                     dataSource={complainData?.value}
                     bordered
                     pagination={{ pageSize: 8 }}
                 />
             </div>
-
         </>
     );
 };
+
 export default ComplainHistory;
