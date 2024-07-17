@@ -1,12 +1,15 @@
 import { CalendarDaysIcon, CreditCardIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { truncateText } from "../../../Utils/truncateText";
+import { Odata } from "../../../interface/Odata";
+import { markNotificationAsRead } from "../../../api/Member/memberNotification";
+import { UserContext } from "../../../context/userContext";
 
 interface NotificationListProps {
   closeNotiList: () => void;
-  notificationList: notification[] | undefined;
+  notificationList: Odata<notification> | undefined;
 }
 
 interface TabProps {
@@ -30,14 +33,18 @@ const NotificationList: React.FC<NotificationListProps> = ({
   notificationList,
 }) => {
   const navigate = useNavigate();
+  const { token } = useContext(UserContext);
   const handleNotiClicked = (noti: notification) => {
+    if (noti.IsRead == false && token != undefined) {
+      markNotificationAsRead(token, noti.NotificationId);
+    }
     closeNotiList();
-    navigate(noti.forward_to_path);
+    navigate(noti.ForwardToPath);
   };
   const [activeTab, setActiveTab] = useState<string>(tabs[0].id);
 
-  const filteredNotifications = notificationList?.filter((noti) =>
-    activeTab === "unReadNotification" ? !noti.is_read : noti.is_read
+  const filteredNotifications = notificationList?.value?.filter((noti) =>
+    activeTab === "unReadNotification" ? !noti.IsRead : noti.IsRead
   );
 
   const handleButtonReadAll = () => {
@@ -91,7 +98,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
                 onClick={() => handleNotiClicked(noti)}
               >
                 <div className="mx-2">
-                  {noti.notification_type === 1 ? (
+                  {noti.NotificationType === 1 ? (
                     <CalendarDaysIcon className="w-6 h-6 text-blue-500" />
                   ) : (
                     <CreditCardIcon className="w-6 h-6 text-blue-500" />
@@ -100,16 +107,16 @@ const NotificationList: React.FC<NotificationListProps> = ({
                 <div className="flex items-center w-full">
                   <div className="flex flex-col items-start w-full">
                     <h2 className="text-lg font-bold dark:text-white">
-                      {noti.title}
+                      {noti.Title}
                     </h2>
                     <p className="text-base text-start text-gray-500">
-                      {truncateText(noti.notification_text, 50)}
+                      {truncateText(noti.NotificationText, 50)}
                     </p>
                     <p className="text-xs text-gray-400">
-                      {dayjs(noti.create_date).format("DD/MM/YYYY")}
+                      {dayjs(noti.CreateDate).format("DD/MM/YYYY")}
                     </p>
                   </div>
-                  {noti.is_read ? null : (
+                  {noti.IsRead ? null : (
                     <div className="h-full text-5xl text-[#2563eb] flex flex-col items-center">
                       &#x2022;
                     </div>
