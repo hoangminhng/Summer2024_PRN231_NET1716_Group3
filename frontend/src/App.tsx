@@ -60,6 +60,7 @@ import Appointment from "./Page/Member/Appointment";
 import NotificationMember from "./Page/Member/Notification";
 import NotificationOwner from "./Page/Owner/Notification";
 import MemberRentedRoomDetail from "./Page/Member/MemberRentedRoomDetail";
+import InvalidPage from "./Page/InvaldPage";
 
 const roles = {
   Admin: 1,
@@ -135,6 +136,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/permission" element={<PermissionPage />} />
+        <Route path="/invalid" element={<InvalidPage />} />
 
         <Route path="/" element={<MemberLayout />}>
           <Route index element={<Home />} />

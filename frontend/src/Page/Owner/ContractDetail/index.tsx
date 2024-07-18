@@ -57,6 +57,18 @@ const OwnerContractDetail = () => {
         })
     );
 
+    const contractDescriptionParagraphs = splitHtmlIntoParagraphs(contactDetailData?.roomDescription ?? "<p>......</p>");
+    const contractDescriptionDocxParagraphs = contractDescriptionParagraphs.map(text => 
+        new Paragraph({
+            children: [
+                new TextRun({
+                    text,
+                    break: 1,
+                }),
+            ],
+        })
+    );
+
     const createdDate = formatDate(contactDetailData?.createdDate || new Date);
     const dateStart = formatDate(contactDetailData?.dateStart|| new Date);
     const dateEnd = formatDate(contactDetailData?.dateEnd|| new Date);
@@ -239,7 +251,7 @@ const OwnerContractDetail = () => {
                             bold: true,
                             size: 24,
                         }),
-                        new TextRun({text : `${contactDetailData?.roomDescription || "......"}`, break: 3}),
+                        ...contractDescriptionDocxParagraphs,
                     ],
                 }),
                 new Paragraph({
@@ -291,7 +303,7 @@ const OwnerContractDetail = () => {
                             text: `${contactDetailData?.ownerAccountName || "......"}\t\t\t\t\t\t\t\t\t`,
                         }),
                         new TextRun({
-                            text: contactDetailData?.status === 0 ? contactDetailData?.studentLeadAccountName : "........",
+                            text: contactDetailData?.status === 1 ? contactDetailData?.studentLeadAccountName : "........",
                         }),
                     ],
                 }),
@@ -465,8 +477,7 @@ const OwnerContractDetail = () => {
                     <p style={{ fontSize: "20px", fontWeight: "bold" }}>
                         Điều 3. CÁC THÔNG TIN VỀ PHÒNG
                     </p>
-                    {contactDetailData?.roomDescription || "......"} <br />
-
+                    <div dangerouslySetInnerHTML={{ __html: contactDetailData?.roomDescription|| "......" }} /> <br />
                     <p style={{ fontSize: "20px", fontWeight: "bold" }}>
                         Điều 4. ĐIỀU KHOẢN HỢP ĐỒNG
                     </p>
@@ -506,7 +517,7 @@ const OwnerContractDetail = () => {
                                 Bên B
                             </p>
                             <p>
-                                {contactDetailData?.status === 0
+                                {contactDetailData?.status === 1
                                     ? contactDetailData?.studentLeadAccountName
                                     : "......"}
                             </p>

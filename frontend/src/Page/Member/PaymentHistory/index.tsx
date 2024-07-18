@@ -16,12 +16,11 @@ const columns: TableColumnsType<BillPaymentMember> = [
     width: 10,
   },
   {
-    title: "Datetime",
-    dataIndex: "monthYear",
-    defaultSortOrder: "descend",
-    render: (_, record) => `${dayjs(record.createDate).format("DD/MM/YYYY")}`,
+    title: "Create date",
+    dataIndex: "createdDate",
+    render: (_, record) => `${dayjs(record.createdDate).format("DD/MM/YYYY")}`,
     sorter: (a, b) =>
-      new Date(a.createDate).getTime() - new Date(b.createDate).getTime(),
+      new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime(),
     sortIcon: () => <ChevronUpDownIcon className="w-5 h-5" />,
     width: 15,
   },

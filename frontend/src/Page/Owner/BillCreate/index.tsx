@@ -100,6 +100,24 @@ const BillCreate: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    let isValid = true;
+
+    bills.forEach((bill) => {
+      bill.billPaymentDetails.forEach((service) => {
+        if (service.newNumberService < service.oldNumberService) {
+          isValid = false;
+          notification.error({
+            message: "Validation Error",
+            description: `New number service (${service.newNumberService}) cannot be less than the old number service (${service.oldNumberService}).`,
+          });
+        }
+      });
+    });
+
+    if (!isValid) {
+      return;
+    }
+
     const requestData = collectDataForAPI();
     console.log(`Request Data: ${JSON.stringify(requestData, null, 2)}`);
     try {
