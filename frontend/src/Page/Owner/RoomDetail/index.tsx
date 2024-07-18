@@ -51,7 +51,9 @@ const RoomDetail: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [statusToChange, setStatusToChange] = useState<number | null>(null);
-  const [currentStatus, setCurrentStatus] = useState<number | undefined>(undefined);
+  const [currentStatus, setCurrentStatus] = useState<number | undefined>(
+    undefined
+  );
   const [popConfirmOpen, setPopConfirmOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
   const [activePackage, setActivePackage] = useState<RegisterPackage>();
@@ -427,9 +429,10 @@ const RoomDetail: React.FC = () => {
                         style={{ width: 120 }}
                         options={[
                           { value: 0, label: "Available" },
-                          { value: 1, label: "Viewing" },
-                          { value: 2, label: "Hiring" },
+                          { value: 1, label: "Viewing", disabled: true },
+                          { value: 2, label: "Hiring", disabled: true },
                           { value: 3, label: "Fixed" },
+                          { value: 4, label: "Hire direcly", disabled: true },
                         ]}
                       ></Select>
                       {statusToChange !== null && (
