@@ -427,8 +427,6 @@ const RoomDetail: React.FC = () => {
                         style={{ width: 120 }}
                         options={[
                           { value: 0, label: "Available" },
-                          { value: 1, label: "Viewing" },
-                          { value: 2, label: "Hiring" },
                           { value: 3, label: "Fixed" },
                         ]}
                       ></Select>
