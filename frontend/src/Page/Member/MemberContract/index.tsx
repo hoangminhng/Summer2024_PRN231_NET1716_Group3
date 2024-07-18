@@ -45,6 +45,17 @@ const MemberViewContract: React.FC = () => {
         ],
       })
   );
+  const contractDescriptionParagraphs = splitHtmlIntoParagraphs(contactDetailData?.roomDescription ?? "<p>......</p>");
+    const contractDescriptionDocxParagraphs = contractDescriptionParagraphs.map(text => 
+        new Paragraph({
+            children: [
+                new TextRun({
+                    text,
+                    break: 1,
+                }),
+            ],
+        })
+    );
 
   const createdDate = formatDate(contactDetailData?.createdDate || new Date());
   const dateStart = formatDate(contactDetailData?.dateStart || new Date());
@@ -285,10 +296,7 @@ const MemberViewContract: React.FC = () => {
                   bold: true,
                   size: 24,
                 }),
-                new TextRun({
-                  text: `${contactDetailData?.roomDescription || "......"}`,
-                  break: 3,
-                }),
+                ...contractDescriptionDocxParagraphs,
               ],
             }),
             new Paragraph({
@@ -343,7 +351,7 @@ const MemberViewContract: React.FC = () => {
                 }),
                 new TextRun({
                   text:
-                    contactDetailData?.status === 0
+                    contactDetailData?.status === 1
                       ? contactDetailData?.studentLeadAccountName
                       : "........",
                 }),

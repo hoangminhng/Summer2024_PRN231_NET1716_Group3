@@ -43,6 +43,18 @@ const OwnerViewContract : React.FC = () =>{
             ],
         })
     );
+
+    const contractDescriptionParagraphs = splitHtmlIntoParagraphs(contactDetailData?.roomDescription ?? "<p>......</p>");
+    const contractDescriptionDocxParagraphs = contractDescriptionParagraphs.map(text => 
+        new Paragraph({
+            children: [
+                new TextRun({
+                    text,
+                    break: 1,
+                }),
+            ],
+        })
+    );
     
 
     const createdDate = formatDate(contactDetailData?.createdDate || new Date);
@@ -266,7 +278,7 @@ const OwnerViewContract : React.FC = () =>{
                                 bold: true,
                                 size: 24,
                             }),
-                            new TextRun({text : `${contactDetailData?.roomDescription || "......"}`, break: 3}),
+                            ...contractDescriptionDocxParagraphs,
                         ],
                     }),
                     new Paragraph({
@@ -318,7 +330,7 @@ const OwnerViewContract : React.FC = () =>{
                                 text: `${contactDetailData?.ownerAccountName || "......"}\t\t\t\t\t\t\t\t\t`,
                             }),
                             new TextRun({
-                                text: contactDetailData?.status === 0 ? contactDetailData?.studentLeadAccountName : "........",
+                                text: contactDetailData?.status === 1 ? contactDetailData?.studentLeadAccountName : "........",
                             }),
                         ],
                     }),
