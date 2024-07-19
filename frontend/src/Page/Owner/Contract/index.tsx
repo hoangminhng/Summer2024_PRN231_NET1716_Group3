@@ -19,6 +19,42 @@
     import 'react-quill/dist/quill.snow.css'; 
 import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
+const initialContent = `
+<p>– Trách nhiệm của bên A:</p>
+<ul>
+<li>Bên A cam kết sẽ bảo đảm quyền sử dụng hợp pháp và tạo mọi điều kiện thuận lợi để bên B sử dụng mặt bằng kinh doanh bán quần áo hiệu quả.</li>
+<li>Bên A sẽ bàn giao toàn bộ đất, nhà ở và nội thất đã có như đã thoả thuận ngay sau khi ký kết hợp đồng này.</li>
+<li>Tạo mọi điều kiện thuận lợi để bên B thực hiện theo hợp đồng.</li>
+<li>Cung cấp nguồn điện, nước, wifi cho bên B sử dụng.</li>
+<li>Sửa chữa những hư hỏng không do lỗi trực tiếp của Bên B gây ra.</li>
+<li>Khi chưa hết hạn hợp đồng bên A lấy lại phòng, thì phải hoàn trả lại số tiền đã đặt cọc trong hợp đồng và đồng thời bồi thường thêm số tiền bằng số tiền mà Bên B đã đặt cọc cho bên B. và Bên A phải báo trước cho Bên B 01 tháng.</li>
+<li>Khi hết hạn hợp đồng, nếu bên B không thuê nữa thì Bên A phải trả lại tiền đặt cọc cho bên B.</li>
+<li>Cuối tháng bên A sẽ tính tiền phòng + tiền nước.</li>
+</ul>
+<p>– Trách nhiệm của bên B:</p>
+<ul>
+<li>Bên B sẽ thanh toán hoá đơn đầu khi tạo hợp đồng mới có thể ở</li>
+<li>Thanh toán đầy đủ các khoản tiền theo đúng thỏa thuận.</li>
+<li>Bảo quản các trang thiết bị và cơ sở vật chất của bên A trang bị cho ban đầu (làm hỏng phải sửa, mất phải đền).</li>
+<li>Không được tự ý sửa chữa, cải tạo cơ sở vật chất khi chưa được sự đồng ý của bên A.</li>
+<li>Giữ gìn vệ sinh trong và ngoài khuôn viên của phòng trọ.</li>
+<li>Bên B phải chấp hành mọi quy định của pháp luật Nhà nước và quy định của địa phương.</li>
+<li>Bên B không được thuê phòng để thực hiện các hành vi trái pháp luật.</li>
+<li>Nếu bên B cho khách ở qua đêm thì phải báo và được sự đồng ý của chủ nhà đồng thời phải chịu trách nhiệm về các hành vi vi phạm pháp luật của khách trong thời gian ở lại.</li>
+<li>Bên B nếu muốn hủy hợp đồng thuê, trả lại phòng và mất tiền cọc.</li>
+</ul>
+`;
+
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
+
+
+const disabledDate = (current : any) => {
+  return current && current < dayjs().endOf('day');
+};
+
+
     const OwnerContractCreate : React.FC = () => {
         const [updatedContent, setUpdatedContent] = useState<string>("");
         const [loading, setLoading] = useState(false);
@@ -452,7 +488,8 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                         },
                     ]}
                     >
-                            <RangePicker style={{width: "600px"}} onChange = {onChangeDate} required/>
+                            <RangePicker style={{width: "600px"}} onChange = {onChangeDate} required
+                            disabledDate={disabledDate}/>
                     </Form.Item>
                     </Card>
                 </div>
@@ -832,6 +869,7 @@ import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage
                     'link', 'image', 'video'
                 ]}
                 style={{ height: '400px', marginBottom: '40px', width: "100%"}}
+                defaultValue={initialContent}
             />
             </div>
                     </Form.Item> 
