@@ -100,7 +100,7 @@ const OwnerContractDetail = () => {
       }, [packageLoading, idnumber, token]);
 
     const handleBackToList = () => {
-        navigate("/owner/contracts");
+        navigate(-1);
     };
 
     const handleDownload = () => {

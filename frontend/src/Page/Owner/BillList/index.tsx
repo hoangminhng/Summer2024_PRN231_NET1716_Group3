@@ -6,6 +6,7 @@ import { UserContext } from "../../..//context/userContext";
 import { getBillListByContractId } from "../../../api/Owner/ownerBillPayment";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
+import { DateFormat } from '../../../Utils/dateFormat';
 
 const BillList: React.FC = () => {
   const navigate = useNavigate();
@@ -95,11 +96,13 @@ const BillList: React.FC = () => {
       title: "Created Date",
       dataIndex: "createdDate",
       key: "createdDate",
+      render:(createDate : Date) => DateFormat(createDate),
     },
     {
       title: "Paid Date",
       dataIndex: "paidDate",
       key: "paidDate",
+      render:(paidDate : Date) => DateFormat(paidDate),
     },
     {
       title: "Bill Detail",
