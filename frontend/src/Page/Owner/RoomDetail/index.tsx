@@ -280,6 +280,8 @@ const RoomDetail: React.FC = () => {
     });
   };
 
+  const isStatusChangeDisabled = currentStatus === 1 || currentStatus === 2 || currentStatus === 4;
+
   return (
     <>
       {packageLoading ? (
@@ -426,6 +428,7 @@ const RoomDetail: React.FC = () => {
                             : currentStatus
                         }
                         onChange={handleStatusChange}
+                        disabled={isStatusChangeDisabled}
                         style={{ width: 120 }}
                         options={[
                           { value: 0, label: "Available" },
