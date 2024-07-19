@@ -336,76 +336,112 @@ const RoomForm: React.FC<RoomFormProps> = ({
               Room Services
             </Title>
             <Form.List name="services" initialValue={defaultSelectedServices}>
-              {(fields, { add }) => (
+              {(fields, { add, remove }) => (
                 <>
-                  {fields.map(({ key, name, ...restField }) => (
-                    <Space
-                      key={key}
-                      style={{
-                        display: "flex",
-                        marginBottom: 8,
-                      }}
-                      align="baseline"
-                    >
-                      <Form.Item
-                        {...restField}
-                        name={[name, "typeService"]}
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please select a service!",
-                          },
-                        ]}
+                  {fields.map(({ key, name, ...restField }) => {
+                    const typeServiceValue = form.getFieldValue([
+                      "services",
+                      name,
+                      "typeService",
+                    ]);
+
+                    const isDefaultService = defaultSelectedServices.some(
+                      (service) => service.typeService === typeServiceValue
+                    );
+
+                    return (
+                      <Space
+                        key={key}
+                        style={{
+                          display: "flex",
+                          marginBottom: 8,
+                        }}
+                        align="baseline"
                       >
-                        <Select
-                          placeholder="Select service"
-                          style={{ width: 200 }}
-                          onSelect={(value) => handleSelectService(value, true)}
-                          onDeselect={(value) =>
-                            handleSelectService(value, false)
-                          }
-                        >
-                          {typeServices.map((service) => (
-                            <Select.Option
-                              key={service.typeServiceID}
-                              value={service.typeServiceID}
-                              disabled={selectedServices.includes(
-                                service.typeServiceID
-                              )}
-                            >
-                              {service.typeName}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "price"]}
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please input the price!",
-                          },
-                          () => ({
-                            validator(_, value) {
-                              if (value > 0) {
-                                return Promise.resolve();
-                              }
-                              return Promise.reject(
-                                new Error("Price must be greater than 0!")
-                              );
+                        <Form.Item
+                          {...restField}
+                          name={[name, "typeService"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select a service!",
                             },
-                          }),
-                        ]}
-                      >
-                        <InputNumber
-                          placeholder="Price"
-                          min={0}
-                          style={{ width: "100%" }}
-                        />
-                      </Form.Item>
-                    </Space>
-                  ))}
+                          ]}
+                        >
+                          {isDefaultService ? (
+                            <Select
+                              value={typeServiceValue}
+                              style={{ width: 200 }}
+                              disabled
+                            >
+                              {typeServices.map((service) => (
+                                <Select.Option
+                                  key={service.typeServiceID}
+                                  value={service.typeServiceID}
+                                >
+                                  {service.typeName}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          ) : (
+                            <Select
+                              placeholder="Select service"
+                              style={{ width: 200 }}
+                              onSelect={(value) =>
+                                handleSelectService(value, true)
+                              }
+                              onDeselect={(value) =>
+                                handleSelectService(value, false)
+                              }
+                            >
+                              {typeServices.map((service) => (
+                                <Select.Option
+                                  key={service.typeServiceID}
+                                  value={service.typeServiceID}
+                                  disabled={selectedServices.includes(
+                                    service.typeServiceID
+                                  )}
+                                >
+                                  {service.typeName}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          )}
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "price"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please input the price!",
+                            },
+                            () => ({
+                              validator(_, value) {
+                                if (value > 0) {
+                                  return Promise.resolve();
+                                }
+                                return Promise.reject(
+                                  new Error("Price must be greater than 0!")
+                                );
+                              },
+                            }),
+                          ]}
+                        >
+                          <InputNumber
+                            placeholder="Price"
+                            min={0}
+                            style={{ width: "100%" }}
+                          />
+                        </Form.Item>
+                        {!isDefaultService && (
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        )}
+                      </Space>
+                    );
+                  })}
+
+                  {/* Option to add new services */}
                   <Form.Item>
                     <Button
                       style={{ width: "auto", marginRight: 20 }}

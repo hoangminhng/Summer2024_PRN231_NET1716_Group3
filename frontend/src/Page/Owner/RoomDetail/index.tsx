@@ -234,6 +234,16 @@ const RoomDetail: React.FC = () => {
 
   const handleUpdateRoomDetails = async () => {
     if (!token || !roomId) return;
+
+    const { length, width, capacity, roomFee, roomName, description } = editValues;
+    if (!length || !width || !capacity || !roomFee || !roomName || !description) {
+      notification.error({
+        message: "Validation Error",
+        description: "All fields are required.",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const updatedDetails: UpdateRoomRequest = {
