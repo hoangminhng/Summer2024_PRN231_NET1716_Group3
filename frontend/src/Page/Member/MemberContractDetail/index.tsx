@@ -475,7 +475,7 @@ const MemberContractDetail = () => {
                                 Bên B
                             </p>
                             <p>
-                                {contactDetailData?.status === 0
+                                {contactDetailData?.status === 1
                                     ? contactDetailData?.studentLeadAccountName
                                     : "......"}
                             </p>
