@@ -383,9 +383,10 @@ const disabledDate = (current : any) => {
           };
 
         const handleCreateContract = async () => {
-            if(!updatedContent){
+            if(updatedContent == null || updatedContent.length == 0 || updatedContent.includes("<p><br></p>")){
                 openNotificationWithIcon("error", "Please fill rule contract!");
                 setErrorContent("");
+                console.log(updatedContent);
             }
             else if(startDate && endDate && userId && selectedMemberAccount?.viewerId && roomIDData && roomDeposit && userContract){
                 let data: CreateContract = {
