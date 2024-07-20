@@ -234,6 +234,16 @@ const RoomDetail: React.FC = () => {
 
   const handleUpdateRoomDetails = async () => {
     if (!token || !roomId) return;
+
+    const { length, width, capacity, roomFee, roomName, description } = editValues;
+    if (!length || !width || !capacity || !roomFee || !roomName || !description) {
+      notification.error({
+        message: "Validation Error",
+        description: "All fields are required.",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const updatedDetails: UpdateRoomRequest = {
@@ -279,6 +289,8 @@ const RoomDetail: React.FC = () => {
       description: "",
     });
   };
+
+  const isStatusChangeDisabled = currentStatus === 1 || currentStatus === 2 || currentStatus === 4;
 
   return (
     <>
@@ -426,6 +438,7 @@ const RoomDetail: React.FC = () => {
                             : currentStatus
                         }
                         onChange={handleStatusChange}
+                        disabled={isStatusChangeDisabled}
                         style={{ width: 120 }}
                         options={[
                           { value: 0, label: "Available" },

@@ -16,7 +16,7 @@ import {
   postMonthlyBillPayment,
 } from "../../../api/Owner/ownerBillPayment";
 import { UserContext } from "../../../context/userContext";
-import { NumberFormat } from "../../../Utils/numberFormat";
+import { DateFormat, NumberFormat } from "../../../Utils/numberFormat";
 import { ApiOutlined, LoadingOutlined } from "@ant-design/icons";
 import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
 
@@ -128,6 +128,10 @@ const BillCreate: React.FC = () => {
         message: "Success",
         description: "Bill created successfully !",
       });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     } catch (error) {
       console.error("API Error:", error);
       notification.error({
@@ -182,10 +186,10 @@ const BillCreate: React.FC = () => {
                             <strong>Year:</strong> {bill.year}
                           </p>
                           <p>
-                            <strong>Start Date:</strong> {bill.startDate}
+                            <strong>Start Date:</strong> {DateFormat(bill.startDate)}
                           </p>
                           <p>
-                            <strong>End Date:</strong> {bill.endDate}
+                            <strong>End Date:</strong> {DateFormat(bill.endDate)}
                           </p>
                           <p>
                             <strong>Status:</strong>{" "}
@@ -220,16 +224,16 @@ const BillCreate: React.FC = () => {
                                 key: "serviceUnit",
                               },
                               {
-                                title: "Quantity",
-                                dataIndex: "quantity",
-                                key: "quantity",
+                                title: "Old Serivce Number",
+                                dataIndex: "oldNumberService",
+                                key: "oldNumberService",
                               },
-                              {
-                                title: "Service Total Amount",
-                                dataIndex: "serviceTotalAmount",
-                                key: "serviceTotalAmount",
-                                render: (text) => NumberFormat(text),
-                              },
+                              // {
+                              //   title: "Service Total Amount",
+                              //   dataIndex: "serviceTotalAmount",
+                              //   key: "serviceTotalAmount",
+                              //   render: (text) => NumberFormat(text),
+                              // },
                               {
                                 title: "New Number Service",
                                 dataIndex: "newNumberService",
