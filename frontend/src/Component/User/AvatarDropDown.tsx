@@ -32,7 +32,7 @@ const profileMenuItems = [
   },
   {
     label: "Payment",
-    path: "payment",
+    path: "payments",
     icon: CreditCardIcon,
   },
   {
