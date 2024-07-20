@@ -43,9 +43,11 @@ const NotificationList: React.FC<NotificationListProps> = ({
   };
   const [activeTab, setActiveTab] = useState<string>(tabs[0].id);
 
-  const filteredNotifications = notificationList?.value?.filter((noti) =>
-    activeTab === "unReadNotification" ? !noti.IsRead : noti.IsRead
-  );
+  const filteredNotifications = notificationList?.value
+    ?.filter((noti) =>
+      activeTab === "unReadNotification" ? !noti.IsRead : noti.IsRead
+    )
+    .sort((a, b) => dayjs(b.CreateDate).unix() - dayjs(a.CreateDate).unix());
 
   const handleButtonReadAll = () => {
     navigate("/notification");
@@ -91,40 +93,42 @@ const NotificationList: React.FC<NotificationListProps> = ({
               read all
             </button>
           </div>
-          {filteredNotifications?.map((noti) => {
-            return (
-              <button
-                className="flex items-center justify-start w-full hover:bg-slate-500/10 rounded-lg"
-                onClick={() => handleNotiClicked(noti)}
-              >
-                <div className="mx-2">
-                  {noti.NotificationType === 1 ? (
-                    <CalendarDaysIcon className="w-6 h-6 text-blue-500" />
-                  ) : (
-                    <CreditCardIcon className="w-6 h-6 text-blue-500" />
-                  )}
-                </div>
-                <div className="flex items-center w-full">
-                  <div className="flex flex-col items-start w-full">
-                    <h2 className="text-lg font-bold dark:text-white">
-                      {noti.Title}
-                    </h2>
-                    <p className="text-base text-start text-gray-500">
-                      {truncateText(noti.NotificationText, 50)}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      {dayjs(noti.CreateDate).format("DD/MM/YYYY")}
-                    </p>
+          <div className="max-h-96 overflow-y-auto">
+            {filteredNotifications?.map((noti) => {
+              return (
+                <button
+                  className="flex items-center justify-start w-full hover:bg-slate-500/10 rounded-lg"
+                  onClick={() => handleNotiClicked(noti)}
+                >
+                  <div className="mx-2">
+                    {noti.NotificationType === 1 ? (
+                      <CalendarDaysIcon className="w-6 h-6 text-blue-500" />
+                    ) : (
+                      <CreditCardIcon className="w-6 h-6 text-blue-500" />
+                    )}
                   </div>
-                  {noti.IsRead ? null : (
-                    <div className="h-full text-5xl text-[#2563eb] flex flex-col items-center">
-                      &#x2022;
+                  <div className="flex items-center w-full">
+                    <div className="flex flex-col items-start w-full">
+                      <h2 className="text-lg font-bold dark:text-white">
+                        {noti.Title}
+                      </h2>
+                      <p className="text-base text-start text-gray-500">
+                        {truncateText(noti.NotificationText, 50)}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {dayjs(noti.CreateDate).format("DD/MM/YYYY")}
+                      </p>
                     </div>
-                  )}
-                </div>
-              </button>
-            );
-          })}
+                    {noti.IsRead ? null : (
+                      <div className="h-full text-5xl text-[#2563eb] flex flex-col items-center">
+                        &#x2022;
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </>

@@ -248,7 +248,7 @@ function App() {
               path="contracts/detail/:contractID"
               element={<MemberContractDetail />}
             />
-            <Route path="payment" element={<PaymentHistory />} />
+            <Route path="payments" element={<PaymentHistory />} />
             <Route path="appointments" element={<Appointment />} />
             <Route path="profile" element={<MemberProfile />} />
             <Route path="rentedRooms" element={<MemberRentedRoom />} />
