@@ -31,6 +31,7 @@ const columns: TableColumnsType<BillPaymentMember> = [
     sorter: (a, b) =>
       new Date(a.paidDate).getTime() - new Date(b.paidDate).getTime(),
     sortIcon: () => <ChevronUpDownIcon className="w-5 h-5" />,
+    defaultSortOrder: "descend",
     width: 15,
   },
   {

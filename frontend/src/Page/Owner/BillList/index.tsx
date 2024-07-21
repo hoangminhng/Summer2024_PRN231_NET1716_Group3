@@ -1,12 +1,12 @@
-import { Button, Flex, Table, Spin } from 'antd';
+import { Button, Flex, Table, Spin } from "antd";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import {ApiOutlined, LoadingOutlined} from "@ant-design/icons"
-import React, { useState, useEffect, useContext } from 'react';
+import { ApiOutlined, LoadingOutlined } from "@ant-design/icons";
+import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../..//context/userContext";
 import { getBillListByContractId } from "../../../api/Owner/ownerBillPayment";
 import { NumberFormat } from "../../../Utils/numberFormat";
 import { getOwnerCurrentActiveMembership } from "../../../api/Owner/ownerPackage";
-import { DateFormat } from '../../../Utils/dateFormat';
+import { DateFormat } from "../../../Utils/dateFormat";
 
 const BillList: React.FC = () => {
   const navigate = useNavigate();
@@ -16,38 +16,34 @@ const BillList: React.FC = () => {
   const { token } = useContext(UserContext);
   const [packageLoading, setPackageLoading] = useState(true);
 
-    console.log(contractId);
-    const fetchBills = async () => {
-      try {
-        if (contractId && token) {
-          const data = await getBillListByContractId(
-            parseInt(contractId),
-            token
-          );
-          setBills(data);
-        }
-      } catch (error) {
-        console.error("There was an error fetching the bill data!", error);
+  console.log(contractId);
+  const fetchBills = async () => {
+    try {
+      if (contractId && token) {
+        const data = await getBillListByContractId(parseInt(contractId), token);
+        setBills(data);
       }
-    };
+    } catch (error) {
+      console.error("There was an error fetching the bill data!", error);
+    }
+  };
 
-    const fetchStatusPackage = async () => {
-      try {
-        if (token != undefined) {
-          let data = await getOwnerCurrentActiveMembership(token);
-          setActivePackage(data);
-        }
-      } catch (error) {
-        console.error("Error fetching status package:", error);
-      } finally {
-        setPackageLoading(false);
+  const fetchStatusPackage = async () => {
+    try {
+      if (token != undefined) {
+        let data = await getOwnerCurrentActiveMembership(token);
+        setActivePackage(data);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching status package:", error);
+    } finally {
+      setPackageLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchStatusPackage();
   }, [token]);
-
 
   useEffect(() => {
     if (!packageLoading) {
@@ -96,18 +92,23 @@ const BillList: React.FC = () => {
       title: "Created Date",
       dataIndex: "createdDate",
       key: "createdDate",
-      render:(createDate : Date) => DateFormat(createDate),
+      render: (createDate: Date) => DateFormat(createDate),
     },
     {
       title: "Paid Date",
       dataIndex: "paidDate",
       key: "paidDate",
-      render:(paidDate : Date) => DateFormat(paidDate),
+      render: (paidDate: Date) => {
+        if (paidDate === null) {
+          return "Not paid yet";
+        }
+        return DateFormat(paidDate);
+      },
     },
     {
       title: "Bill Detail",
       key: "action",
-      render: (_text: any, record: { billPaymentID: any; }) => (
+      render: (_text: any, record: { billPaymentID: any }) => (
         <Link to={`/owner/bill-payment/bills/details/${record.billPaymentID}`}>
           View Detail
         </Link>
@@ -117,27 +118,35 @@ const BillList: React.FC = () => {
 
   return (
     <>
-    {packageLoading ? (
+      {packageLoading ? (
         <Spin
           spinning={true}
           indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
         />
       ) : activePackage ? (
-    <div>
-      <Flex justify="flex-end" align="center" style={{ margin: 20 }}>
-        {/* <Button onClick={handleOpenBillPaymentForm} style={{ marginRight: 8 }}>Create monthly bill</Button> */}
-        <Button onClick={handleViewContract}>View contract</Button>
-      </Flex>
-      <div style={{ padding: '24px' }}>
-      <Table dataSource={bills} columns={columns} rowKey="billPaymentID" />
-      </div>
-    </div>
-    ) : (
-      <div className="w-full text-center items-center justify-between">
-        <ApiOutlined style={{fontSize:"100px", marginTop:"50px"}}/>
-        <p style={{fontWeight: "bold"}}>Your current account has not registered for the package, so you cannot access this page. Please register for a membership package to use.</p>
-      </div>
-    )}
+        <div>
+          <Flex justify="flex-end" align="center" style={{ margin: 20 }}>
+            {/* <Button onClick={handleOpenBillPaymentForm} style={{ marginRight: 8 }}>Create monthly bill</Button> */}
+            <Button onClick={handleViewContract}>View contract</Button>
+          </Flex>
+          <div style={{ padding: "24px" }}>
+            <Table
+              dataSource={bills}
+              columns={columns}
+              rowKey="billPaymentID"
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="w-full text-center items-center justify-between">
+          <ApiOutlined style={{ fontSize: "100px", marginTop: "50px" }} />
+          <p style={{ fontWeight: "bold" }}>
+            Your current account has not registered for the package, so you
+            cannot access this page. Please register for a membership package to
+            use.
+          </p>
+        </div>
+      )}
     </>
   );
 };

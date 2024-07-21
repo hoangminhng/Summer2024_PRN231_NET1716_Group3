@@ -39,7 +39,7 @@ const PaymentSucess = () => {
             }
             if (response?.data?.paymentType == 1) {
               //bill_payment
-              homeTimeout = setTimeout(() => navigate("/payment"), 2000);
+              homeTimeout = setTimeout(() => navigate("/payments"), 2000);
             }
             if (response?.data?.paymentType == 2) {
               //package_register
